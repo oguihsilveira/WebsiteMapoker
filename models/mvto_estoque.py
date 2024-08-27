@@ -1,6 +1,6 @@
 from database.db import db
 
-class Estoque(db.Model):
+class Mvto_estoque(db.Model):
     def to_dict(self):
         return {
             'codigo'        : self.codigo,

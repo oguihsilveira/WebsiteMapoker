@@ -1,8 +1,8 @@
-from routes.compradosRoutes import comprados
-from routes.estoqueRoutes import estoque
+from routes.comprasRoutes import comprados
+from routes.mvto_estoqueRoutes import estoque
 from routes.fornecedoresRoutes import fornecedores
 from routes.funcionariosRoutes import funcionarios
-from routes.marcasRoutes import marcas
+from routes.contas_a_pagarRoutes import marcas
 from routes.produtosRoutes import produtos
 from routes.usuariosRoutes import usuarios
 

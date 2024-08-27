@@ -7,7 +7,7 @@ def usuariosController():
     if request.method == 'POST':
         try:
             data = request.get_json()
-            usuario = Usuarios(codigo=data['codigo'], nome=data['nome'], login=data['login'], senha=data['senha'])
+            usuario = Usuarios(codigo=data['codigo'], login=data['login'], senha=data['senha'], cod_funcionario=data['cod_funcionario'])
             print(data)
             db.session.add(usuario)
             db.session.commit()
@@ -22,7 +22,7 @@ def usuariosController():
             user = {'usuarios': [usuarios.to_dict() for usuarios in data]}
             return jsonify(user)
         except Exception as e:
-            return {'error': f'Não foi possível buscar usuários. Error: {str(e)}'}, 405
+            return {'error': f'Não foi possível buscar Usuários. Error: {str(e)}'}, 405
 
     # Método PUT
     elif request.method == 'PUT':
@@ -32,10 +32,11 @@ def usuariosController():
                 put_usuario = Usuarios.query.get(put_usuario_id)
                 if put_usuario is None:
                     return {'error': 'Cliente não encontrado'}, 404
-                put_usuario.nome = data.get('nome', put_usuario.nome)
                 put_usuario.login = data.get('login', put_usuario.login)
                 put_usuario.senha = data.get('senha', put_usuario.senha)
-                print(put_usuario.nome, put_usuario.login, put_usuario.senha)
+                put_usuario.cod_funcionario = data.get('cod_funcionario', put_usuario.cod_funcionario)
+                # print
+                print(put_usuario.login, put_usuario.senha, put_usuario.cod_funcionario)
                 db.session.commit()
                 return 'Usuario alterado com sucesso', 200
             except Exception as e:

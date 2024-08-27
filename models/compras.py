@@ -1,6 +1,6 @@
 from database.db import db
 
-class Comprados(db.Model):
+class Compras(db.Model):
     def to_dict(self):
         return {
             'codigo'        : self.codigo,

@@ -7,7 +7,7 @@ def fornecedoresController():
     if request.method == 'POST':
         try:
             data = request.get_json()
-            fornecedores = Fornecedores(codigo=data['codigo'], empresa=data['empresa'], endereco=data['endereco'], telefone=data['telefone'], email=data['email'])
+            fornecedores = Fornecedores(codigo=data['codigo'], empresa=data['empresa'], endereco=data['endereco'], cnpj=data['cnpj'], telefone=data['telefone'], email=data['email'])
             db.session.add(fornecedores)
             db.session.commit()
             return jsonify({'message': 'Fornecedor inserido com sucesso'}), 200
@@ -22,7 +22,7 @@ def fornecedoresController():
             return fornecedor
 
         except Exception as e:
-            return 'Não foi possível buscar usuários. Error: {}'.format(str(e)), 405   
+            return 'Não foi possível buscar Fornecedores. Error: {}'.format(str(e)), 405   
 
     # Método PUT
     elif request.method == 'PUT':
@@ -34,9 +34,11 @@ def fornecedoresController():
                 return {'error': 'Fornecedor não encontrado'}, 404
             put_fornecedores.empresa = data.get('empresa', put_fornecedores.empresa)
             put_fornecedores.endereco = data.get('endereco', put_fornecedores.endereco)
+            put_fornecedores.cnpj = data.get('cnpj', put_fornecedores.cnpj)
             put_fornecedores.telefone = data.get('telefone', put_fornecedores.telefone)
             put_fornecedores.email = data.get('email', put_fornecedores.email)
-            print(put_fornecedores.empresa, put_fornecedores.endereco, put_fornecedores.telefone, put_fornecedores.email)
+            # print
+            print(put_fornecedores.empresa, put_fornecedores.endereco, put_fornecedores.cnpj, put_fornecedores.telefone, put_fornecedores.email)
             db.session.commit()
             return 'Fornecedor alterado com sucesso', 200
         except Exception as e:

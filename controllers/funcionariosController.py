@@ -7,7 +7,7 @@ def funcionariosController():
     if request.method == 'POST':
         try:
             data = request.get_json()
-            funcionarios = Funcionarios(codigo=data['codigo'], nome=data['nome'], email=data['email'], senha=data['senha'], salario=data['salario'], endereco=data['endereco'], cargaHoraria=data['cargaHoraria'], cargo=data['cargo'])
+            funcionarios = Funcionarios(codigo=data['codigo'], nome=data['nome'], email=data['email'], datanasc=data['datanasc'], cargo=data['cargo'], salario=data['salario'], endereco=data['endereco'], carga_horaria=data['carga_horaria'])
             db.session.add(funcionarios)
             db.session.commit()
             return jsonify({'message': 'Funcionario inserido com sucesso'}), 200
@@ -22,7 +22,7 @@ def funcionariosController():
             return funcionario
 
         except Exception as e:
-            return 'Não foi possível buscar usuários. Error: {}'.format(str(e)), 405
+            return 'Não foi possível buscar Funcionários. Error: {}'.format(str(e)), 405
 
     # Método PUT
     elif request.method == 'PUT':
@@ -34,11 +34,13 @@ def funcionariosController():
                     return {'error': 'Funcionario não encontrado'}, 404
                 put_funcionarios.nome = data.get('nome', put_funcionarios.nome)
                 put_funcionarios.email = data.get('email', put_funcionarios.email)
-                put_funcionarios.senha = data.get('senha', put_funcionarios.senha)
-                put_funcionarios.salario = data.get('salario', put_funcionarios.salario)
-                put_funcionarios.cargaHoraria = data.get('cargaHoraria', put_funcionarios.cargaHoraria)
+                put_funcionarios.datanasc = data.get('datanasc', put_funcionarios.datanasc)
                 put_funcionarios.cargo = data.get('cargo', put_funcionarios.cargo)
-                print(put_funcionarios.nome, put_funcionarios.email, put_funcionarios.senha, put_funcionarios.salario, put_funcionarios.cargaHoraria, put_funcionarios.cargo)
+                put_funcionarios.salario = data.get('salario', put_funcionarios.salario)
+                put_funcionarios.endereco = data.get('endereco', put_funcionarios.endereco)
+                put_funcionarios.carga_horaria = data.get('carga_horaria', put_funcionarios.carga_horaria)
+                # print
+                print(put_funcionarios.nome, put_funcionarios.email, put_funcionarios.datanasc, put_funcionarios.cargo, put_funcionarios.salario, put_funcionarios.endereco, put_funcionarios.carga_horaria)
                 db.session.commit()
                 return 'Funcionario alterado com sucesso', 200
             except Exception as e:

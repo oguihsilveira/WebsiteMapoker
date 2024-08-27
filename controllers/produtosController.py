@@ -7,12 +7,12 @@ def produtosController():
     if request.method == 'POST':
         try:
             data = request.get_json()
-            produtos = Produtos(codigo=data['codigo'], nome=data['nome'], preco=data['preco'], status=data['status'], quantidade=data['quantidade'],codMarca=data['codMarca'], codFornecedor=data['codFornecedor'], )
+            produtos = Produtos(codigo=data['codigo'], item=data['item'], marca=data['marca'], tipo=data['tipo'], observacoes=data['observacoes'],preco_compra=data['preco_compra'], preco_venda=data['preco_venda'], status=data['status'], quantidade=data['quantidade'],)
             db.session.add(produtos)
             db.session.commit()
-            return jsonify({'message': 'Produtos inserido com sucesso'}), 200
+            return jsonify({'message': 'Produto inserido com sucesso'}), 200
         except Exception as e:
-            return jsonify({'error': 'Erro ao cadastrar Produtos. Erro: {}'.format(str(e))}), 400
+            return jsonify({'error': 'Erro ao cadastrar Produto. Erro: {}'.format(str(e))}), 400
     
     # Método GET
     elif request.method == 'GET':
@@ -22,7 +22,7 @@ def produtosController():
             return produto
 
         except Exception as e:
-            return 'Não foi possível buscar produtos. Error: {}'.format(str(e)), 405
+            return 'Não foi possível buscar Produto. Error: {}'.format(str(e)), 405
         
     # Método PUT
     elif request.method == 'PUT':
@@ -32,14 +32,16 @@ def produtosController():
             put_produtos = Produtos.query.get(put_produtos_id)
             if put_produtos is None:
                 return {'error': 'Produto não encontrado'}, 404
-            put_produtos.nome = data.get('nome', put_produtos.nome)
-            put_produtos.preco = data.get('preco', put_produtos.preco)
+            put_produtos.item = data.get('item', put_produtos.item)
+            put_produtos.marca = data.get('marca', put_produtos.marca)
+            put_produtos.tipo = data.get('tipo', put_produtos.tipo)
+            put_produtos.observacoes = data.get('observacoes', put_produtos.observacoes)
+            put_produtos.preco_compra = data.get('preco_compra', put_produtos.preco_compra)
+            put_produtos.preco_venda = data.get('preco_venda', put_produtos.preco_venda)
             put_produtos.status = data.get('status', put_produtos.status)
             put_produtos.quantidade = data.get('quantidade', put_produtos.quantidade)
-            put_produtos.codMarca = data.get('codMarca', put_produtos.codMarca)
-            put_produtos.codFornecedor = data.get('codFornecedor', put_produtos.codFornecedor)
-
-            print(put_produtos.nome,put_produtos.preco,put_produtos.status,put_produtos.quantidade,put_produtos.codMarca,put_produtos.codFornecedor)
+            # print
+            print(put_produtos.item,put_produtos.marca,put_produtos.tipo,put_produtos.observacoes,put_produtos.preco_compra,put_produtos.preco_venda, put_produtos.status, put_produtos.quantidade)
             db.session.commit()
             return 'Produtos alterado com sucesso', 200
         except Exception as e:
@@ -56,4 +58,4 @@ def produtosController():
             db.session.commit()
             return 'Produto deletado com sucesso', 200
         except Exception as e:
-            return {'error': 'Erro ao deletar produto. Erro{}'.format(e)}, 400
+            return {'error': 'Erro ao deletar Produto. Erro{}'.format(e)}, 400
