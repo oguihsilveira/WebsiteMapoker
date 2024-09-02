@@ -1,4 +1,4 @@
-from controllers.comprasController import compradosController
+from controllers.comprasController import comprasController
 
-def comprados(app):
-    app.route('/comprados', methods=['POST', 'GET', 'PUT', 'DELETE'])(compradosController)
+def compras(app):
+    app.route('/compras', methods=['POST', 'GET', 'PUT', 'DELETE'])(comprasController)

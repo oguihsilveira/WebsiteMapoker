@@ -1,4 +1,4 @@
-from controllers.contas_a_pagarController import marcasController
+from controllers.contas_a_pagarController import contas_a_pagarController
 
-def marcas(app):
-    app.route('/marcas', methods=['POST', 'GET', 'PUT', 'DELETE'])(marcasController)
+def contas_a_pagar(app):
+    app.route('/contas_a_pagar', methods=['POST', 'GET', 'PUT', 'DELETE'])(contas_a_pagarController)
