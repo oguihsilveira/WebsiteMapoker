@@ -1,16 +1,16 @@
-.programs{
+.produtos{
     margin: 80px auto;
     width: 90%;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.program img{
+.produto img{
     width: 100%;
     border-radius: 10px;
     display: block;
 }
-.program{
+.produto{
     flex-basis: 31%;
     position: relative;
 }
@@ -21,7 +21,7 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background: rgba(0, 15, 152, 0.3);
+    background: rgba(50, 50, 50, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,7 +36,7 @@
     width: 60px;
     margin-bottom: 10px;
 }
-.program:hover .caption{
+.produto:hover .caption{
     opacity: 1;
     padding-top: 0;
 }

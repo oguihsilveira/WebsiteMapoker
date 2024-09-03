@@ -6,8 +6,8 @@ const Hero = () => {
   return (
     <div className='hero container'>
         <div className='hero-text'>
-            <h1>Titulo</h1>
-            <p>paragrafo aqui wfb3fuhwoifoewuhwoufieuedhudhuehduehuhudhuhudhuheufurhfuhfdufhiufhiufhd</p>
+            <h1>Mapoker</h1>
+            <p>Soluções para indústria!</p>
             <button className='btn'>Explore mais <img src={dark_arrow} alt=""/></button>
         </div>
     </div>

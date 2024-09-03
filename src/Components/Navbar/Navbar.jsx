@@ -18,11 +18,11 @@ const App = () => {
         <img src={logo} alt="" className='logo'/>
         <ul>
             <li>Home</li>
-            <li>Program</li>
-            <li>About Us</li>
-            <li>Campus</li>
-            <li>Testimonials</li>
-            <li><button className='btn'>Contact Us</button></li>
+            <li>Produtos</li>
+            <li>Sobre nós</li>
+            <li>Ambiente</li>
+            <li>Gestão ERP</li>
+            <li><button className='btn'>Nos contate</button></li>
         </ul>
     </nav>
   )
