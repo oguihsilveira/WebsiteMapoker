@@ -1,10 +1,10 @@
 import React from 'react'
 import './Contato.css'
-import msg_icon from '../../assets/msg-icon.png'
-import mail_icon from '../../assets/mail-icon.png'
-import phone_icon from '../../assets/phone-icon.png'
-import location_icon from '../../assets/location-icon.png'
-import white_arrow from '../../assets/white-arrow.png'
+import msg_icon from '../../../assets/msg-icon.png'
+import mail_icon from '../../../assets/mail-icon.png'
+import phone_icon from '../../../assets/phone-icon.png'
+import location_icon from '../../../assets/location-icon.png'
+import white_arrow from '../../../assets/white-arrow.png'
 
 const Contato = () => {
     const [result, setResult] = React.useState("");
@@ -14,7 +14,7 @@ const Contato = () => {
       setResult("Enviando....");
       const formData = new FormData(event.target);
   
-      formData.append("access_key", "2fccb06d-a998-443e-8fd7-53e86adc2956"); //7d9b4928-5635-47ba-9a77-1b6e8fe7f5b6 detgui95@gmail.com
+      formData.append("access_key", "7d9b4928-5635-47ba-9a77-1b6e8fe7f5b6"); //7d9b4928-5635-47ba-9a77-1b6e8fe7f5b6 detgui95@gmail.com
   
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
