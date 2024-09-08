@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 import './Login.css';
 import white_arrow from '../../../assets/white-arrow.png';
 
 const Login = () => {
   const [result, setResult] = useState("");
+  const navigate = useNavigate(); // Instanciar useNavigate
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -16,8 +18,8 @@ const Login = () => {
 
     if (username === 'admin' && password === '1234') {
       setResult("Login bem-sucedido");
-      // Redirecionar para outra página, se necessário
-      window.location.href = "/CadastrosGerais";
+      // Redirecionar para outra página usando useNavigate
+      navigate('/cadastrosgerais'); // Certifique-se de que o path está correto
     } else {
       setResult("Credenciais incorretas");
     }

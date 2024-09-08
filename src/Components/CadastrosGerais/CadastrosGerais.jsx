@@ -1,10 +1,14 @@
 import React from 'react';
-import NavbarCad from './NavbarCad/NavBarCad'
+import NavbarCadGerais from './NavbarCadGerais/NavBarCadGerais';
+import RodapeCadGerais from './RodapeCadGerais/RodapeCadGerais';
+import BtnCadGerais from './BtnCadGerais/BtnCadGerais';
 
 const CadastrosGerais = () => {
   return (
     <div>
-      <NavbarCad/>
+      <NavbarCadGerais />
+      <BtnCadGerais />
+      <RodapeCadGerais />
     </div>
   );
 }

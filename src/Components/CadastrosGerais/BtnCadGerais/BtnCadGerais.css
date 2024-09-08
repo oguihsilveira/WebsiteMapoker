@@ -1,0 +1,29 @@
+/* Contêiner para alinhar os botões */
+.btn-container {
+  display: flex;
+  flex-direction: column; /* Coloca os itens em uma coluna */
+  align-items: center; /* Centraliza os botões horizontalmente */
+  gap: 20px; /* Espaçamento entre os botões */
+  margin: 120px 0px 60px 0px; /* Ajusta a margem do contêiner */
+}
+
+/* Estilo do botão */
+.btncadgerais {
+  background-color: #232323; /* Cor de fundo escura */
+  color: #fff; /* Cor do texto branca */
+  padding: 10px 20px;
+  border: 1px;
+  border-radius: 25px; /* Borda arredondada */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 300px; /* Largura fixa dos botões para alinhamento */
+}
+
+/* Efeito hover */
+.btncadgerais:hover {
+  background-color: #ff5100; /* Cor de fundo ao passar o mouse */
+}

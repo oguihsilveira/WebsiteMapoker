@@ -1,20 +1,19 @@
 import React from 'react'
-import './NavbarCad.css'
+import './NavbarFornecedores.css'
 import logo from '../../../assets/logo.png'
 
 
-const App = () => {
+const NavbarFornecedores = () => {
 
   return (
     <nav className={'container'}>
         <img src={logo} alt="" className='logo'/>
         <ul>
-            <li>financeiro@mapoker.com.br</li>
-            <li>© 2024 Mapoker. Todos os direitos reservados.</li>
+            <li>Fornecedores</li>
             <li><button className='btn'>LogOut</button></li>
         </ul>
     </nav>
   )
 }
 
-export default App
+export default NavbarFornecedores
