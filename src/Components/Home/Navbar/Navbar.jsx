@@ -3,15 +3,15 @@ import './Navbar.css'
 import logo from '../../../assets/logo.png'
 import { Link } from 'react-scroll'
 
-const App = () => {
+const Navbar = () => {
 
   const [sticky, setSticky] = useState(false);
 
-  useEffect(() => {
-    window.addEventListener('scroll', () =>{
-      window.scrollY > 50 ?setSticky(true) : setSticky(false);
-    })
-  }, []);
+  useEffect(()=>{
+      window.addEventListener('scroll', ()=>{
+        window.scrollY > 50 ? setSticky(true) : setSticky(false);
+      })
+  },[])
 
   return (
     <nav className={`container ${sticky? 'dark-nav' : ''}`}>
@@ -28,4 +28,4 @@ const App = () => {
   )
 }
 
-export default App
+export default Navbar

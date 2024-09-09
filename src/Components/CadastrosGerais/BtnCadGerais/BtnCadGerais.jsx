@@ -7,13 +7,13 @@ const BtnCadGerais = () => {
 
   return (
     <div className="btn-container">
+      <button className="btncadgerais" onClick={() => navigate('/funcionarios')}>
+        Funcionarios
+      </button> {/* Funcionarios */}
+
       <button className="btncadgerais" onClick={() => navigate('/fornecedores')}>
         Fornecedores
       </button> {/* Fornecedores */}
-
-      <button className="btncadgerais" onClick={() => navigate('/funcionarios')}>
-        Funcionários
-      </button> {/* Funcionários */}
 
       <button className="btncadgerais" onClick={() => navigate('/usuarios-erp')}>
         Usuários ERP

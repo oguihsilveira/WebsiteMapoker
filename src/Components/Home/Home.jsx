@@ -8,8 +8,7 @@ import Login from './Login/Login';
 import Contato from './Contato/Contato';
 import Rodape from './Rodape/Rodape';
 
-
-export default function Home() {
+function Home() {
   return (
     <div>
       <Navbar />
@@ -29,3 +28,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home

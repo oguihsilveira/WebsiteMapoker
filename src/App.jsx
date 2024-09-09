@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./Components/Home/home";
+import Home from "./Components/Home/Home";
 import CadastrosGerais from "./Components/CadastrosGerais/CadastrosGerais";
 import Fornecedores from "./Components/Fornecedores/Fornecedores"; // Importe o componente Fornecedores
 import Funcionarios from "./Components/Funcionarios/Funcionarios"; // Importe o componente Funcionarios
