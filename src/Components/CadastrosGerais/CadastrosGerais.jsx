@@ -7,8 +7,10 @@ const CadastrosGerais = () => {
   return (
     <div>
       <NavbarCadGerais />
+      <div className='container'>
       <BtnCadGerais />
       <RodapeCadGerais />
+      </div>
     </div>
   );
 }

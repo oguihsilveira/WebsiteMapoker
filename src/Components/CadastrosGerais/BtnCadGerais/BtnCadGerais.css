@@ -3,8 +3,8 @@
   display: flex;
   flex-direction: column; /* Coloca os itens em uma coluna */
   align-items: center; /* Centraliza os botões horizontalmente */
-  gap: 20px; /* Espaçamento entre os botões */
-  margin: 120px 0px 60px 0px; /* Ajusta a margem do contêiner */
+  gap: 16px; /* Espaçamento entre os botões */
+  margin: 100px 0px 40px 0px; /* Ajusta a margem do contêiner */
 }
 
 /* Estilo do botão */

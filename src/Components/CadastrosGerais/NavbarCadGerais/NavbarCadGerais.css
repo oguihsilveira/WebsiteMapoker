@@ -15,6 +15,13 @@ nav {
 .logo{
     width: 180px;
 }
+.back {
+    width: 20px; /* Ajuste o tamanho do ícone conforme necessário */
+    height: auto;
+    vertical-align: middle; /* Para alinhar o ícone verticalmente com o texto */
+    cursor: pointer;
+    margin-bottom: 2px;
+}
 nav ul li{
     display: inline-block;
     list-style: none;
