@@ -1,0 +1,48 @@
+.galerias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Ajuste o espaçamento entre os itens se necessário */
+    width: 90%;
+    margin: 80px auto;
+}
+
+.galeria {
+    flex: 1 1 calc(33.333% - 20px); /* Ajusta a largura para 3 itens por linha com o espaçamento */
+    box-sizing: border-box;
+    position: relative;
+}
+
+.galeria img {
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+}
+
+.caption {
+    border-radius: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(50, 50, 50, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: #000;
+    cursor: pointer;
+    opacity: 0;
+    padding-top: 70%;
+    transition: 0.4s;
+}
+
+.caption img {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+.galeria:hover .caption {
+    opacity: 1;
+    padding-top: 0;
+}

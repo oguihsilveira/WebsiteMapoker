@@ -1,0 +1,13 @@
+.rodape{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #797979;
+  }
+  .rodape ul li{
+    margin-left: 10px;
+    margin-right: 10px;
+    list-style: none;
+    display: inline-block;
+    margin-left: 20px;
+  }

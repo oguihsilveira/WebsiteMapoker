@@ -10,6 +10,7 @@ import ProdutosComprados from "./Components/ProdutosComprados/ProdutosComprados"
 import ProdutosEstoque from "./Components/ProdutosEstoque/ProdutosEstoque"; // Importe Produtos em Estoque
 import ContasPagamentos from "./Components/ContasPagamentos/ContasPagamentos"; // Importe Contas e Pagamentos
 import ParcelasPagar from "./Components/ParcelasPagar/ParcelasPagar"; // Importe Parcelas a Pagar
+import Galeria from './Components/Galeria/Galeria';
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/produtos-estoque" element={<ProdutosEstoque />} />
         <Route path="/contas-pagamentos" element={<ContasPagamentos />} />
         <Route path="/parcelas-pagar" element={<ParcelasPagar />} />
+        <Route path="/galeria" element={<Galeria />} />
       </Routes>
     </Router>
   );
