@@ -1,13 +1,13 @@
 from flask import request, jsonify
 from database.db import db
-from models.mvto_estoque import Mvto_estoque
+from models.mvto_estoque import mvto_estoque
 
 def mvto_estoqueController():
     # Método POST
     if request.method == 'POST':
         try:
             data = request.get_json()
-            estoque = Mvto_estoque( codigo=data['codigo'], item=data['item'], tipo=data['tipo'], observacoes=data['observacoes'], preco_compra=data['preco_compra'], preco_venda=data['preco_venda'], data_entrada=data['data_entrada'], qntd_entrada=data['qntd_entrada'], cod_produto=data['cod_produto'], cod_fornecedor=data['cod_fornecedor']
+            estoque = mvto_estoque( codigo=data['codigo'], item=data['item'], tipo=data['tipo'], observacoes=data['observacoes'], preco_compra=data['preco_compra'], preco_venda=data['preco_venda'], data_entrada=data['data_entrada'], qntd_entrada=data['qntd_entrada'], cod_produto=data['cod_produto'], cod_fornecedor=data['cod_fornecedor']
             )
             db.session.add(estoque)
             db.session.commit()
@@ -18,7 +18,7 @@ def mvto_estoqueController():
     # Método GET
     elif request.method == 'GET':
         try:
-            data = Mvto_estoque.query.all()
+            data = mvto_estoque.query.all()
             estoque = {'estoque': [item.to_dict() for item in data]}
             return estoque
 
@@ -30,7 +30,7 @@ def mvto_estoqueController():
         try:
             data = request.get_json()
             put_estoque_id = data['codigo']
-            put_estoque = Mvto_estoque.query.get(put_estoque_id)
+            put_estoque = mvto_estoque.query.get(put_estoque_id)
             if put_estoque is None:
                 return jsonify({'error': 'Estoque não encontrado'}), 404
             
@@ -57,7 +57,7 @@ def mvto_estoqueController():
     elif request.method == 'DELETE':
         try:
             codigo = request.args.get('codigo')
-            delete_estoque = Mvto_estoque.query.get(codigo)
+            delete_estoque = mvto_estoque.query.get(codigo)
             if delete_estoque is None:
                 return jsonify({'error': 'Estoque não encontrado'}), 404
             db.session.delete(delete_estoque)
