@@ -19,7 +19,7 @@ class Funcionarios(db.Model):
     email           = db.Column(db.String(50))
     datanasc        = db.Column(db.Date)
     cargo           = db.Column(db.String(50))
-    salario         = db.Column(db.Float)
+    salario         = db.Column(db.Float(8,2))
     endereco        = db.Column(db.String(50))
     carga_horaria   = db.Column(db.String(50))
 

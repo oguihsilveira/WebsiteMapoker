@@ -6,6 +6,7 @@ def funcionariosController():
     # Método POST
     if request.method == 'POST':
         try:
+            print(data)
             data = request.get_json()
             funcionarios = Funcionarios(codigo=data['codigo'], nome=data['nome'], email=data['email'], datanasc=data['datanasc'], cargo=data['cargo'], salario=data['salario'], endereco=data['endereco'], carga_horaria=data['carga_horaria'])
             db.session.add(funcionarios)
