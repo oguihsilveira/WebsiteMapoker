@@ -14,9 +14,9 @@ export default function ContentFuncionarios() {
     cargo: '',
     salario: '',
     endereco: '',
-    cargaHoraria: '',
+    carga_horaria: '', // Altere para underscore
   });
-  const [editingFuncionario, setEditingFuncionario] = useState(null); 
+  const [editingFuncionario, setEditingFuncionario] = useState(null);
 
   useEffect(() => {
     fetchFuncionarios();
@@ -26,13 +26,14 @@ export default function ContentFuncionarios() {
     setLoading(true);
     try {
       const response = await axios.get('http://localhost:3000/funcionarios');
-      setFuncionarios(response.data);
+      console.log('Dados recebidos:', response.data);  // Verifique os dados aqui
+      setFuncionarios(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Erro ao buscar funcionários:', error);
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const handleOpenModal = () => {
     setModalVisible(true);
@@ -44,17 +45,15 @@ export default function ContentFuncionarios() {
       cargo: '',
       salario: '',
       endereco: '',
-      cargaHoraria: '',
+      carga_horaria: '', // Underscore
     });
-    
-    // Garante que a modal comece no topo
     setTimeout(() => {
       const modal = document.querySelector('.modal');
       if (modal) {
         modal.scrollTop = 0;
       }
     }, 0);
-  };  
+  };
 
   const handleCloseModal = () => {
     setModalVisible(false);
@@ -70,10 +69,14 @@ export default function ContentFuncionarios() {
     e.preventDefault();
     try {
       if (editingFuncionario) {
-        await axios.put(`http://localhost:3000/funcionarios/${editingFuncionario}`, formData);
+        await axios.put(`http://localhost:3000/funcionarios/${editingFuncionario}`, formData, {
+          headers: { 'Content-Type': 'application/json' },
+        });
         alert('Funcionário atualizado com sucesso!');
       } else {
-        await axios.post('http://localhost:3000/funcionarios', formData);
+        await axios.post('http://localhost:3000/funcionarios', formData, {
+          headers: { 'Content-Type': 'application/json' },
+        });
         alert('Funcionário cadastrado com sucesso!');
       }
       fetchFuncionarios();
@@ -85,7 +88,7 @@ export default function ContentFuncionarios() {
   };
 
   const handleDelete = async (codigo) => {
-    if (window.confirm("Tem certeza que deseja excluir este funcionário?")) {
+    if (window.confirm('Tem certeza que deseja excluir este funcionário?')) {
       try {
         await axios.delete(`http://localhost:3000/funcionarios/${codigo}`);
         fetchFuncionarios();
@@ -140,7 +143,7 @@ export default function ContentFuncionarios() {
               <td>{funcionario.cargo}</td>
               <td>{funcionario.salario}</td>
               <td>{funcionario.endereco}</td>
-              <td>{funcionario.cargaHoraria}</td>
+              <td>{funcionario.carga_horaria}</td> {/* Corrigido */}
               <td>
                 <button className="button" onClick={() => handleEdit(funcionario)}>
                   Editar
@@ -153,7 +156,7 @@ export default function ContentFuncionarios() {
           ))}
         </tbody>
       </table>
-      {/* Modal para adicionar/editar funcionários */}
+
       <div className="modal-container" style={{ display: modalVisible ? 'block' : 'none' }}>
         <div className="modal">
           <h2 className="modal-title">
@@ -211,8 +214,8 @@ export default function ContentFuncionarios() {
             <input
               type="text"
               placeholder="Carga Horária"
-              name="cargaHoraria"
-              value={formData.cargaHoraria}
+              name="carga_horaria" // Altere para underscore
+              value={formData.carga_horaria}
               onChange={handleChange}
               className="input"
             />
