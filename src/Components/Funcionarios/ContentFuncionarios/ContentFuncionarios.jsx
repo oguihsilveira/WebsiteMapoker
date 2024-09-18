@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ContentFuncionarios.css'; 
+import './ContentFuncionarios.css';
 
 export default function ContentFuncionarios() {
   const [funcionarios, setFuncionarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [editingFuncionario, setEditingFuncionario] = useState(null);
   const [formData, setFormData] = useState({
     codigo: '',
     nome: '',
@@ -14,45 +15,40 @@ export default function ContentFuncionarios() {
     cargo: '',
     salario: '',
     endereco: '',
-    carga_horaria: '', // Altere para underscore
+    carga_horaria: '',
   });
-  const [editingFuncionario, setEditingFuncionario] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetchFuncionarios();
+    axios.get('http://localhost:3000/funcionarios')
+      .then(response => {
+        setFuncionarios(response.data.funcionarios);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Erro ao carregar funcionários:', error);
+        setLoading(false);
+      });
   }, []);
 
-  const fetchFuncionarios = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get('http://localhost:3000/funcionarios');
-      console.log('Dados recebidos:', response.data);  // Verifique os dados aqui
-      setFuncionarios(Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-      console.error('Erro ao buscar funcionários:', error);
-    } finally {
-      setLoading(false);
+  const handleOpenModal = (funcionario = null) => {
+    if (funcionario) {
+      setFormData(funcionario);
+      setEditingFuncionario(funcionario.codigo);
+    } else {
+      setFormData({
+        codigo: '',
+        nome: '',
+        email: '',
+        datanasc: '',
+        cargo: '',
+        salario: '',
+        endereco: '',
+        carga_horaria: '',
+      });
+      setEditingFuncionario(null);
     }
-  };  
-
-  const handleOpenModal = () => {
     setModalVisible(true);
-    setFormData({
-      codigo: '',
-      nome: '',
-      email: '',
-      datanasc: '',
-      cargo: '',
-      salario: '',
-      endereco: '',
-      carga_horaria: '', // Underscore
-    });
-    setTimeout(() => {
-      const modal = document.querySelector('.modal');
-      if (modal) {
-        modal.scrollTop = 0;
-      }
-    }, 0);
   };
 
   const handleCloseModal = () => {
@@ -60,50 +56,105 @@ export default function ContentFuncionarios() {
     setEditingFuncionario(null);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editingFuncionario) {
-        await axios.put(`http://localhost:3000/funcionarios/${editingFuncionario}`, formData, {
-          headers: { 'Content-Type': 'application/json' },
-        });
-        alert('Funcionário atualizado com sucesso!');
-      } else {
-        await axios.post('http://localhost:3000/funcionarios', formData, {
-          headers: { 'Content-Type': 'application/json' },
-        });
-        alert('Funcionário cadastrado com sucesso!');
-      }
-      fetchFuncionarios();
-      handleCloseModal(); 
-    } catch (error) {
-      console.error('Erro ao cadastrar/atualizar funcionário:', error);
-      alert('Erro ao cadastrar/atualizar funcionário.');
+  const handleUpdate = () => {
+    if (Object.values(formData).some(field => field === '')) {
+      alert('Todos os campos devem ser preenchidos.');
+      return;
     }
+
+    axios.get('http://localhost:3000/funcionarios')
+      .then(response => {
+        const funcionariosList = response.data.funcionarios;
+        const codigoDuplicado = funcionariosList.some(funcionario => funcionario.codigo === formData.codigo && funcionario.codigo !== editingFuncionario);
+
+        if (codigoDuplicado) {
+          alert('Já existe um funcionário com este código.');
+          return;
+        }
+
+        axios.put('http://localhost:3000/funcionarios', formData, {
+          params: { codigo: formData.codigo }
+        })
+        .then(response => {
+          setFuncionarios(funcionarios.map(funcionario =>
+            funcionario.codigo === formData.codigo ? formData : funcionario
+          ));
+          setEditingFuncionario(null);
+          setFormData({
+            codigo: '',
+            nome: '',
+            email: '',
+            datanasc: '',
+            cargo: '',
+            salario: '',
+            endereco: '',
+            carga_horaria: ''
+          });
+          setModalVisible(false);
+          alert('Funcionário atualizado com sucesso!');
+        })
+        .catch(error => {
+          console.error('Erro ao atualizar funcionário:', error.response ? error.response.data : error.message);
+          alert('Erro ao atualizar funcionário.');
+        });
+      })
+      .catch(error => {
+        console.error('Erro ao verificar código:', error);
+      });
   };
 
-  const handleDelete = async (codigo) => {
+  const handleDelete = (codigo) => {
     if (window.confirm('Tem certeza que deseja excluir este funcionário?')) {
-      try {
-        await axios.delete(`http://localhost:3000/funcionarios/${codigo}`);
-        fetchFuncionarios();
-      } catch (error) {
-        console.error('Erro ao deletar funcionário:', error);
-        alert('Erro ao deletar funcionário.');
-      }
+      axios.delete('http://localhost:3000/funcionarios', { params: { codigo } })
+        .then(response => {
+          setFuncionarios(funcionarios.filter(funcionario => funcionario.codigo !== codigo));
+          alert('Funcionário excluído com sucesso!');
+        })
+        .catch(error => {
+          console.error('Erro ao deletar funcionário:', error.response ? error.response.data : error.message);
+          alert('Erro ao deletar funcionário.');
+        });
     }
   };
 
-  const handleEdit = (funcionario) => {
-    setEditingFuncionario(funcionario.codigo);
-    setFormData(funcionario);
-    setModalVisible(true);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (editingFuncionario) {
+      handleUpdate();
+    } else {
+      if (Object.values(formData).some(field => field === '')) {
+        alert('Todos os campos devem ser preenchidos.');
+        return;
+      }
+
+      axios.post('http://localhost:3000/funcionarios', formData)
+        .then(response => {
+          setFuncionarios([...funcionarios, response.data.funcionario]);
+          setFormData({
+            codigo: '',
+            nome: '',
+            email: '',
+            datanasc: '',
+            cargo: '',
+            salario: '',
+            endereco: '',
+            carga_horaria: '',
+          });
+          setModalVisible(false);
+          alert('Funcionário cadastrado com sucesso!');
+        })
+        .catch(error => {
+          console.error('Erro ao cadastrar funcionário:', error.response ? error.response.data : error.message);
+          alert('Erro ao cadastrar funcionário.');
+        });
+    }
   };
+
+  const filteredFuncionarios = funcionarios.filter(funcionario =>
+    funcionario.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    funcionario.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -116,9 +167,26 @@ export default function ContentFuncionarios() {
   return (
     <div className="content-container">
       <h2 className="title">Funcionários</h2>
-      <button className="button" onClick={handleOpenModal}>
-        Novo Funcionário
-      </button>
+
+      {/* Botão para abrir a modal */}
+      <div className="controls">
+        <button className="button add-button" onClick={() => handleOpenModal()}>
+          Adicionar Novo Funcionário
+        </button>
+      </div>
+
+      {/* Barra de Pesquisa */}
+      <div className="controls">
+        <input
+          type="text"
+          placeholder="Pesquisar..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+      </div>
+
+      {/* Tabela de Funcionários */}
       <table className="table">
         <thead>
           <tr>
@@ -134,18 +202,18 @@ export default function ContentFuncionarios() {
           </tr>
         </thead>
         <tbody>
-          {funcionarios.map((funcionario) => (
+          {filteredFuncionarios.map((funcionario) => (
             <tr key={funcionario.codigo}>
               <td>{funcionario.codigo}</td>
               <td>{funcionario.nome}</td>
               <td>{funcionario.email}</td>
-              <td>{funcionario.datanasc}</td>
+              <td>{new Date(funcionario.datanasc).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
               <td>{funcionario.cargo}</td>
               <td>{funcionario.salario}</td>
               <td>{funcionario.endereco}</td>
-              <td>{funcionario.carga_horaria}</td> {/* Corrigido */}
-              <td>
-                <button className="button" onClick={() => handleEdit(funcionario)}>
+              <td>{funcionario.carga_horaria}</td>
+              <td className="actions">
+                <button className="button" onClick={() => handleOpenModal(funcionario)}>
                   Editar
                 </button>
                 <button className="button" onClick={() => handleDelete(funcionario.codigo)}>
@@ -157,77 +225,88 @@ export default function ContentFuncionarios() {
         </tbody>
       </table>
 
-      <div className="modal-container" style={{ display: modalVisible ? 'block' : 'none' }}>
-        <div className="modal">
-          <h2 className="modal-title">
-            {editingFuncionario ? 'Editar Funcionário' : 'Novo Funcionário'}
-          </h2>
-          <form onSubmit={handleSubmit} className="form">
-            <input
-              type="text"
-              placeholder="Nome"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              className="input"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="input"
-            />
-            <input
-              type="date"
-              placeholder="Data de Nascimento"
-              name="datanasc"
-              value={formData.datanasc}
-              onChange={handleChange}
-              className="input"
-            />
-            <input
-              type="text"
-              placeholder="Cargo"
-              name="cargo"
-              value={formData.cargo}
-              onChange={handleChange}
-              className="input"
-            />
-            <input
-              type="number"
-              placeholder="Salário"
-              name="salario"
-              value={formData.salario}
-              onChange={handleChange}
-              className="input"
-            />
-            <input
-              type="text"
-              placeholder="Endereço"
-              name="endereco"
-              value={formData.endereco}
-              onChange={handleChange}
-              className="input"
-            />
-            <input
-              type="text"
-              placeholder="Carga Horária"
-              name="carga_horaria" // Altere para underscore
-              value={formData.carga_horaria}
-              onChange={handleChange}
-              className="input"
-            />
-            <button type="submit" className="button">
-              {editingFuncionario ? 'Atualizar' : 'Cadastrar'}
-            </button>
-            <button type="button" className="button" onClick={handleCloseModal}>
-              Cancelar
-            </button>
-          </form>
+      {modalVisible && (
+        <div className="modal-container">
+          <div className="modal">
+            <h2 className="modal-title">{editingFuncionario ? 'Editar Funcionário' : 'Novo Funcionário'}</h2>
+            <form onSubmit={handleSubmit} className="form">
+              <input
+                type="text"
+                placeholder="Código"
+                name="codigo"
+                value={formData.codigo}
+                onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+                className="input"
+                disabled={editingFuncionario ? true : false} // Evita editar código ao atualizar
+              />
+              <input
+                type="text"
+                placeholder="Nome"
+                name="nome"
+                value={formData.nome}
+                onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                className="input"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                name="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="input"
+              />
+              <input
+                type="date"
+                placeholder="Data de Nascimento"
+                name="datanasc"
+                value={formData.datanasc}
+                onChange={(e) => setFormData({ ...formData, datanasc: e.target.value })}
+                className="input"
+              />
+              <input
+                type="text"
+                placeholder="Cargo"
+                name="cargo"
+                value={formData.cargo}
+                onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
+                className="input"
+              />
+              <input
+                type="number"
+                placeholder="Salário"
+                name="salario"
+                value={formData.salario}
+                onChange={(e) => setFormData({ ...formData, salario: e.target.value })}
+                className="input"
+              />
+              <input
+                type="text"
+                placeholder="Endereço"
+                name="endereco"
+                value={formData.endereco}
+                onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
+                className="input"
+              />
+              <input
+                type="text"
+                placeholder="Carga Horária"
+                name="carga_horaria"
+                value={formData.carga_horaria}
+                onChange={(e) => setFormData({ ...formData, carga_horaria: e.target.value })}
+                className="input"
+              />
+              <div className="form-buttons">
+                <button type="submit" className="button">
+                  {editingFuncionario ? 'Atualizar' : 'Cadastrar'}
+                </button>
+                <button type="button" className="button" onClick={handleCloseModal}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
