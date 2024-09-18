@@ -3,3 +3,8 @@ npm install axios
 npm install react-router-dom
 npm install react-scroll
 npm install react-sticky
+npm install react-icons
+
+
+//rodar
+npm run dev

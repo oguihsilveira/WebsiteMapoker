@@ -6,12 +6,12 @@ export default function ContentFuncionarios() {
   const [funcionarios, setFuncionarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [editingFuncionario, setEditingFuncionario] = useState(null);
+  const [modalType, setModalType] = useState(null); // 'add' or 'edit'
   const [formData, setFormData] = useState({
     codigo: '',
     nome: '',
     email: '',
-    datanasc: '',
+    datanasc: '', // Campo para Data de Nascimento
     cargo: '',
     salario: '',
     endereco: '',
@@ -20,94 +20,94 @@ export default function ContentFuncionarios() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
+    fetchFuncionarios();
+  }, []);
+
+  const fetchFuncionarios = () => {
     axios.get('http://localhost:3000/funcionarios')
       .then(response => {
-        setFuncionarios(response.data.funcionarios);
+        if (Array.isArray(response.data.funcionarios)) {
+          setFuncionarios(response.data.funcionarios);
+        } else {
+          console.error('Formato inesperado da resposta da API:', response.data);
+        }
         setLoading(false);
       })
       .catch(error => {
         console.error('Erro ao carregar funcionários:', error);
         setLoading(false);
       });
-  }, []);
+  };
 
-  const handleOpenModal = (funcionario = null) => {
-    if (funcionario) {
+  const handleOpenModal = (type, funcionario = null) => {
+    if (type === 'edit' && funcionario) {
       setFormData(funcionario);
-      setEditingFuncionario(funcionario.codigo);
     } else {
       setFormData({
         codigo: '',
         nome: '',
         email: '',
-        datanasc: '',
+        datanasc: '', // Limpa o campo para novo funcionário
         cargo: '',
         salario: '',
         endereco: '',
         carga_horaria: '',
       });
-      setEditingFuncionario(null);
     }
+    setModalType(type);
     setModalVisible(true);
   };
 
   const handleCloseModal = () => {
     setModalVisible(false);
-    setEditingFuncionario(null);
+    setModalType(null);
+  };
+
+  const handleInsert = () => {
+    postFuncionario(formData);
+  };
+
+  const postFuncionario = (data) => {
+    axios.post('http://localhost:3000/funcionarios', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        fetchFuncionarios(); // Atualiza a lista de funcionários
+        handleCloseModal();
+        alert('Funcionário cadastrado com sucesso!');
+      })
+      .catch(error => {
+        console.error('Erro ao cadastrar funcionário:', error.response ? error.response.data : error.message);
+        alert('Erro ao cadastrar funcionário.');
+      });
   };
 
   const handleUpdate = () => {
-    if (Object.values(formData).some(field => field === '')) {
-      alert('Todos os campos devem ser preenchidos.');
-      return;
-    }
+    putFuncionario(formData);
+  };
 
-    axios.get('http://localhost:3000/funcionarios')
-      .then(response => {
-        const funcionariosList = response.data.funcionarios;
-        const codigoDuplicado = funcionariosList.some(funcionario => funcionario.codigo === formData.codigo && funcionario.codigo !== editingFuncionario);
-
-        if (codigoDuplicado) {
-          alert('Já existe um funcionário com este código.');
-          return;
-        }
-
-        axios.put('http://localhost:3000/funcionarios', formData, {
-          params: { codigo: formData.codigo }
-        })
-        .then(response => {
-          setFuncionarios(funcionarios.map(funcionario =>
-            funcionario.codigo === formData.codigo ? formData : funcionario
-          ));
-          setEditingFuncionario(null);
-          setFormData({
-            codigo: '',
-            nome: '',
-            email: '',
-            datanasc: '',
-            cargo: '',
-            salario: '',
-            endereco: '',
-            carga_horaria: ''
-          });
-          setModalVisible(false);
-          alert('Funcionário atualizado com sucesso!');
-        })
-        .catch(error => {
-          console.error('Erro ao atualizar funcionário:', error.response ? error.response.data : error.message);
-          alert('Erro ao atualizar funcionário.');
-        });
-      })
-      .catch(error => {
-        console.error('Erro ao verificar código:', error);
-      });
+  const putFuncionario = (data) => {
+    axios.put('http://localhost:3000/funcionarios', data, {
+      params: { codigo: data.codigo }
+    })
+    .then(response => {
+      fetchFuncionarios(); // Atualiza a lista de funcionários
+      handleCloseModal();
+      alert('Funcionário atualizado com sucesso!');
+    })
+    .catch(error => {
+      console.error('Erro ao atualizar funcionário:', error.response ? error.response.data : error.message);
+      alert('Erro ao atualizar funcionário.');
+    });
   };
 
   const handleDelete = (codigo) => {
     if (window.confirm('Tem certeza que deseja excluir este funcionário?')) {
       axios.delete('http://localhost:3000/funcionarios', { params: { codigo } })
         .then(response => {
-          setFuncionarios(funcionarios.filter(funcionario => funcionario.codigo !== codigo));
+          fetchFuncionarios(); // Atualiza a lista de funcionários
           alert('Funcionário excluído com sucesso!');
         })
         .catch(error => {
@@ -119,42 +119,17 @@ export default function ContentFuncionarios() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (editingFuncionario) {
+    if (modalType === 'add') {
+      handleInsert();
+    } else if (modalType === 'edit') {
       handleUpdate();
-    } else {
-      if (Object.values(formData).some(field => field === '')) {
-        alert('Todos os campos devem ser preenchidos.');
-        return;
-      }
-
-      axios.post('http://localhost:3000/funcionarios', formData)
-        .then(response => {
-          setFuncionarios([...funcionarios, response.data.funcionario]);
-          setFormData({
-            codigo: '',
-            nome: '',
-            email: '',
-            datanasc: '',
-            cargo: '',
-            salario: '',
-            endereco: '',
-            carga_horaria: '',
-          });
-          setModalVisible(false);
-          alert('Funcionário cadastrado com sucesso!');
-        })
-        .catch(error => {
-          console.error('Erro ao cadastrar funcionário:', error.response ? error.response.data : error.message);
-          alert('Erro ao cadastrar funcionário.');
-        });
     }
   };
 
-  const filteredFuncionarios = funcionarios.filter(funcionario =>
+  const filteredFuncionarios = Array.isArray(funcionarios) ? funcionarios.filter(funcionario =>
     funcionario.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
     funcionario.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).reverse() : []; // Adiciona .reverse() para inverter a ordem
 
   if (loading) {
     return (
@@ -168,25 +143,22 @@ export default function ContentFuncionarios() {
     <div className="content-container">
       <h2 className="title">Funcionários</h2>
 
-      {/* Botão para abrir a modal */}
       <div className="controls">
-        <button className="button add-button" onClick={() => handleOpenModal()}>
+        <button className="button add-button" onClick={() => handleOpenModal('add')}>
           Adicionar Novo Funcionário
         </button>
       </div>
 
-      {/* Barra de Pesquisa */}
       <div className="controls">
         <input
           type="text"
-          placeholder="Pesquisar..."
+          placeholder="Pesquisar por nome ou código..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"
         />
       </div>
 
-      {/* Tabela de Funcionários */}
       <table className="table">
         <thead>
           <tr>
@@ -213,7 +185,7 @@ export default function ContentFuncionarios() {
               <td>{funcionario.endereco}</td>
               <td>{funcionario.carga_horaria}</td>
               <td className="actions">
-                <button className="button" onClick={() => handleOpenModal(funcionario)}>
+                <button className="button" onClick={() => handleOpenModal('edit', funcionario)}>
                   Editar
                 </button>
                 <button className="button" onClick={() => handleDelete(funcionario.codigo)}>
@@ -228,76 +200,94 @@ export default function ContentFuncionarios() {
       {modalVisible && (
         <div className="modal-container">
           <div className="modal">
-            <h2 className="modal-title">{editingFuncionario ? 'Editar Funcionário' : 'Novo Funcionário'}</h2>
+            <h2 className="modal-title">
+              {modalType === 'edit' ? 'Editar Funcionário' : 'Novo Funcionário'}
+            </h2>
             <form onSubmit={handleSubmit} className="form">
-              <input
-                type="text"
-                placeholder="Código"
-                name="codigo"
-                value={formData.codigo}
-                onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
-                className="input"
-                disabled={editingFuncionario ? true : false} // Evita editar código ao atualizar
-              />
-              <input
-                type="text"
-                placeholder="Nome"
-                name="nome"
-                value={formData.nome}
-                onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                className="input"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                name="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="input"
-              />
-              <input
-                type="date"
-                placeholder="Data de Nascimento"
-                name="datanasc"
-                value={formData.datanasc}
-                onChange={(e) => setFormData({ ...formData, datanasc: e.target.value })}
-                className="input"
-              />
-              <input
-                type="text"
-                placeholder="Cargo"
-                name="cargo"
-                value={formData.cargo}
-                onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
-                className="input"
-              />
-              <input
-                type="number"
-                placeholder="Salário"
-                name="salario"
-                value={formData.salario}
-                onChange={(e) => setFormData({ ...formData, salario: e.target.value })}
-                className="input"
-              />
-              <input
-                type="text"
-                placeholder="Endereço"
-                name="endereco"
-                value={formData.endereco}
-                onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
-                className="input"
-              />
-              <input
-                type="text"
-                placeholder="Carga Horária"
-                name="carga_horaria"
-                value={formData.carga_horaria}
-                onChange={(e) => setFormData({ ...formData, carga_horaria: e.target.value })}
-                className="input"
-              />
+              <label>
+                Código:
+                <input
+                  type="text"
+                  name="codigo"
+                  value={formData.codigo}
+                  onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+                  className="input"
+                  disabled={modalType === 'edit'} // Disable input for code in edit mode
+                />
+              </label>
+              <label>
+                Nome:
+                <input
+                  type="text"
+                  name="nome"
+                  value={formData.nome}
+                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                  className="input"
+                />
+              </label>
+              <label>
+                Email:
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="input"
+                />
+              </label>
+              <label>
+                Data de Nascimento:
+                <input
+                  type="date"
+                  name="datanasc"
+                  value={formData.datanasc}
+                  onChange={(e) => setFormData({ ...formData, datanasc: e.target.value })}
+                  className="input"
+                />
+              </label>
+              <label>
+                Cargo:
+                <input
+                  type="text"
+                  name="cargo"
+                  value={formData.cargo}
+                  onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}
+                  className="input"
+                />
+              </label>
+              <label>
+                Salário:
+                <input
+                  type="number"
+                  name="salario"
+                  value={formData.salario}
+                  onChange={(e) => setFormData({ ...formData, salario: e.target.value })}
+                  className="input"
+                />
+              </label>
+              <label>
+                Endereço:
+                <input
+                  type="text"
+                  name="endereco"
+                  value={formData.endereco}
+                  onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
+                  className="input"
+                />
+              </label>
+              <label>
+                Carga Horária:
+                <input
+                  type="text"
+                  name="carga_horaria"
+                  value={formData.carga_horaria}
+                  onChange={(e) => setFormData({ ...formData, carga_horaria: e.target.value })}
+                  className="input"
+                />
+              </label>
               <div className="form-buttons">
                 <button type="submit" className="button">
-                  {editingFuncionario ? 'Atualizar' : 'Cadastrar'}
+                  {modalType === 'edit' ? 'Atualizar' : 'Cadastrar'}
                 </button>
                 <button type="button" className="button" onClick={handleCloseModal}>
                   Cancelar
