@@ -79,8 +79,12 @@ export default function ContentFuncionarios() {
         alert('Funcionário cadastrado com sucesso!');
       })
       .catch(error => {
-        console.error('Erro ao cadastrar funcionário:', error.response ? error.response.data : error.message);
-        alert('Erro ao cadastrar funcionário.');
+        if (error.response && error.response.status === 409) {
+          alert('Erro: O código do funcionário já existe. Por favor, escolha um código diferente.');
+        } else {
+          console.error('Erro ao cadastrar funcionário:', error.response ? error.response.data : error.message);
+          alert('Erro ao cadastrar funcionário.');
+        }
       });
   };
 
@@ -105,31 +109,39 @@ export default function ContentFuncionarios() {
 
   const handleDelete = (codigo) => {
     if (window.confirm('Tem certeza que deseja excluir este funcionário?')) {
-      axios.delete('http://localhost:3000/funcionarios', { params: { codigo } })
-        .then(response => {
-          fetchFuncionarios(); // Atualiza a lista de funcionários
-          alert('Funcionário excluído com sucesso!');
-        })
-        .catch(error => {
-          console.error('Erro ao deletar funcionário:', error.response ? error.response.data : error.message);
-          alert('Erro ao deletar funcionário.');
-        });
+        axios.delete('http://localhost:3000/funcionarios', { params: { codigo } })
+            .then(response => {
+                fetchFuncionarios(); // Atualiza a lista de funcionários
+                alert('Funcionário excluído com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro ao deletar funcionário:', error.response ? error.response.data : error.message);
+                alert(error.response && error.response.data.error ? error.response.data.error : 'Erro ao deletar funcionário.');
+            });
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Verifica se a data de nascimento está preenchida
+    if (!formData.datanasc) {
+      alert('A data de nascimento é obrigatória.');
+      return;
+    }
+  
     if (modalType === 'add') {
       handleInsert();
     } else if (modalType === 'edit') {
       handleUpdate();
     }
-  };
+  };  
 
   const filteredFuncionarios = Array.isArray(funcionarios) ? funcionarios.filter(funcionario =>
     funcionario.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    funcionario.email.toLowerCase().includes(searchQuery.toLowerCase())
-  ).reverse() : []; // Adiciona .reverse() para inverter a ordem
+    funcionario.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    funcionario.codigo.toString().toLowerCase().includes(searchQuery.toLowerCase()) // Adicionando a busca por código
+  ).reverse() : [];
 
   if (loading) {
     return (
@@ -152,7 +164,7 @@ export default function ContentFuncionarios() {
       <div className="controls">
         <input
           type="text"
-          placeholder="Pesquisar por nome ou código..."
+          placeholder="Pesquisar por nome, email ou código..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"

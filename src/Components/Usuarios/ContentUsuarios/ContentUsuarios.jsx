@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Ícones para mostrar/ocultar senha
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './ContentUsuarios.css';
 
 export default function ContentUsuarios() {
@@ -8,7 +8,7 @@ export default function ContentUsuarios() {
   const [funcionarios, setFuncionarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalType, setModalType] = useState(null); // 'add' or 'edit'
+  const [modalType, setModalType] = useState(null);
   const [formData, setFormData] = useState({
     codigo: '',
     login: '',
@@ -16,11 +16,11 @@ export default function ContentUsuarios() {
     cod_funcionario: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // Estado para visibilidade da senha
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     fetchUsuarios();
-    fetchFuncionarios(); // Carregar funcionários para preencher o select
+    fetchFuncionarios();
   }, []);
 
   const fetchUsuarios = () => {
@@ -84,13 +84,14 @@ export default function ContentUsuarios() {
       },
     })
       .then(response => {
-        fetchUsuarios(); // Atualiza a lista de usuários
+        fetchUsuarios();
         handleCloseModal();
         alert('Usuário cadastrado com sucesso!');
       })
       .catch(error => {
-        console.error('Erro ao cadastrar usuário:', error.response ? error.response.data : error.message);
-        alert('Erro ao cadastrar usuário.');
+        const errorMessage = error.response?.data?.error || 'Erro ao cadastrar usuário.';
+        console.error('Erro ao cadastrar usuário:', errorMessage);
+        alert(errorMessage);
       });
   };
 
@@ -103,13 +104,14 @@ export default function ContentUsuarios() {
       params: { codigo: data.codigo }
     })
     .then(response => {
-      fetchUsuarios(); // Atualiza a lista de usuários
+      fetchUsuarios();
       handleCloseModal();
       alert('Usuário atualizado com sucesso!');
     })
     .catch(error => {
-      console.error('Erro ao atualizar usuário:', error.response ? error.response.data : error.message);
-      alert('Erro ao atualizar usuário.');
+      const errorMessage = error.response?.data?.error || 'Erro ao atualizar usuário.';
+      console.error('Erro ao atualizar usuário:', errorMessage);
+      alert(errorMessage);
     });
   };
 
@@ -117,7 +119,7 @@ export default function ContentUsuarios() {
     if (window.confirm('Tem certeza que deseja excluir este usuário?')) {
       axios.delete('http://localhost:3000/usuarios', { params: { codigo } })
         .then(response => {
-          fetchUsuarios(); // Atualiza a lista de usuários
+          fetchUsuarios();
           alert('Usuário excluído com sucesso!');
         })
         .catch(error => {
@@ -139,7 +141,7 @@ export default function ContentUsuarios() {
   const filteredUsuarios = Array.isArray(usuarios) ? usuarios.filter(usuario =>
     usuario.login.toLowerCase().includes(searchQuery.toLowerCase()) ||
     usuario.cod_funcionario.toString().includes(searchQuery.toLowerCase())
-  ).reverse() : []; // Adiciona .reverse() para inverter a ordem
+  ).reverse() : [];
 
   if (loading) {
     return (
@@ -185,9 +187,13 @@ export default function ContentUsuarios() {
               <td>{usuario.codigo}</td>
               <td>{usuario.login}</td>
               <td>
-                {/* Exibe um ícone para mostrar/ocultar a senha */}
                 <span className="password-container">
-                  {showPassword ? usuario.senha : '********'}
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={usuario.senha}
+                    readOnly
+                    className="password-input"
+                  />
                   <button
                     type="button"
                     className="password-toggle"
@@ -218,51 +224,61 @@ export default function ContentUsuarios() {
               {modalType === 'edit' ? 'Editar Usuário' : 'Novo Usuário'}
             </h2>
             <form onSubmit={handleSubmit} className="form">
-              <input
-                type="text"
-                placeholder="Código"
-                name="codigo"
-                value={formData.codigo}
-                onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
-                className="input"
-                disabled={modalType === 'edit'} // Disable input for code in edit mode
-              />
-              <input
-                type="text"
-                placeholder="Login"
-                name="login"
-                value={formData.login}
-                onChange={(e) => setFormData({ ...formData, login: e.target.value })}
-                className="input"
-              />
-              <input
-                type={showPassword ? 'text' : 'password'} // Mostrar ou ocultar senha no formulário
-                placeholder="Senha"
-                name="senha"
-                value={formData.senha}
-                onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                className="input"
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
-              <select
-                name="cod_funcionario"
-                value={formData.cod_funcionario}
-                onChange={(e) => setFormData({ ...formData, cod_funcionario: e.target.value })}
-                className="input"
-              >
-                <option value="">Selecione um Funcionário</option>
-                {funcionarios.map((funcionario) => (
-                  <option key={funcionario.codigo} value={funcionario.codigo}>
-                    {funcionario.nome}
-                  </option>
-                ))}
-              </select>
+              <label>
+                Código:
+                <input
+                  type="text"
+                  name="codigo"
+                  value={formData.codigo}
+                  onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+                  className="input"
+                  disabled={modalType === 'edit'}
+                />
+              </label>
+              <label>
+                Login:
+                <input
+                  type="text"
+                  name="login"
+                  value={formData.login}
+                  onChange={(e) => setFormData({ ...formData, login: e.target.value })}
+                  className="input"
+                />
+              </label>
+              <label>
+                Senha:
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="senha"
+                  value={formData.senha}
+                  onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
+                  className="input"
+                />
+                <button
+                  type="button"
+                  className="password-toggle input" // Adicione a classe "input"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </label>
+              <label>
+                Funcionário:
+
+                <select
+                  name="cod_funcionario"
+                  value={formData.cod_funcionario}
+                  onChange={(e) => setFormData({ ...formData, cod_funcionario: e.target.value })}
+                  className="input"
+                >
+                  <option value="">Selecione um Funcionário</option>
+                  {funcionarios.map((funcionario) => (
+                    <option key={funcionario.codigo} value={funcionario.codigo}>
+                      {funcionario.nome}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <div className="form-buttons">
                 <button type="submit" className="button">
                   {modalType === 'edit' ? 'Atualizar' : 'Cadastrar'}

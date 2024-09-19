@@ -1,10 +1,10 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import './NavbarProdutosEstoque.css'
+import './NavbarEstoque.css'
 import logo from '../../../assets/logo.png'
 import back_icon from '../../../assets/back-icon.png'
 
-const NavbarProdutosEstoque = () => {
+const NavbarEstoque = () => {
   const navigate = useNavigate(); // Hook para navegação
 
   const handleBackClick = () => {
@@ -23,4 +23,4 @@ const NavbarProdutosEstoque = () => {
   )
 }
 
-export default NavbarProdutosEstoque
+export default NavbarEstoque

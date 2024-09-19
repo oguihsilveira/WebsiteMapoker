@@ -11,25 +11,21 @@ const BtnCadGerais = () => {
         Funcionarios
       </button> {/* Funcionarios */}
 
-      <button className="btncadgerais" onClick={() => navigate('/fornecedores')}>
-        Fornecedores
-      </button> {/* Fornecedores */}
-
       <button className="btncadgerais" onClick={() => navigate('/usuarios-erp')}>
-        Usuários ERP
+        Usuários do Sistema
       </button> {/* Usuários que podem logar dentro do ERP */}
 
-      <button className="btncadgerais" onClick={() => navigate('/produtos-fornecedores')}>
-        Produtos dos Fornecedores
-      </button> {/* Produtos que os fornecedores colocam para a empresa comprar */}
+      <button className="btncadgerais" onClick={() => navigate('/estoque')}>
+        Estoque da Empresa
+      </button> {/* Produtos que no estoque da empresa */}
 
-      <button className="btncadgerais" onClick={() => navigate('/produtos-comprados')}>
-        Produtos Comprados
-      </button> {/* Produtos que foram comprados dos fornecedores */}
+      <button className="btncadgerais" onClick={() => navigate('/clientes')}>
+        Clientes
+      </button> {/* Clientes que fizeram cadastro no site */}
 
-      <button className="btncadgerais" onClick={() => navigate('/produtos-estoque')}>
-        Produtos em Estoque
-      </button> {/* Produtos que foram comprados e CHEGARAM ao estoque da empresa */}
+      <button className="btncadgerais" onClick={() => navigate('/pedidos')}>
+        Pedidos
+      </button> {/* Produtos que foram pedidos por clientes */}
 
       <button className="btncadgerais" onClick={() => navigate('/contas-pagamentos')}>
         Contas & Pagamentos

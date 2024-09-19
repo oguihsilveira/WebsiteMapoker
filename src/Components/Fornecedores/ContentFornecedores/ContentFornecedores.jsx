@@ -75,10 +75,14 @@ export default function ContentFornecedores() {
         alert('Fornecedor cadastrado com sucesso!');
       })
       .catch(error => {
-        console.error('Erro ao cadastrar fornecedor:', error.response ? error.response.data : error.message);
-        alert('Erro ao cadastrar fornecedor.');
+        if (error.response && error.response.status === 409) {
+          alert('Erro: O código do fornecedor já existe. Por favor, escolha um código diferente.');
+        } else {
+          console.error('Erro ao cadastrar fornecedor:', error.response ? error.response.data : error.message);
+          alert('Erro ao cadastrar fornecedor.');
+        }
       });
-  };
+  };  
 
   const handleUpdate = () => {
     putFornecedor(formData);
