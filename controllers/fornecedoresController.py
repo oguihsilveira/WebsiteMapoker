@@ -3,11 +3,22 @@ from database.db import db
 from models.fornecedores import Fornecedores
 
 def fornecedoresController():
-    # Método POST
     if request.method == 'POST':
         try:
             data = request.get_json()
-            fornecedores = Fornecedores(codigo=data['codigo'], empresa=data['empresa'], endereco=data['endereco'], cnpj=data['cnpj'], telefone=data['telefone'], email=data['email'])
+            # Verifica se o código já existe
+            existing_fornecedor = Fornecedores.query.get(data['codigo'])
+            if existing_fornecedor:
+                return jsonify({'error': 'Código já existe'}), 409  # Retorna status 409 se o código for duplicado
+
+            fornecedores = Fornecedores(
+                codigo=data['codigo'], 
+                empresa=data['empresa'], 
+                endereco=data['endereco'], 
+                cnpj=data['cnpj'], 
+                telefone=data['telefone'], 
+                email=data['email']
+            )
             db.session.add(fornecedores)
             db.session.commit()
             return jsonify({'message': 'Fornecedor inserido com sucesso'}), 200
