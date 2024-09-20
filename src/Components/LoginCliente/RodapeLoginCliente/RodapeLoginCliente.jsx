@@ -1,7 +1,7 @@
 import React from 'react'
-import './RodapeProdutosFornecedores.css'
+import './RodapeLoginCliente.css'
 
-const RodapeProdutosFornecedores = () => {
+const RodapeLoginCliente = () => {
   return (
     <div className='rodape'>
         <p>© 2024 Mapoker. Todos os direitos reservados.</p>
@@ -13,4 +13,4 @@ const RodapeProdutosFornecedores = () => {
   )
 }
 
-export default RodapeProdutosFornecedores
+export default RodapeLoginCliente

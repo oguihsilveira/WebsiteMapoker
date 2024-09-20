@@ -1,6 +1,6 @@
 import React from 'react'
 import NavbarGaleria from './NavbarGaleria/NavbarGaleria'
-import Title from '../Home/Title/Title'
+import Title from './Title/Title'
 import ContentGaleria from './ContentGaleria/ContentGaleria'
 import RodapeGaleria from './RodapeGaleria/RodapeGaleria'
 

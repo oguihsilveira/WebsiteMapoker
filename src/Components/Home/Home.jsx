@@ -19,7 +19,7 @@ function Home() {
         <Sobre />
         <Title subTitle="Galeria" title="Ambiente da empresa" />
         <Ambiente />
-        <Title subTitle="ERP" title="Fazer Login" />
+        <Title subTitle="ADM" title="Fazer Login" />
         <Login />
         <Title subTitle="Contate-nos" title="Fique à vontade" />
         <Contato />

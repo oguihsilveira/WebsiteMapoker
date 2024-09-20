@@ -41,7 +41,15 @@ export default function ContentFuncionarios() {
 
   const handleOpenModal = (type, funcionario = null) => {
     if (type === 'edit' && funcionario) {
-      setFormData(funcionario);
+      // Converte a data de nascimento para o formato 'YYYY-MM-DD' se ela existir
+      const formattedDate = funcionario.datanasc 
+        ? new Date(funcionario.datanasc).toISOString().split('T')[0] 
+        : '';
+  
+      setFormData({
+        ...funcionario,
+        datanasc: formattedDate, // Preenche o campo de data com a data formatada
+      });
     } else {
       setFormData({
         codigo: '',
@@ -56,7 +64,7 @@ export default function ContentFuncionarios() {
     }
     setModalType(type);
     setModalVisible(true);
-  };
+  };  
 
   const handleCloseModal = () => {
     setModalVisible(false);
@@ -121,12 +129,27 @@ export default function ContentFuncionarios() {
     }
   };
 
+  const fieldLabels = {
+    codigo: 'Código',
+    nome: 'Nome',
+    email: 'Email',
+    datanasc: 'Data de Nascimento',
+    cargo: 'Cargo',
+    salario: 'Salário',
+    endereco: 'Endereço',
+    carga_horaria: 'Carga Horária',
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Verifica se a data de nascimento está preenchida
-    if (!formData.datanasc) {
-      alert('A data de nascimento é obrigatória.');
+  
+    // Validação de campos obrigatórios
+    const requiredFields = Object.keys(fieldLabels);
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+  
+    if (emptyFields.length > 0) {
+      const missingFieldLabels = emptyFields.map(field => fieldLabels[field]);
+      alert(`Por favor, preencha os seguintes campos: ${missingFieldLabels.join(', ')}`);
       return;
     }
   
@@ -135,7 +158,9 @@ export default function ContentFuncionarios() {
     } else if (modalType === 'edit') {
       handleUpdate();
     }
-  };  
+  };
+  
+    
 
   const filteredFuncionarios = Array.isArray(funcionarios) ? funcionarios.filter(funcionario =>
     funcionario.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -274,6 +299,7 @@ export default function ContentFuncionarios() {
                   name="salario"
                   value={formData.salario}
                   onChange={(e) => setFormData({ ...formData, salario: e.target.value })}
+                  onWheel={(e) => e.target.blur()}
                   className="input"
                 />
               </label>

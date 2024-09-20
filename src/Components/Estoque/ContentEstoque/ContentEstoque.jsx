@@ -58,7 +58,15 @@ export default function ContentEstoque() {
 
   const handleOpenModal = (type, item = null) => {
     if (type === 'edit' && item) {
-      setFormData(item);
+      // Converte a data de entrada para o formato 'YYYY-MM-DD' se ela existir
+      const formattedDate = item.data_entrada 
+        ? new Date(item.data_entrada).toISOString().split('T')[0] 
+        : '';
+  
+      setFormData({
+        ...item,
+        data_entrada: formattedDate, // Preenche o campo de data com a data formatada
+      });
     } else {
       setFormData({
         codigo: '',
@@ -66,7 +74,7 @@ export default function ContentEstoque() {
         tipo: '',
         preco_compra: '',
         preco_venda: '',
-        data_entrada: '',
+        data_entrada: '', // Limpa o campo para novo item
         qtde_entrada: '',
         cod_funcionario: '',
         observacoes: '',
@@ -90,14 +98,14 @@ export default function ContentEstoque() {
       .then(() => {
         fetchEstoque();
         handleCloseModal();
-        alert('Item do estoque cadastrado com sucesso!');
+        alert('Item no estoque cadastrado com sucesso!');
       })
       .catch(error => {
         if (error.response && error.response.status === 409) {
           alert('Erro: O código do item já existe. Por favor, escolha um código diferente.');
         } else {
-          console.error('Erro ao cadastrar item do estoque:', error.response ? error.response.data : error.message);
-          alert('Erro ao cadastrar item do estoque.');
+          console.error('Erro ao cadastrar item no estoque:', error.response ? error.response.data : error.message);
+          alert('Erro ao cadastrar item no estoque.');
         }
       });
   };
@@ -111,40 +119,58 @@ export default function ContentEstoque() {
       .then(() => {
         fetchEstoque();
         handleCloseModal();
-        alert('Item do estoque atualizado com sucesso!');
+        alert('Item no estoque atualizado com sucesso!');
       })
       .catch(error => {
-        console.error('Erro ao atualizar item do estoque:', error.response ? error.response.data : error.message);
-        alert('Erro ao atualizar item do estoque.');
+        console.error('Erro ao atualizar item no estoque:', error.response ? error.response.data : error.message);
+        alert('Erro ao atualizar item no estoque.');
       });
   };
 
   const handleDelete = (codigo) => {
-    if (window.confirm('Tem certeza que deseja excluir este item do estoque?')) {
+    if (window.confirm('Tem certeza que deseja excluir este item no estoque?')) {
       axios.delete('http://localhost:3000/estoque', { params: { codigo } })
         .then(() => {
           fetchEstoque();
-          alert('Item do estoque excluído com sucesso!');
+          alert('Item no estoque excluído com sucesso!');
         })
         .catch(error => {
-          console.error('Erro ao deletar item do estoque:', error.response ? error.response.data : error.message);
-          alert(error.response && error.response.data.error ? error.response.data.error : 'Erro ao deletar item do estoque.');
+          console.error('Erro ao deletar item no estoque:', error.response ? error.response.data : error.message);
+          alert(error.response && error.response.data.error ? error.response.data.error : 'Erro ao deletar item no estoque.');
         });
     }
   };
 
+  const fieldLabels = {
+    codigo: 'Código',
+    produto: 'Produto',
+    quantidade: 'Quantidade',
+    preco: 'Preço',
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
+  
+    // Validação de campos obrigatórios
+    const requiredFields = Object.keys(fieldLabels);
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+  
+    if (emptyFields.length > 0) {
+      const missingFieldLabels = emptyFields.map(field => fieldLabels[field]);
+      alert(`Por favor, preencha os seguintes campos: ${missingFieldLabels.join(', ')}`);
+      return;
+    }
+  
     if (modalType === 'add') {
       handleInsert();
     } else if (modalType === 'edit') {
       handleUpdate();
     }
-  };
+  };  
 
   const filteredEstoque = estoque.filter(item =>
-    item.item.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.codigo.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    item.tipo.toLowerCase().includes(searchQuery.toLowerCase()) || // Pesquisa pelo tipo
+    item.codigo.toString().toLowerCase().includes(searchQuery.toLowerCase()) // Pesquisa pelo código
   ).reverse();
 
   if (loading) {
@@ -167,7 +193,7 @@ export default function ContentEstoque() {
       <div className="controls">
         <input
           type="text"
-          placeholder="Pesquisar por login ou código do funcionário..."
+          placeholder="Pesquisar por tipo ou código do estoque..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"
@@ -180,8 +206,8 @@ export default function ContentEstoque() {
             <th>Código</th>
             <th>Item</th>
             <th>Tipo</th>
-            <th>Preço de Compra</th>
-            <th>Preço de Venda</th>
+            <th>Preço de Compra/Unidade(R$)</th>
+            <th>Preço de Venda/Unidade(R$)</th>
             <th>Data de Entrada</th>
             <th>Quantidade de Entrada</th>
             <th>Código do Funcionário</th>
@@ -213,7 +239,7 @@ export default function ContentEstoque() {
       {modalVisible && (
         <div className="modal-container">
           <div className="modal">
-            <h2 className="modal-title">{modalType === 'edit' ? 'Editar Item do Estoque' : 'Novo Item do Estoque'}</h2>
+            <h2 className="modal-title">{modalType === 'edit' ? 'Editar Item no Estoque' : 'Novo Item no Estoque'}</h2>
             <form onSubmit={handleSubmit} className="form">
               <label>
                 Código:
@@ -247,22 +273,24 @@ export default function ContentEstoque() {
                 />
               </label>
               <label>
-                Preço de Compra:
+                Preço de Compra/Unidade(R$):
                 <input
                   type="number"
                   name="preco_compra"
                   value={formData.preco_compra}
                   onChange={(e) => setFormData({ ...formData, preco_compra: e.target.value })}
+                  onWheel={(e) => e.target.blur()}
                   className="input"
                 />
               </label>
               <label>
-                Preço de Venda:
+                Preço de Venda/Unidade(R$):
                 <input
                   type="number"
                   name="preco_venda"
                   value={formData.preco_venda}
                   onChange={(e) => setFormData({ ...formData, preco_venda: e.target.value })}
+                  onWheel={(e) => e.target.blur()}
                   className="input"
                 />
               </label>
@@ -277,15 +305,16 @@ export default function ContentEstoque() {
                 />
               </label>
               <label>
-                Quantidade de Entrada:
-                <input
-                  type="number"
-                  name="qtde_entrada"
-                  value={formData.qtde_entrada}
-                  onChange={(e) => setFormData({ ...formData, qtde_entrada: e.target.value })}
-                  className="input"
-                />
-              </label>
+                  Quantidade de Entrada:
+                  <input
+                    type="number"
+                    name="qtde_entrada"
+                    value={formData.qtde_entrada}
+                    onChange={(e) => setFormData({ ...formData, qtde_entrada: e.target.value })}
+                    onWheel={(e) => e.target.blur()}
+                    className="input"
+                  />
+                </label>
               <label>
                 Funcionário:
                 <select

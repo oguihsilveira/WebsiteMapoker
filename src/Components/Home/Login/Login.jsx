@@ -19,7 +19,7 @@ const Login = () => {
     if (username === 'admin' && password === '1234') {
       setResult("Login bem-sucedido");
       // Redirecionar para outra página usando useNavigate
-      navigate('/cadastrosgerais'); // Certifique-se de que o path está correto
+      navigate('/cadastros-gerais'); // Certifique-se de que o path está correto
     } else {
       setResult("Credenciais incorretas");
     }

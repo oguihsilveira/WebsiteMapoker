@@ -8,7 +8,7 @@ const NavbarFuncionarios = () => {
   const navigate = useNavigate(); // Hook para navegação
 
   const handleBackClick = () => {
-    navigate('/cadastrosgerais'); // Navega para a página /cadastrosgerais
+    navigate('/cadastros-gerais'); // Navega para a página /cadastros-gerais
   }
 
   return (

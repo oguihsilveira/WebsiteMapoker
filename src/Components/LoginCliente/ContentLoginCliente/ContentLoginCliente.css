@@ -35,8 +35,13 @@
     opacity: 0;
     padding-top: 70%;
     transition: 0.4s;
-    height: 350px; /* imagens 400x400 */
 }
+
+.caption img {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
 .galeria:hover .caption {
     opacity: 1;
     padding-top: 0;

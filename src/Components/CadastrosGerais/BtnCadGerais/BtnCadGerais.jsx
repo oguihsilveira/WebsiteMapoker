@@ -8,7 +8,7 @@ const BtnCadGerais = () => {
   return (
     <div className="btn-container">
       <button className="btncadgerais" onClick={() => navigate('/funcionarios')}>
-        Funcionarios
+        Funcionários
       </button> {/* Funcionarios */}
 
       <button className="btncadgerais" onClick={() => navigate('/usuarios-erp')}>

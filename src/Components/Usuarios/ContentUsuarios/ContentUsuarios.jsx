@@ -129,14 +129,32 @@ export default function ContentUsuarios() {
     }
   };
 
+  const fieldLabels = {
+    codigo: 'Código',
+    login: 'Login',
+    senha: 'Senha',
+    cod_funcionario: 'Código do Funcionário',
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
+  
+    // Validação de campos obrigatórios
+    const requiredFields = Object.keys(fieldLabels);
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+  
+    if (emptyFields.length > 0) {
+      const missingFieldLabels = emptyFields.map(field => fieldLabels[field]);
+      alert(`Por favor, preencha os seguintes campos: ${missingFieldLabels.join(', ')}`);
+      return;
+    }
+  
     if (modalType === 'add') {
       handleInsert();
     } else if (modalType === 'edit') {
       handleUpdate();
     }
-  };
+  };    
 
   const filteredUsuarios = Array.isArray(usuarios) ? usuarios.filter(usuario =>
     usuario.login.toLowerCase().includes(searchQuery.toLowerCase()) ||
