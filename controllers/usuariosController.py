@@ -10,7 +10,7 @@ def usuariosController():
             # Verificar se o código de usuário já existe
             existing_usuario = Usuarios.query.filter_by(codigo=data['codigo']).first()
             if existing_usuario:
-                return jsonify({'error': 'Este código de usuário já existente'}), 400
+                return jsonify({'error': 'Este código de usuário já existe'}), 400
 
             # Verificar se o código de funcionário já está atribuído a outro usuário
             existing_funcionario = Usuarios.query.filter_by(cod_funcionario=data['cod_funcionario']).first()
