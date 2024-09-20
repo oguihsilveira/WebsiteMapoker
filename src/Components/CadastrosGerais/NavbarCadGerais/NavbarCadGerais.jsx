@@ -18,7 +18,7 @@ const NavbarCadGerais = () => {
         <ul>
             <li onClick={handleBackClick}><img src={back_icon} alt="Voltar" className='back'/></li>
             <li>financeiro@mapoker.com.br</li>
-            <li>Gestão ERP</li>
+            <li>Gestão da Empresa</li>
             <li><button className='btn'>LogOut</button></li>
         </ul>
     </nav>
