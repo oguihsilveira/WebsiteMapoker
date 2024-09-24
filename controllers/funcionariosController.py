@@ -2,6 +2,7 @@ from flask import request, jsonify
 from database.db import db
 from models.funcionarios import Funcionarios
 from models.usuarios import Usuarios
+from models.estoque import Estoque
 
 def funcionariosController():
     if request.method == 'POST':
@@ -71,17 +72,23 @@ def funcionariosController():
         try:
             codigo = request.args.get('codigo')
             delete_funcionario = Funcionarios.query.get(codigo)
-            
+
             if delete_funcionario is None:
                 return {'error': 'Funcionário não encontrado'}, 404
-            
+
             # Verifica se o funcionário tem um usuário associado
             usuario_associado = Usuarios.query.filter_by(cod_funcionario=codigo).first()
             if usuario_associado:
                 return jsonify({'error': 'Não é possível excluir este funcionário, pois ele possui um usuário cadastrado.'}), 400
             
+            # Verifica se o funcionário tem itens associados no estoque
+            itens_associados = Estoque.query.filter_by(cod_funcionario=codigo).first()  # Corrigido aqui
+            if itens_associados:
+                return jsonify({'error': 'Não é possível excluir este funcionário, pois ele cadastrou itens no estoque.'}), 400
+            
             db.session.delete(delete_funcionario)
             db.session.commit()
-            return 'Funcionário deletado com sucesso', 200
+            return {'message': 'Funcionário excluído com sucesso'}, 200
         except Exception as e:
-            return {'error': 'Erro ao deletar Funcionário. Erro: {}'.format(e)}, 400
+            return {'error': 'Erro ao excluir funcionário. Erro: {}'.format(str(e))}, 400
+

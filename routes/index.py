@@ -1,19 +1,12 @@
-from routes.comprasRoutes import compras
-from routes.contas_a_pagarRoutes import contas_a_pagar
-from routes.fornecedoresRoutes import fornecedores
 from routes.funcionariosRoutes import funcionarios
 from routes.estoqueRoutes import estoque
-from routes.parcelas_a_pagarRoutes import parcelas_a_pagar
-from routes.produtosRoutes import produtos
 from routes.usuariosRoutes import usuarios
 
+# Importando a rota de login
+from routes.login_usuariosRoutes import login_usuarios
 
 def default_routes(app):
-    compras(app)
-    contas_a_pagar(app)
-    fornecedores(app)
-    funcionarios(app)
-    estoque(app)
-    parcelas_a_pagar(app)
-    produtos(app)
-    usuarios(app)
+    funcionarios(app)  # Rota para funcionários
+    estoque(app)      # Rota para estoque
+    usuarios(app)     # Rota para usuários
+    login_usuarios(app)  # Rota para login de usuários
