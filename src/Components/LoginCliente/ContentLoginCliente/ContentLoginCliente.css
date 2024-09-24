@@ -1,48 +1,88 @@
-.galerias {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px; /* Ajuste o espaçamento entre os itens se necessário */
-    width: 90%;
-    margin: 80px auto;
-}
-
-.galeria {
-    flex: 1 1 calc(33.333% - 20px); /* Ajusta a largura para 3 itens por linha com o espaçamento */
-    box-sizing: border-box;
-    position: relative;
-}
-
-.galeria img {
+.content-login-cliente {
     width: 100%;
-    border-radius: 10px;
-    display: block;
+    max-width: 400px;
+    margin: 50px auto 100px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.caption {
-    border-radius: 10px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: rgba(50, 50, 50, 0.3);
+.tabs {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    color: #ffffff;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.tab {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
     cursor: pointer;
-    opacity: 0;
-    padding-top: 70%;
-    transition: 0.4s;
+    background-color: transparent;
+    color: #232323;
+    font-size: 16px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: color 0.3s, border-bottom 0.3s;
 }
 
-.caption img {
-    width: 60px;
-    margin-bottom: 10px;
+.tab.active {
+    color: #ff5100;
+    border-bottom: 2px solid #ff5100;
 }
 
-.galeria:hover .caption {
-    opacity: 1;
-    padding-top: 0;
+.tab:hover {
+    color: #ff5100;
+}
+
+.tab-content {
+    padding: 0;
+}
+
+h2 {
+    margin-bottom: 30px; /* Ajuste a distância do título para os campos */
+    font-size: 24px; /* Aumenta um pouco o tamanho da fonte */
+    color: #232323; /* Cor preta */
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+form input {
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+form input:focus {
+    border-color: #ff5100;
+}
+
+form button {
+    padding: 12px;
+    background-color: #232323;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form button:hover {
+    background-color: #ff5100;
+}
+
+form button:active {
+    transform: scale(0.98);
 }

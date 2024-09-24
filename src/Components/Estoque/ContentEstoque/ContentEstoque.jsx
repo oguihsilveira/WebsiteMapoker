@@ -143,9 +143,13 @@ export default function ContentEstoque() {
 
   const fieldLabels = {
     codigo: 'Código',
-    produto: 'Produto',
-    quantidade: 'Quantidade',
-    preco: 'Preço',
+    item: 'Produto',
+    tipo: 'Tipo',
+    preco_compra: 'Preço de Compra',
+    preco_venda: 'Preço de Venda',
+    qtde_entrada: 'Quantidade de Entrada',
+    cod_funcionario: 'Funcionário', // Adicionando o campo de funcionário
+    observacoes: 'Observações', // Adicionando o campo de observações
   };
   
   const handleSubmit = (e) => {
@@ -166,7 +170,8 @@ export default function ContentEstoque() {
     } else if (modalType === 'edit') {
       handleUpdate();
     }
-  };  
+  };
+    
 
   const filteredEstoque = estoque.filter(item =>
     item.tipo.toLowerCase().includes(searchQuery.toLowerCase()) || // Pesquisa pelo tipo

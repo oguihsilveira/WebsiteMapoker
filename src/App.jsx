@@ -8,8 +8,7 @@ import Funcionarios from "./Components/Funcionarios/Funcionarios"; // Importe o 
 import Usuarios from "./Components/Usuarios/Usuarios"; // Importe o componente Usuarios
 import Estoque from "./Components/Estoque/Estoque"
 import ContasPagamentos from "./Components/ContasPagamentos/ContasPagamentos"; // Importe Contas e Pagamentos
-import ParcelasPagar from "./Components/ParcelasPagar/ParcelasPagar"; // Importe Parcelas a Pagar
-
+/* import ParcelasPagar from "./Components/ParcelasPagar/ParcelasPagar"; // Importe Parcelas a Pagar */
 
 const App = () => {
   return (
@@ -23,7 +22,7 @@ const App = () => {
         <Route path="/usuarios-erp" element={<Usuarios />} />
         <Route path="/estoque" element={<Estoque />} />
         <Route path="/contas-pagamentos" element={<ContasPagamentos />} />
-        <Route path="/parcelas-pagar" element={<ParcelasPagar />} />
+{/*         <Route path="/parcelas-pagar" element={<ParcelasPagar />} /> */}
 
       </Routes>
     </Router>

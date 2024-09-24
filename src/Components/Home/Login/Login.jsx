@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import axios from 'axios'; // Importar axios
 import './Login.css';
 import white_arrow from '../../../assets/white-arrow.png';
 
@@ -12,16 +13,27 @@ const Login = () => {
     setResult("Logando....");
     const formData = new FormData(event.target);
 
-    // Aqui, você pode implementar a lógica de login real
     const username = formData.get('username');
     const password = formData.get('password');
 
-    if (username === 'admin' && password === '1234') {
-      setResult("Login bem-sucedido");
-      // Redirecionar para outra página usando useNavigate
-      navigate('/cadastros-gerais'); // Certifique-se de que o path está correto
-    } else {
-      setResult("Credenciais incorretas");
+    try {
+      const response = await axios.post('http://localhost:3000/login-usuarios', {
+        login: username,
+        senha: password,
+      });
+
+      if (response.status === 200) {
+        const token = response.data.token;
+        localStorage.setItem('token', token); // Armazenar o token
+        setResult("Login bem-sucedido");
+        navigate('/cadastros-gerais'); // Redirecionar após login
+      }
+    } catch (error) {
+      if (error.response) {
+        setResult(error.response.data.error || "Erro no login");
+      } else {
+        setResult("Erro ao conectar ao servidor");
+      }
     }
   };
 
