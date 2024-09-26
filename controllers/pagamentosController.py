@@ -1,8 +1,8 @@
 from flask import request, jsonify
 from database.db import db
-from models.contas_a_pagar import Contas
+from models.pagamentos import Contas
 
-def contas_a_pagarController():
+def pagamentosController():
     # Método POST
     if request.method == 'POST':
         try:

@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from database.db import db
-from models.compras import Compras
+from models.pedidos import Compras
 
 def comprasController():
     # Método POST

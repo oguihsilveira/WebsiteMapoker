@@ -4,7 +4,7 @@ from flask import request, jsonify
 from models.usuarios import Usuarios
 from database.db import db
 
-SECRET_KEY = 'sua_chave_secreta'  # Troque por uma chave secreta forte
+SECRET_KEY = 'hgjfyrddytfuyfiyufu@12332211233'  # Troque por uma chave secreta forte
 
 def login_usuarios_controller():
     if request.method == 'POST':
@@ -17,7 +17,7 @@ def login_usuarios_controller():
                     'login': user.login,
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=20)  # Token expira em 30 minutos
                 }, SECRET_KEY, algorithm="HS256")
-                print(token)
+                print("Seu token: ",token)
                 return jsonify({'token': token}), 200
             
             return jsonify({'error': 'Credenciais inválidas'}), 401

@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from database.db import db
-from models.parcelas_pagamentos import Parcelas
+from models.parcelas import Parcelas
 
 def parcelas_pagamentosController():
     # Método POST
