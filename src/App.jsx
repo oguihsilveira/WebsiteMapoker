@@ -1,14 +1,24 @@
+//Imports
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Components/Home/Home";
-import Galeria from './Components/Galeria/Galeria';
 import LoginCliente from "./Components/LoginCliente/LoginCliente";
+/* import ProdutosExibidos from "./Components/rota-de-produtos"; */
+import Galeria from './Components/Galeria/Galeria';
+
+
+//Cadastros Gerais
 import CadastrosGerais from "./Components/CadastrosGerais/CadastrosGerais";
-import Funcionarios from "./Components/Funcionarios/Funcionarios"; // Importe o componente Funcionarios
-import Usuarios from "./Components/Usuarios/Usuarios"; // Importe o componente Usuarios
-import Estoque from "./Components/Estoque/Estoque"
-import ContasPagamentos from "./Components/ContasPagamentos/ContasPagamentos"; // Importe Contas e Pagamentos
-/* import ParcelasPagar from "./Components/ParcelasPagar/ParcelasPagar"; // Importe Parcelas a Pagar */
+
+//Cadastros específicos
+import Funcionarios from "./Components/Cadastros/Funcionarios/Funcionarios";
+import Usuarios from "./Components/Cadastros/Usuarios/Usuarios";
+import Estoque from "./Components/Cadastros/Estoque/Estoque";
+/* import Produtos from './Components/Cadastros/Produtos/Produtos'; */ //cadastrar produtos
+/* import Clientes from "./Components/Clientes/"; */ //Visualizar clientes
+/* import Pedidos from "./Components/Clientes/Pedidos/Pedidos"; */ //Pedidos vindos dos clientes
+import Pagamentos from "./Components/Cadastros/Pagamentos/Pagamentos";
+import Parcelas from './Components/Cadastros/Parcelas/Parcelas';
 
 const App = () => {
   return (
@@ -19,10 +29,12 @@ const App = () => {
         <Route path="/login-clientes" element={<LoginCliente />} />
         <Route path="/cadastros-gerais" element={<CadastrosGerais />} />
         <Route path="/funcionarios" element={<Funcionarios />} />
-        <Route path="/usuarios-erp" element={<Usuarios />} />
+        <Route path="/usuarios-adm" element={<Usuarios />} />
         <Route path="/estoque" element={<Estoque />} />
-        <Route path="/contas-pagamentos" element={<ContasPagamentos />} />
-{/*         <Route path="/parcelas-pagar" element={<ParcelasPagar />} /> */}
+        <Route path="/pagamentos" element={<Pagamentos />} />
+        <Route path="/parcelas" element={<Parcelas />} />
+        <Route path="/estoque" element={<Estoque />} />
+
 
       </Routes>
     </Router>

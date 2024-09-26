@@ -11,7 +11,7 @@ const BtnCadGerais = () => {
         Funcionários
       </button> {/* Funcionarios */}
 
-      <button className="btncadgerais" onClick={() => navigate('/usuarios-erp')}>
+      <button className="btncadgerais" onClick={() => navigate('/usuarios-adm')}>
         Usuários do Sistema
       </button> {/* Usuários que podem logar dentro do ERP */}
 
@@ -27,12 +27,12 @@ const BtnCadGerais = () => {
         Pedidos
       </button> {/* Produtos que foram pedidos por clientes */}
 
-      <button className="btncadgerais" onClick={() => navigate('/contas-pagamentos')}>
-        Contas & Pagamentos
+      <button className="btncadgerais" onClick={() => navigate('/pagamentos')}>
+        Pagamentos dos Clientes
       </button> {/* Contas/Pagamentos dos produtos comprados dos fornecedores */}
 
-      <button className="btncadgerais" onClick={() => navigate('/parcelas-pagar')}>
-        Parcelas a Pagar
+      <button className="btncadgerais" onClick={() => navigate('/parcelas')}>
+        Parcelas dos Clientes
       </button> {/* Caso o tipo de pagamento for Parcelado/Financiado, mostrar parcelas que restam a pagar. */}
     </div>
   );

@@ -1,14 +1,14 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import './NavbarFuncionarios.css'
-import logo from '../../../assets/logo.png'
-import back_icon from '../../../assets/back-icon.png'
+import './NavbarPagamentos.css'
+import logo from '../../../../assets/logo.png'
+import back_icon from '../../../../assets/back-icon.png'
 
-const NavbarFuncionarios = () => {
+const NavbarPagamentos = () => {
   const navigate = useNavigate(); // Hook para navegação
 
   const handleBackClick = () => {
-    navigate('/cadastros-gerais'); // Navega para a página /cadastros-gerais
+    navigate('/cadastros-gerais'); // Navega para a página /cadastrosgerais
   }
 
   return (
@@ -16,11 +16,11 @@ const NavbarFuncionarios = () => {
         <img src={logo} alt="Logo" className='logo'/>
         <ul>
             <li onClick={handleBackClick}><img src={back_icon} alt="Voltar" className='back'/></li>
-            <li>Funcionários</li>
+            <li>Pagamentos dos Clientes</li>
             <li><button className='btn'>LogOut</button></li>
         </ul>
     </nav>
   )
 }
 
-export default NavbarFuncionarios
+export default NavbarPagamentos

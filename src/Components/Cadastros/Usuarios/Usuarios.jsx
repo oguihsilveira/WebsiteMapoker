@@ -8,7 +8,9 @@ const Usuarios = () => {
     <div>
       <NavbarUsuarios/>
       <ContentUsuarios/>
+      <div className='container'>
       <RodapeUsuarios/>
+      </div>
     </div>
   )
 }

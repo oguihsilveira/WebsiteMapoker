@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ContentContasPagamentos.css';
+import './ContentPagamentos.css';
 
-export default function ContentContasPagamentos() {
+export default function ContentPagamentos() {
   const [contasPagamentos, setContasPagamentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
