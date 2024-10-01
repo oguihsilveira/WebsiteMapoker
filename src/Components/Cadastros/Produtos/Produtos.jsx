@@ -3,7 +3,7 @@ import NavbarProdutos from './NavbarProdutos/NavbarProdutos'
 import ContentProdutos from './ContentProdutos/ContentProdutos'
 import RodapeProdutos from './RodapeProdutos/RodapeProdutos'
 
-const Estoque = () => {
+const Produtos = () => {
   return (
     <div>
       <NavbarProdutos/>
@@ -15,4 +15,4 @@ const Estoque = () => {
   )
 }
 
-export default Estoque
+export default Produtos

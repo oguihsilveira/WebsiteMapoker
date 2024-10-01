@@ -132,10 +132,12 @@ export default function ContentProdutos() {
     <div className="content-container">
       <h2 className="title">Produtos</h2>
 
-      <div className="controls">
-        <button className="button add-button" onClick={() => handleOpenModal('add')}>
-          Adicionar Novo Produto
-        </button>
+        <div className="controls">
+            <button className="button add-button" onClick={() => handleOpenModal('add')}>
+            Adicionar Novo Produto
+            </button>
+        </div>
+        <div className="controls">
         <input
           type="text"
           placeholder="Pesquisar por nome ou código..."
@@ -143,7 +145,7 @@ export default function ContentProdutos() {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"
         />
-      </div>
+        </div>
 
       <table className="table">
         <thead>
