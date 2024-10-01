@@ -54,13 +54,15 @@
 
 .modal-container {
   position: fixed;
-  top: 30%; /* Ajusta a posição vertical da modal */
+  top: 0; /* Ajusta para que a modal comece do topo da tela */
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  bottom: 0; /* Preenche toda a tela */
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Alinha a modal no topo da área de visualização */
+  align-items: center; /* Centraliza a modal verticalmente */
+  z-index: 1000; /* Garantir que fique sobre outros elementos */
 }
 
 .modal {
@@ -68,13 +70,13 @@
   padding: 20px;
   border-radius: 10px;
   position: relative;
-  top: 30px;
-  height: 500px;
-  width: 500px; /* Ajusta a largura da modal */
-  max-width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
+  height: auto; /* Deixa a altura auto para acomodar o conteúdo */
+  width: 500px; /* Largura da modal */
+  max-width: 90%; /* Maxima largura em relação a tela */
+  max-height: 80vh; /* Maxima altura da modal */
+  overflow-y: auto; /* Habilita rolagem se o conteúdo for maior */
 }
+
 
 .modal-title {
   text-align: center;
