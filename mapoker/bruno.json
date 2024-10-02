@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "mapoker",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
