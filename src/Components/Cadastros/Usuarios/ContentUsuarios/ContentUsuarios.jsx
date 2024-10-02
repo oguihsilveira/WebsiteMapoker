@@ -172,6 +172,7 @@ export default function ContentUsuarios() {
   return (
     <div className="content-container">
       <h2 className="title">Usuários</h2>
+      <h3 className="subtitle">Administradores</h3>
 
       <div className="controls">
         <button className="button add-button" onClick={() => handleOpenModal('add')}>
@@ -217,7 +218,7 @@ export default function ContentUsuarios() {
                     className="password-toggle"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    {showPassword ? <FaEye /> : <FaEyeSlash />}
                   </button>
                 </span>
               </td>
@@ -265,20 +266,22 @@ export default function ContentUsuarios() {
               </label>
               <label>
                 Senha:
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="senha"
-                  value={formData.senha}
-                  onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                  className="input"
-                />
-                <button
-                  type="button"
-                  className="password-toggle input" // Adicione a classe "input"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
+                <div className="password-container">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="senha"
+                    value={formData.senha}
+                    onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
+                    className="input"
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-input"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEye /> : <FaEyeSlash />}
+                  </button>
+                </div>
               </label>
               <label>
                 Funcionário:

@@ -13,13 +13,13 @@ export default function ContentProdutos() {
     tipo: '',
     preco_atual: '',
     preco_antigo: '',
-    status: '',
+    status: '', // Campo status
     quantidade: '',
     foto: '',
     observacoes: '',
     cod_estoque: '',
   });
-  const [searchQuery, setSearchQuery] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchProdutos();
@@ -43,7 +43,9 @@ export default function ContentProdutos() {
 
   const handleOpenModal = (type, item = null) => {
     if (type === 'edit' && item) {
-      setFormData(item);
+      setFormData({
+        ...item,
+      });
     } else {
       setFormData({
         codigo: '',
@@ -51,7 +53,7 @@ export default function ContentProdutos() {
         tipo: '',
         preco_atual: '',
         preco_antigo: '',
-        status: '',
+        status: '', // Campo status
         quantidade: '',
         foto: '',
         observacoes: '',
@@ -68,10 +70,10 @@ export default function ContentProdutos() {
   };
 
   const handleInsert = () => {
-    postProdutos(formData);
+    postProduto(formData);
   };
 
-  const postProdutos = (data) => {
+  const postProduto = (data) => {
     axios.post('http://localhost:3000/produtos', data)
       .then(() => {
         fetchProdutos();
@@ -79,16 +81,20 @@ export default function ContentProdutos() {
         alert('Produto cadastrado com sucesso!');
       })
       .catch(error => {
-        console.error('Erro ao cadastrar produto:', error.response ? error.response.data : error.message);
-        alert('Erro ao cadastrar produto.');
+        if (error.response && error.response.status === 409) {
+          alert('Erro: O código do produto já existe. Por favor, escolha um código diferente.');
+        } else {
+          console.error('Erro ao cadastrar produto:', error.response ? error.response.data : error.message);
+          alert('Erro ao cadastrar produto.');
+        }
       });
   };
 
   const handleUpdate = () => {
-    putProdutos(formData);
+    putProduto(formData);
   };
 
-  const putProdutos = (data) => {
+  const putProduto = (data) => {
     axios.put('http://localhost:3000/produtos', data, { params: { codigo: data.codigo } })
       .then(() => {
         fetchProdutos();
@@ -110,14 +116,45 @@ export default function ContentProdutos() {
         })
         .catch(error => {
           console.error('Erro ao deletar produto:', error.response ? error.response.data : error.message);
-          alert('Erro ao deletar produto.');
+          alert(error.response && error.response.data.error ? error.response.data.error : 'Erro ao deletar produto.');
         });
     }
   };
 
+  const fieldLabels = {
+    codigo: 'Código',
+    item: 'Item',
+    tipo: 'Tipo',
+    preco_atual: 'Preço Atual',
+    preco_antigo: 'Preço Antigo',
+    status: 'Status', // Campo status
+    quantidade: 'Quantidade',
+    foto: 'Foto',
+    observacoes: 'Observações',
+    cod_estoque: 'Código do Estoque',
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const requiredFields = Object.keys(fieldLabels);
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+
+    if (emptyFields.length > 0) {
+      const missingFieldLabels = emptyFields.map(field => fieldLabels[field]);
+      alert(`Por favor, preencha os seguintes campos: ${missingFieldLabels.join(', ')}`);
+      return;
+    }
+
+    if (modalType === 'add') {
+      handleInsert();
+    } else if (modalType === 'edit') {
+      handleUpdate();
+    }
+  };
+
   const filteredProdutos = produtos.filter(item =>
-    item.item.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.codigo.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    (item.item && item.item.toLowerCase().includes(searchQuery.toLowerCase())) || 
+    (item.codigo && item.codigo.toString().toLowerCase().includes(searchQuery.toLowerCase()))
   ).reverse();
 
   if (loading) {
@@ -132,20 +169,20 @@ export default function ContentProdutos() {
     <div className="content-container">
       <h2 className="title">Produtos</h2>
 
-        <div className="controls">
-            <button className="button add-button" onClick={() => handleOpenModal('add')}>
-            Adicionar Novo Produto
-            </button>
-        </div>
-        <div className="controls">
+      <div className="controls">
+        <button className="button add-button" onClick={() => handleOpenModal('add')}>
+          Adicionar Novo Produto
+        </button>
+      </div>
+      <div className="controls">
         <input
           type="text"
-          placeholder="Pesquisar por nome ou código..."
+          placeholder="Pesquisar por Item ou código do produto..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"
         />
-        </div>
+      </div>
 
       <table className="table">
         <thead>
@@ -153,8 +190,8 @@ export default function ContentProdutos() {
             <th>Código</th>
             <th>Item</th>
             <th>Tipo</th>
-            <th>Preço Atual (R$)</th>
-            <th>Preço Antigo (R$)</th>
+            <th>Preço Atual</th>
+            <th>Preço Antigo</th>
             <th>Status</th>
             <th>Quantidade</th>
             <th>Foto</th>
@@ -163,23 +200,23 @@ export default function ContentProdutos() {
           </tr>
         </thead>
         <tbody>
-          {filteredProdutos.map((item) => (
-            <tr key={item.codigo}>
-              <td>{item.codigo}</td>
-              <td>{item.item}</td>
-              <td>{item.tipo}</td>
-              <td>R${item.preco_atual.toFixed(2)}</td>
-              <td>{item.preco_antigo ? `R$${item.preco_antigo.toFixed(2)}` : '-'}</td>
-              <td>{item.status}</td>
-              <td>{item.quantidade}</td>
-              <td><img src={item.foto} alt={item.item} className="produto-foto" /></td>
-              <td>{item.observacoes}</td>
-              <td className="actions">
-                <button className="button" onClick={() => handleOpenModal('edit', item)}>Editar</button>
-                <button className="button" onClick={() => handleDelete(item.codigo)}>Excluir</button>
-              </td>
-            </tr>
-          ))}
+        {filteredProdutos.map((item) => (
+          <tr key={item.codigo}>
+            <td>{item.codigo}</td>
+            <td>{item.item}</td>
+            <td>{item.tipo}</td>
+            <td>R${item.preco_atual ? item.preco_atual.toFixed(2) : 'N/A'}</td>
+            <td>R${item.preco_antigo ? item.preco_antigo.toFixed(2) : 'N/A'}</td>
+            <td>{item.status}</td>
+            <td>{item.quantidade}</td>
+            <td><img src={item.foto} alt={item.item} className="foto-produto" /></td>
+            <td>{item.observacoes}</td>
+            <td className="actions">
+              <button className="button" onClick={() => handleOpenModal('edit', item)}>Editar</button>
+              <button className="button" onClick={() => handleDelete(item.codigo)}>Excluir</button>
+            </td>
+          </tr>
+        ))}
         </tbody>
       </table>
 
@@ -187,10 +224,7 @@ export default function ContentProdutos() {
         <div className="modal-container">
           <div className="modal">
             <h2 className="modal-title">{modalType === 'edit' ? 'Editar Produto' : 'Novo Produto'}</h2>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              modalType === 'add' ? handleInsert() : handleUpdate();
-            }} className="form">
+            <form onSubmit={handleSubmit} className="form">
               <label>
                 Código:
                 <input
@@ -199,7 +233,7 @@ export default function ContentProdutos() {
                   value={formData.codigo}
                   onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
                   className="input"
-                  disabled={modalType === 'edit'} // Disable input for code in edit mode
+                  disabled={modalType === 'edit'}
                 />
               </label>
               <label>
@@ -223,36 +257,39 @@ export default function ContentProdutos() {
                 />
               </label>
               <label>
-                Preço Atual (R$):
+                Preço Atual:
                 <input
                   type="number"
                   name="preco_atual"
                   value={formData.preco_atual}
-                  onChange={(e) => setFormData({ ...formData, preco_atual: e.target.value })}
-                  onWheel={(e) => e.target.blur()}
+                  onChange={(e) => setFormData({ ...formData, preco_atual: parseFloat(e.target.value) })}
                   className="input"
+                  step="0.01"
                 />
               </label>
               <label>
-                Preço Antigo (R$):
+                Preço Antigo:
                 <input
                   type="number"
                   name="preco_antigo"
                   value={formData.preco_antigo}
-                  onChange={(e) => setFormData({ ...formData, preco_antigo: e.target.value })}
-                  onWheel={(e) => e.target.blur()}
+                  onChange={(e) => setFormData({ ...formData, preco_antigo: parseFloat(e.target.value) })}
                   className="input"
+                  step="0.01"
                 />
               </label>
               <label>
                 Status:
-                <input
-                  type="text"
+                <select
                   name="status"
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="input"
-                />
+                  className="input"  // Adiciona a classe 'input' para estilização
+                >
+                  <option value="">Selecione um status</option>
+                  <option value="Disponível">Disponível</option>
+                  <option value="Indisponível">Indisponível</option>
+                </select>
               </label>
               <label>
                 Quantidade:
@@ -260,8 +297,7 @@ export default function ContentProdutos() {
                   type="number"
                   name="quantidade"
                   value={formData.quantidade}
-                  onChange={(e) => setFormData({ ...formData, quantidade: e.target.value })}
-                  onWheel={(e) => e.target.blur()}
+                  onChange={(e) => setFormData({ ...formData, quantidade: parseInt(e.target.value, 10) })}
                   className="input"
                 />
               </label>
@@ -277,7 +313,8 @@ export default function ContentProdutos() {
               </label>
               <label>
                 Observações:
-                <textarea
+                <input
+                  type="text"
                   name="observacoes"
                   value={formData.observacoes}
                   onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
@@ -287,19 +324,19 @@ export default function ContentProdutos() {
               <label>
                 Código do Estoque:
                 <input
-                  type="text"
+                  type="number"
                   name="cod_estoque"
                   value={formData.cod_estoque}
-                  onChange={(e) => setFormData({ ...formData, cod_estoque: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, cod_estoque: parseInt(e.target.value, 10) })}
                   className="input"
                 />
               </label>
-              <div className="modal-buttons">
-                <button type="button" className="button cancel-button" onClick={handleCloseModal}>
-                  Cancelar
+              <div className="form-buttons">
+                <button type="submit" className="button">
+                  {modalType === 'edit' ? 'Atualizar' : 'Cadastrar'}
                 </button>
-                <button type="submit" className="button submit-button">
-                  {modalType === 'add' ? 'Cadastrar' : 'Atualizar'}
+                <button type="button" className="button" onClick={handleCloseModal}>
+                  Cancelar
                 </button>
               </div>
             </form>

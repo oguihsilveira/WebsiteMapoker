@@ -24,6 +24,7 @@
     text-align: center;
     font-family: sans-serif;
     width: auto; /* Ajusta a largura do botão */
+    margin-left: 10px;
   }
   
   .button:hover {
@@ -101,8 +102,8 @@
   
   .form-buttons {
     display: flex;
-    gap: 10px;
-    justify-content: flex-end;
+    justify-content: flex-end; /* Alinha os botões à direita */
+    margin-top: 20px; /* Adiciona um espaço entre o formulário e os botões */
   }
   
   .loading-container {
@@ -130,3 +131,10 @@
   .button.add-button {
     width: auto; /* Garante que o botão de adicionar não ocupe a mesma largura que a pesquisa */
   }
+  .input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: sans-serif;
+  }
+  
