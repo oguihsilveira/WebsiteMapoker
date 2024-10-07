@@ -1,4 +1,4 @@
-.sobre{
+.sobre {
     margin: auto;
     margin-top: 100px;
     margin-bottom: 120px;
@@ -7,36 +7,85 @@
     justify-content: space-between;
     width: 90%;
 }
-.sobre-left{
+
+.sobre-left {
     flex-basis: 40%;
     position: relative;
 }
-.sobre-right{
+
+.sobre-right {
     flex-basis: 56%;
 }
-.sobre-img{
+
+.sobre-img {
     width: 100%;
     border-radius: 5px;
 }
-.play-icon{
+
+.play-icon {
     width: 60px;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    cursor: pointer; /* Adicionado cursor de ponteiro */
 }
-.sobre h3{
+
+.header-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.header-group h3 {
+    font-size: 32px;
     font-weight: 600;
-    font-weight: 16px;
     color: #ff5100;
+    margin: 0;
 }
-.sobre h2{
+
+.header-group h2 {
     font-size: 35px;
     color: #232323;
-    margin: 10px 0;
+    margin: 5px 0 0 0;
     max-width: 400px;
 }
-.sobre p{
+
+.sobre p {
     color: #676767;
     margin-bottom: 15px;
+}
+
+/* Estilos para o modal de vídeo */
+.video-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Fundo semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Trazer para frente */
+}
+
+.video-container {
+    background: #fff;
+    padding: 2px;
+    width: 60%;
+    max-width: 800px;
+    position: relative; /* Definir posição relativa para o container de vídeo */
+}
+
+/* Ajuste na posição do botão de fechar */
+.close-btn {
+    position: absolute;
+    bottom: 400px; /* Definir o botão mais próximo ao vídeo */
+    left: 820px;
+    font-size: 50px;
+    color: #ff5100;
+    cursor: pointer;
+    z-index: 1001; /* Garantir que fique acima de todos os elementos no modal */
 }

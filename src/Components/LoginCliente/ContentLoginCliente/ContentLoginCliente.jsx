@@ -32,15 +32,15 @@ const ContentLoginCliente = () => {
           <div className="login-form">
             <h2>Login</h2>
             <form>
-              <label>
-                Email:
-                <input type="email" name="email" required />
-              </label>
-              <label>
-                Senha:
-                <input type="password" name="password" required />
-              </label>
-              <button type="submit">Entrar</button>
+              <div className="form-group">
+                <label>Email:</label>
+                <input type="email" name="email" className="form-input" required />
+              </div>
+              <div className="form-group">
+                <label>Senha:</label>
+                <input type="password" name="password" className="form-input" required />
+              </div>
+              <button type="submit" className="form-button">Entrar</button>
             </form>
           </div>
         )}
@@ -49,19 +49,19 @@ const ContentLoginCliente = () => {
           <div className="cadastro-form">
             <h2>Cadastro</h2>
             <form>
-              <label>
-                Nome:
-                <input type="text" name="nome" required />
-              </label>
-              <label>
-                Email:
-                <input type="email" name="email" required />
-              </label>
-              <label>
-                Senha:
-                <input type="password" name="password" required />
-              </label>
-              <button type="submit">Cadastrar</button>
+              <div className="form-group">
+                <label>Nome:</label>
+                <input type="text" name="nome" className="form-input" required />
+              </div>
+              <div className="form-group">
+                <label>Email:</label>
+                <input type="email" name="email" className="form-input" required />
+              </div>
+              <div className="form-group">
+                <label>Senha:</label>
+                <input type="password" name="password" className="form-input" required />
+              </div>
+              <button type="submit" className="form-button">Cadastrar</button>
             </form>
           </div>
         )}

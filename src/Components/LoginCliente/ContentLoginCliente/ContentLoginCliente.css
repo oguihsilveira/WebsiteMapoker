@@ -1,13 +1,15 @@
+/* Estilo principal do componente */
 .content-login-cliente {
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     margin: 50px auto 100px auto;
-    padding: 20px;
+    padding: 30px;
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Estilo das abas */
 .tabs {
     display: flex;
     justify-content: space-between;
@@ -37,52 +39,70 @@
     color: #ff5100;
 }
 
+/* Estilo do conteúdo das abas */
 .tab-content {
     padding: 0;
 }
 
 h2 {
-    margin-bottom: 30px; /* Ajuste a distância do título para os campos */
-    font-size: 24px; /* Aumenta um pouco o tamanho da fonte */
-    color: #232323; /* Cor preta */
+    margin-bottom: 30px;
+    font-size: 24px;
+    color: #232323;
     text-align: center;
 }
 
+/* Estilo do formulário */
 form {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-form input {
-    padding: 12px;
+/* Container dos grupos de campos */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+label {
+    font-size: 14px;
+    color: #676767;
+    margin-bottom: 5px;
+}
+
+/* Estilização dos inputs */
+.form-input {
+    padding: 14px 12px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background-color: #f9f9f9;
     font-size: 14px;
     outline: none;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s, background-color 0.3s;
 }
 
-form input:focus {
+.form-input:focus {
     border-color: #ff5100;
+    background-color: #fff;
 }
 
-form button {
-    padding: 12px;
+/* Estilo do botão */
+.form-button {
+    padding: 14px;
     background-color: #232323;
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
-form button:hover {
+.form-button:hover {
     background-color: #ff5100;
 }
 
-form button:active {
+.form-button:active {
     transform: scale(0.98);
 }
