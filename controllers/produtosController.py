@@ -3,14 +3,13 @@ from database.db import db
 from models.produtos import Produtos
 
 def produtosController():
-    # Método POST - Adicionar um novo produto
     if request.method == 'POST':
         try:
-            data = request.get_json()  # Alterado para receber dados do JSON
+            data = request.get_json()
             # Verificar se o código do produto já existe
             existing_produto = Produtos.query.filter_by(codigo=data['codigo']).first()
             if existing_produto:
-                return jsonify({'error': 'Este código de produto já existe'}), 400
+                return jsonify({'error': 'Este código de produto já existe'}), 409  # Retornar 409 - Conflict
 
             # Criar um novo objeto produto com os dados recebidos
             produto = Produtos(
@@ -21,7 +20,7 @@ def produtosController():
                 preco_antigo=data.get('preco_antigo', None),
                 status=data['status'],
                 quantidade=data['quantidade'],
-                foto=data['foto'],  # O campo foto deve ser tratado adequadamente no frontend
+                foto=data['foto'],
                 observacoes=data['observacoes'],
                 cod_estoque=data['cod_estoque']
             )
@@ -32,7 +31,6 @@ def produtosController():
         except Exception as e:
             return jsonify({'error': f'Erro ao cadastrar produto. Erro: {str(e)}'}), 400
 
-    # Método GET - Retornar todos os produtos
     elif request.method == 'GET':
         try:
             data = Produtos.query.all()
@@ -41,7 +39,6 @@ def produtosController():
         except Exception as e:
             return jsonify({'error': f'Não foi possível buscar produtos. Erro: {str(e)}'}), 405
 
-    # Método PUT - Atualizar um produto existente
     elif request.method == 'PUT':
         try:
             data = request.get_json()
@@ -50,7 +47,6 @@ def produtosController():
             if not put_produto:
                 return jsonify({'error': 'Produto não encontrado'}), 404
 
-            # Atualizar os campos do produto com base nos dados recebidos
             put_produto.item = data.get('item', put_produto.item)
             put_produto.tipo = data.get('tipo', put_produto.tipo)
             put_produto.preco_atual = data.get('preco_atual', put_produto.preco_atual)
@@ -66,7 +62,6 @@ def produtosController():
         except Exception as e:
             return jsonify({'error': f'Erro ao atualizar produto. Erro: {str(e)}'}), 400
 
-    # Método DELETE - Remover um produto existente
     elif request.method == 'DELETE':
         try:
             codigo = request.args.get('codigo')
