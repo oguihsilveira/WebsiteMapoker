@@ -20,6 +20,7 @@ export default function ContentProdutos() {
     cod_estoque: '',
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [imagePreview, setImagePreview] = useState(''); // Novo estado para preview de imagem
 
   useEffect(() => {
     fetchProdutos();
@@ -46,6 +47,7 @@ export default function ContentProdutos() {
       setFormData({
         ...item,
       });
+      setImagePreview(item.foto || ''); // Define o preview de imagem ao editar
     } else {
       setFormData({
         codigo: '',
@@ -59,6 +61,7 @@ export default function ContentProdutos() {
         observacoes: '',
         cod_estoque: '',
       });
+      setImagePreview(''); // Limpa o preview de imagem ao adicionar
     }
     setModalType(type);
     setModalVisible(true);
@@ -67,6 +70,18 @@ export default function ContentProdutos() {
   const handleCloseModal = () => {
     setModalVisible(false);
     setModalType(null);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, foto: reader.result });
+        setImagePreview(reader.result); // Atualiza o preview de imagem
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleInsert = () => {
@@ -164,7 +179,7 @@ export default function ContentProdutos() {
       </div>
     );
   }
-
+  
   return (
     <div className="content-container">
       <h2 className="title">Produtos</h2>

@@ -8,5 +8,8 @@ npm install jwt-decode
 //erros?
 npm audit fix
 
+//atualização npm
+npm install -g npm@10.9.0
+
 //rodar
 npm run dev
