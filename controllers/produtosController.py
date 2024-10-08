@@ -1,76 +1,132 @@
+# produtosController.py
+
 from flask import request, jsonify
-from database.db import db
+from models.estoque import Estoque  # Importar a model de Estoque para ForeignKey
 from models.produtos import Produtos
+from flask_sqlalchemy import SQLAlchemy
+import os
+from werkzeug.utils import secure_filename
+
+db = SQLAlchemy()
+
+UPLOAD_FOLDER = 'static/uploads/'  # Define a pasta onde as imagens serão salvas
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}  # Extensões permitidas
+
+# Função auxiliar para verificar a extensão do arquivo
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def produtosController():
     if request.method == 'POST':
         try:
-            data = request.get_json()
-            # Verificar se o código do produto já existe
-            existing_produto = Produtos.query.filter_by(codigo=data['codigo']).first()
-            if existing_produto:
-                return jsonify({'error': 'Este código de produto já existe'}), 409  # Retornar 409 - Conflict
+            codigo = request.form.get('codigo')
+            item = request.form.get('item')
+            tipo = request.form.get('tipo')
+            preco_atual = request.form.get('preco_atual')
+            preco_antigo = request.form.get('preco_antigo')
+            status = request.form.get('status')
+            quantidade = request.form.get('quantidade')
+            cod_estoque = request.form.get('cod_estoque')
+            observacoes = request.form.get('observacoes')
 
-            # Criar um novo objeto produto com os dados recebidos
-            produto = Produtos(
-                codigo=data['codigo'],
-                item=data['item'],
-                tipo=data['tipo'],
-                preco_atual=data['preco_atual'],
-                preco_antigo=data.get('preco_antigo', None),
-                status=data['status'],
-                quantidade=data['quantidade'],
-                foto=data['foto'],
-                observacoes=data['observacoes'],
-                cod_estoque=data['cod_estoque']
+            # Manipulação do arquivo de upload
+            if 'foto' not in request.files:
+                return jsonify({'message': 'No file part'}), 400
+            file = request.files['foto']
+            if file.filename == '':
+                return jsonify({'message': 'No selected file'}), 400
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(UPLOAD_FOLDER, filename))
+                foto = os.path.join(UPLOAD_FOLDER, filename)
+            else:
+                return jsonify({'message': 'File extension not allowed'}), 400
+
+            novo_produto = Produtos(
+                codigo=codigo,
+                item=item,
+                tipo=tipo,
+                preco_atual=preco_atual,
+                preco_antigo=preco_antigo,
+                status=status,
+                quantidade=quantidade,
+                foto=foto,
+                observacoes=observacoes,
+                cod_estoque=cod_estoque
             )
 
-            db.session.add(produto)
+            db.session.add(novo_produto)
             db.session.commit()
-            return jsonify({'message': 'Produto inserido com sucesso'}), 200
+            return jsonify({'message': 'Produto cadastrado com sucesso!'}), 201
+
         except Exception as e:
-            return jsonify({'error': f'Erro ao cadastrar produto. Erro: {str(e)}'}), 400
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
 
     elif request.method == 'GET':
         try:
-            data = Produtos.query.all()
-            produtos = {'produtos': [produto.to_dict() for produto in data]}
-            return jsonify(produtos), 200
+            produtos = Produtos.query.all()
+            output = []
+            for produto in produtos:
+                produto_data = {
+                    'codigo': produto.codigo,
+                    'item': produto.item,
+                    'tipo': produto.tipo,
+                    'preco_atual': produto.preco_atual,
+                    'preco_antigo': produto.preco_antigo,
+                    'status': produto.status,
+                    'quantidade': produto.quantidade,
+                    'foto': produto.foto,  # Inclui o campo foto na resposta
+                    'observacoes': produto.observacoes,
+                    'cod_estoque': produto.cod_estoque
+                }
+                output.append(produto_data)
+            return jsonify({'produtos': output}), 200
         except Exception as e:
-            return jsonify({'error': f'Não foi possível buscar produtos. Erro: {str(e)}'}), 405
+            return jsonify({'error': str(e)}), 500
 
     elif request.method == 'PUT':
         try:
-            data = request.get_json()
-            put_produto_id = data['codigo']
-            put_produto = Produtos.query.get(put_produto_id)
-            if not put_produto:
-                return jsonify({'error': 'Produto não encontrado'}), 404
+            data = request.form
+            produto = Produtos.query.filter_by(codigo=data['codigo']).first()
 
-            put_produto.item = data.get('item', put_produto.item)
-            put_produto.tipo = data.get('tipo', put_produto.tipo)
-            put_produto.preco_atual = data.get('preco_atual', put_produto.preco_atual)
-            put_produto.preco_antigo = data.get('preco_antigo', put_produto.preco_antigo)
-            put_produto.status = data.get('status', put_produto.status)
-            put_produto.quantidade = data.get('quantidade', put_produto.quantidade)
-            put_produto.foto = data.get('foto', put_produto.foto)
-            put_produto.observacoes = data.get('observacoes', put_produto.observacoes)
-            put_produto.cod_estoque = data.get('cod_estoque', put_produto.cod_estoque)
+            if not produto:
+                return jsonify({'message': 'Produto não encontrado'}), 404
+
+            produto.item = data.get('item', produto.item)
+            produto.tipo = data.get('tipo', produto.tipo)
+            produto.preco_atual = data.get('preco_atual', produto.preco_atual)
+            produto.preco_antigo = data.get('preco_antigo', produto.preco_antigo)
+            produto.status = data.get('status', produto.status)
+            produto.quantidade = data.get('quantidade', produto.quantidade)
+            produto.cod_estoque = data.get('cod_estoque', produto.cod_estoque)
+            produto.observacoes = data.get('observacoes', produto.observacoes)
+
+            # Atualiza a foto se um novo arquivo for enviado
+            if 'foto' in request.files:
+                file = request.files['foto']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(UPLOAD_FOLDER, filename))
+                    produto.foto = os.path.join(UPLOAD_FOLDER, filename)
 
             db.session.commit()
-            return jsonify({'message': 'Produto atualizado com sucesso'}), 200
+            return jsonify({'message': 'Produto atualizado com sucesso!'}), 200
+
         except Exception as e:
-            return jsonify({'error': f'Erro ao atualizar produto. Erro: {str(e)}'}), 400
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
 
     elif request.method == 'DELETE':
         try:
-            codigo = request.args.get('codigo')
-            delete_produto = Produtos.query.get(codigo)
-            if delete_produto is None:
-                return jsonify({'error': 'Produto não encontrado'}), 404
+            codigo = request.form['codigo']
+            produto = Produtos.query.filter_by(codigo=codigo).first()
+            if not produto:
+                return jsonify({'message': 'Produto não encontrado'}), 404
 
-            db.session.delete(delete_produto)
+            db.session.delete(produto)
             db.session.commit()
-            return jsonify({'message': 'Produto deletado com sucesso'}), 200
+            return jsonify({'message': 'Produto excluído com sucesso!'}), 200
         except Exception as e:
-            return jsonify({'error': f'Erro ao deletar produto. Erro: {str(e)}'}), 400
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
