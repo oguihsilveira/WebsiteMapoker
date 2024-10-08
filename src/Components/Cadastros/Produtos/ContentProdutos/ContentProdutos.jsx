@@ -6,21 +6,28 @@ export default function ContentProdutos() {
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalType, setModalType] = useState(null); // 'add' or 'edit'
+  const [modalType, setModalType] = useState(null);
   const [formData, setFormData] = useState({
     codigo: '',
     item: '',
     tipo: '',
     preco_atual: '',
     preco_antigo: '',
-    status: '', // Campo status
+    status: '',
     quantidade: '',
     foto: '',
     observacoes: '',
     cod_estoque: '',
   });
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [imagePreview, setImagePreview] = useState(''); // Novo estado para preview de imagem
+  const [imagePreview, setImagePreview] = useState('');
+
+  // Filtragem de produtos com base na pesquisa
+  const filteredProdutos = produtos.filter(item =>
+    (item.item && item.item.toLowerCase().includes(searchQuery.toLowerCase())) || 
+    (item.codigo && item.codigo.toString().toLowerCase().includes(searchQuery.toLowerCase()))
+  ).reverse();
 
   useEffect(() => {
     fetchProdutos();
@@ -44,10 +51,8 @@ export default function ContentProdutos() {
 
   const handleOpenModal = (type, item = null) => {
     if (type === 'edit' && item) {
-      setFormData({
-        ...item,
-      });
-      setImagePreview(item.foto || ''); // Define o preview de imagem ao editar
+      setFormData({ ...item });
+      setImagePreview(item.foto || '');
     } else {
       setFormData({
         codigo: '',
@@ -55,13 +60,13 @@ export default function ContentProdutos() {
         tipo: '',
         preco_atual: '',
         preco_antigo: '',
-        status: '', // Campo status
+        status: '',
         quantidade: '',
         foto: '',
         observacoes: '',
         cod_estoque: '',
       });
-      setImagePreview(''); // Limpa o preview de imagem ao adicionar
+      setImagePreview('');
     }
     setModalType(type);
     setModalVisible(true);
@@ -74,22 +79,20 @@ export default function ContentProdutos() {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, foto: reader.result });
-        setImagePreview(reader.result); // Atualiza o preview de imagem
-      };
-      reader.readAsDataURL(file);
-    }
+    setFormData({ ...formData, foto: file });
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleInsert = () => {
-    postProduto(formData);
+    const formDataObj = new FormData();
+    Object.keys(formData).forEach(key => {
+      formDataObj.append(key, formData[key]);
+    });
+    postProduto(formDataObj);
   };
 
   const postProduto = (data) => {
-    axios.post('http://localhost:3000/produtos', data)
+    axios.post('http://localhost:3000/produtos', data, { headers: { 'Content-Type': 'multipart/form-data' } })
       .then(() => {
         fetchProdutos();
         handleCloseModal();
@@ -106,11 +109,18 @@ export default function ContentProdutos() {
   };
 
   const handleUpdate = () => {
-    putProduto(formData);
+    const formDataObj = new FormData();
+    Object.keys(formData).forEach(key => {
+      formDataObj.append(key, formData[key]);
+    });
+    putProduto(formDataObj);
   };
 
   const putProduto = (data) => {
-    axios.put('http://localhost:3000/produtos', data, { params: { codigo: data.codigo } })
+    axios.put('http://localhost:3000/produtos', data, {
+      params: { codigo: formData.codigo },
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
       .then(() => {
         fetchProdutos();
         handleCloseModal();
@@ -136,27 +146,13 @@ export default function ContentProdutos() {
     }
   };
 
-  const fieldLabels = {
-    codigo: 'Código',
-    item: 'Item',
-    tipo: 'Tipo',
-    preco_atual: 'Preço Atual',
-    preco_antigo: 'Preço Antigo',
-    status: 'Status', // Campo status
-    quantidade: 'Quantidade',
-    foto: 'Foto',
-    observacoes: 'Observações',
-    cod_estoque: 'Código do Estoque',
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    const requiredFields = Object.keys(fieldLabels);
+    const requiredFields = ['codigo', 'item', 'tipo', 'preco_atual', 'status', 'quantidade', 'cod_estoque'];
     const emptyFields = requiredFields.filter(field => !formData[field]);
 
     if (emptyFields.length > 0) {
-      const missingFieldLabels = emptyFields.map(field => fieldLabels[field]);
-      alert(`Por favor, preencha os seguintes campos: ${missingFieldLabels.join(', ')}`);
+      alert(`Por favor, preencha os seguintes campos: ${emptyFields.join(', ')}`);
       return;
     }
 
@@ -167,17 +163,8 @@ export default function ContentProdutos() {
     }
   };
 
-  const filteredProdutos = produtos.filter(item =>
-    (item.item && item.item.toLowerCase().includes(searchQuery.toLowerCase())) || 
-    (item.codigo && item.codigo.toString().toLowerCase().includes(searchQuery.toLowerCase()))
-  ).reverse();
-
   if (loading) {
-    return (
-      <div className="loading-container">
-        <p>Carregando...</p>
-      </div>
-    );
+    return <div className="loading-container"><p>Carregando...</p></div>;
   }
   
   return (
@@ -316,16 +303,21 @@ export default function ContentProdutos() {
                   className="input"
                 />
               </label>
-              <label>
-                Foto:
-                <input
-                  type="text"
-                  name="foto"
-                  value={formData.foto}
-                  onChange={(e) => setFormData({ ...formData, foto: e.target.value })}
-                  className="input"
-                />
-              </label>
+              <div className="form-group">
+                <label>
+                  Foto:
+                </label>
+                <label className="custom-file-upload">
+                  <input
+                    type="file"
+                    name="foto"
+                    onChange={handleImageChange}
+                    className="file-input"
+                  />
+                  Selecione uma imagem
+                </label>
+              </div>
+              {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
               <label>
                 Observações:
                 <input

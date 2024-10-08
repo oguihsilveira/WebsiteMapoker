@@ -137,3 +137,36 @@
     border-radius: 5px;
     font-family: sans-serif;
   }
+  .image-preview {
+    max-width: 100%; /* A imagem não pode ultrapassar a largura da modal */
+    max-height: 400px; /* Defina uma altura máxima para a imagem */
+    object-fit: contain; /* Faz com que a imagem mantenha suas proporções */
+    display: block; /* Garante que a imagem seja exibida como um bloco */
+    margin: 0 auto; /* Centraliza a imagem horizontalmente */
+  }
+/* Oculta o input de arquivo padrão */
+.file-input {
+  display: none; /* Oculta o input de arquivo */
+}
+
+.form-group {
+  margin-bottom: 15px; /* Espaço abaixo do grupo do formulário */
+}
+
+.custom-file-upload {
+  display: inline-block; /* Permite o estilo do botão */
+  padding: 10px 15px; /* Adiciona espaço interno ao botão */
+  border: 1px solid #ccc; /* Borda leve */
+  border-radius: 4px; /* Cantos arredondados */
+  background-color: #f9f9f9; /* Cor de fundo leve */
+  color: #333; /* Cor do texto */
+  cursor: pointer; /* Muda o cursor para indicar que é clicável */
+  margin-top: 5px; /* Espaço acima do botão */
+  display: block; /* Faz o botão ocupar a largura total disponível */
+}
+
+/* Estiliza o botão ao passar o mouse */
+.custom-file-upload:hover {
+  border-color: #888; /* Muda a cor da borda ao passar o mouse */
+  background-color: #f1f1f1; /* Muda a cor de fundo ao passar o mouse */
+}
