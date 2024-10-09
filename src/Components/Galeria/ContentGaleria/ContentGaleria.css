@@ -5,26 +5,27 @@
     width: 90%;
     margin: 80px auto;
 }
-
+  
 .galeria {
     flex: 1 1 calc(33.333% - 20px); /* Ajusta a largura para 3 itens por linha com o espaçamento */
     box-sizing: border-box;
     position: relative;
 }
-
+  
 .galeria img {
     width: 100%;
+    height: auto; /* Mantém a proporção da imagem */
     border-radius: 10px;
     display: block;
 }
-
+  
 .caption {
     border-radius: 10px;
     position: absolute;
     top: 0;
     left: 0;
-    bottom: 0;
-    right: 0;
+    width: 100%; /* Ajusta para cobrir 100% da largura da imagem */
+    height: 100%; /* Ajusta para cobrir 100% da altura da imagem */
     background: rgba(50, 50, 50, 0.3);
     display: flex;
     align-items: center;
@@ -33,11 +34,75 @@
     color: #ffffff;
     cursor: pointer;
     opacity: 0;
-    padding-top: 70%;
     transition: 0.4s;
-    height: 350px; /* imagens 400x400 */
+    padding: 10px; /* Espaçamento interno para o caption */
+    text-align: center; /* Centraliza o texto */
 }
+  
+.caption h2 {
+    margin: 0;
+    padding: 5px 0; /* Espaçamento entre o título e o subtítulo */
+    font-size: 1.75rem; /* Ajuste o tamanho do título */
+    color: #ffffff;
+}
+  
+.caption p {
+    margin: 0;
+    padding: 0; /* Remove espaçamentos extras */
+    font-size: 1rem; /* Tamanho do subtítulo */
+}
+  
 .galeria:hover .caption {
     opacity: 1;
-    padding-top: 0;
+}
+  
+/* Estilo da Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Fundo escuro */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Para aparecer por cima de tudo */
+}
+  
+.modal-content {
+    background: #ffffff;
+    padding: 2px;
+    border-radius: 10px;
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+}
+  
+.modal-content img {
+    width: 100%;
+    height: auto; /* Mantém a proporção da imagem */
+    border-radius: 10px;
+}
+  
+.modal-title {
+    text-align: center; /* Centraliza o título */
+    font-size: 1.5rem; /* Ajuste o tamanho do título */
+    color: #ffffff; /* Cor do texto */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Sombra do texto */
+    margin-top: 10px; /* Espaçamento acima do título */
+}
+  
+/* Estilo do botão de fechar */
+.close-button {
+    position: absolute;
+    bottom: 375px;
+    left: 375px;
+    background: none;
+    border: none;
+    color: #ff5100; /* Cor laranja para o botão */
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 1001; /* Para aparecer por cima da imagem */
 }
