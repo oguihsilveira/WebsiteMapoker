@@ -155,7 +155,7 @@
 
 .password-toggle-input {
   border: none; /* Remove a borda padrão */
-  background: #232323; /* Fundo transparente */
+  background: transparent; /* Fundo transparente */
   cursor: pointer; /* Cursor pointer para interatividade */
   height: 40px;
   width: 40px;

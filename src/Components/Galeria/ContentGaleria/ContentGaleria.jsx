@@ -6,114 +6,81 @@ import ambiente_lazer from "../../../assets/ambiente-lazer.jpg";
 import escritorio from "../../../assets/escritorio.jpg";
 
 const ContentGaleria = () => {
+  const images = [
+    { src: sala_reunioes, title: "Ambiente 1" },
+    { src: ambiente_lazer, title: "Ambiente 2" },
+    { src: jardim, title: "Ambiente 3" },
+    { src: escritorio, title: "Ambiente 4" },
+    { src: escritorio, title: "Ambiente 4" },
+    { src: jardim, title: "Ambiente 3" },
+    // Adicione mais imagens aqui se necessário
+  ];
+
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState("");
-  const [selectedTitle, setSelectedTitle] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const openModal = (imageSrc, title) => {
-    setSelectedImage(imageSrc);
-    setSelectedTitle(title);
+  const openModal = (index) => {
+    setCurrentIndex(index);
     setModalOpen(true);
   };
 
   const closeModal = () => {
     setModalOpen(false);
-    setSelectedImage("");
-    setSelectedTitle("");
+  };
+
+  const nextImage = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    );
   };
 
   return (
     <div className="galerias">
       {modalOpen && (
         <div className="modal-overlay">
-          <div>
+          <div className="modal-wrapper">
             <div className="modal-content">
               <button className="close-button" onClick={closeModal}>
                 <b>X</b>
               </button>
-              <img src={selectedImage} alt="Imagem Expandida" />
+              <img
+                src={images[currentIndex].src}
+                alt={images[currentIndex].title}
+              />
             </div>
             <br />
-            <div className="modal-title">{selectedTitle}</div>
+            <div className="modal-title">{images[currentIndex].title}</div>
+            <button className="prev-button" onClick={prevImage}>
+              &#10094;
+            </ button>
+            <button className="next-button" onClick={nextImage}>
+              &#10095;
+            </button>
           </div>
         </div>
       )}
 
-      <div className="galeria" onClick={() => openModal(sala_reunioes, "Ambiente 1")}>
-        <img src={sala_reunioes} alt="" />
-        <div className="caption">
-          <h2>Ambiente 1</h2>
-          <p>Clique para ver!</p>
+      {images.map((image, index) => (
+        <div
+          key={index}
+          className="galeria"
+          onClick={() => openModal(index)}
+        >
+          <img src={image.src} alt={image.title} />
+          <div className="caption">
+            <h2>{image.title}</h2>
+            <p>Clique para ver!</p>
+          </div>
         </div>
-      </div>
-
-      <div className="galeria" onClick={() => openModal(ambiente_lazer, "Ambiente 2")}>
-        <img src={ambiente_lazer} alt="" />
-        <div className="caption">
-          <h2>Ambiente 2</h2>
-          <p>Clique para ver!</p>
-        </div>
-      </div>
-
-      <div className="galeria" onClick={() => openModal(jardim, "Ambiente 3")}>
-        <img src={jardim} alt="" />
-        <div className="caption">
-          <h2>Ambiente 3</h2>
-          <p>Clique para ver!</p>
-        </div>
-      </div>
-
-      <div className="galeria" onClick={() => openModal(sala_reunioes, "Ambiente 4")}>
-        <img src={sala_reunioes} alt="" />
-        <div className="caption">
-          <h2>Ambiente 4</h2>
-          <p>Clique para ver!</p>
-        </div>
-      </div>
-
-      <div className="galeria" onClick={() => openModal(ambiente_lazer, "Ambiente 5")}>
-        <img src={ambiente_lazer} alt="" />
-        <div className="caption">
-          <h2>Ambiente 5</h2>
-          <p>Clique para ver!</p>
-        </div>
-      </div>
-
-      <div className="galeria" onClick={() => openModal(jardim, "Ambiente 6")}>
-        <img src={jardim} alt="" />
-        <div className="caption">
-          <h2>Ambiente 6</h2>
-          <p>Clique para ver!</p>
-        </div>
-      </div>
-
-      <div className="galeria" onClick={() => openModal(sala_reunioes, "Ambiente 7")}>
-        <img src={sala_reunioes} alt="" />
-        <div className="caption">
-          <h2>Ambiente 7</h2>
-          <p>Clique para ver!</p>
-        </div>
-      </div>
-
-      <div className="galeria" onClick={() => openModal(ambiente_lazer, "Ambiente 8")}>
-        <img src={ambiente_lazer} alt="" />
-        <div className="caption">
-          <h2>Ambiente 8</h2>
-          <p>Clique para ver!</p>
-        </div>
-      </div>
-
-      <div className="galeria" onClick={() => openModal(jardim, "Ambiente 9")}>
-        <img src={jardim} alt="" />
-        <div className="caption">
-          <h2>Ambiente 9</h2>
-          <p>Clique para ver!</p>
-        </div>
-      </div>
+      ))}
     </div>
   );
 };
