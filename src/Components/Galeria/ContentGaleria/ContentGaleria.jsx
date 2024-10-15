@@ -11,9 +11,10 @@ const ContentGaleria = () => {
     { src: ambiente_lazer, title: "Ambiente 2" },
     { src: jardim, title: "Ambiente 3" },
     { src: escritorio, title: "Ambiente 4" },
-    { src: escritorio, title: "Ambiente 4" },
-    { src: jardim, title: "Ambiente 3" },
-    // Adicione mais imagens aqui se necessário
+    { src: escritorio, title: "Ambiente 5" },
+    { src: jardim, title: "Ambiente 6" },
+    { src: sala_reunioes, title: "Ambiente 7" },
+    { src: ambiente_lazer, title: "Ambiente 8" },
   ];
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -60,7 +61,7 @@ const ContentGaleria = () => {
             <div className="modal-title">{images[currentIndex].title}</div>
             <button className="prev-button" onClick={prevImage}>
               &#10094;
-            </ button>
+            </button>
             <button className="next-button" onClick={nextImage}>
               &#10095;
             </button>

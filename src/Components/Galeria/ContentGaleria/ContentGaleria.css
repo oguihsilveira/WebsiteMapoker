@@ -1,17 +1,13 @@
 .galerias {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas */
     gap: 20px;
     width: 90%;
     margin: 80px auto;
   }
   
   .galeria {
-    flex: 1 1 calc(33.333% - 20px);
-    box-sizing: border-box;
     position: relative;
-    max-width: 300px; /* Adicionei um tamanho máximo para as imagens */
-    margin: 10px; /* Adicionei um espaçamento entre as imagens */
   }
   
   .galeria img {
@@ -19,7 +15,6 @@
     height: auto;
     border-radius: 10px;
     display: block;
-    object-fit: cover; /* Adicionei para que as imagens sejam cortadas para caber no tamanho máximo */
   }
   
   .caption {
