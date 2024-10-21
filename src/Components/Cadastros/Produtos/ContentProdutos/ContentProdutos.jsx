@@ -59,8 +59,7 @@ export default function ContentProdutos() {
         codigo: '',
         item: '',
         tipo: '',
-        preco_atual: '',
-        preco_antigo: '',
+        preco_atual: '', preco_antigo: '',
         status: '',
         quantidade: '',
         foto: '',
@@ -344,7 +343,7 @@ export default function ContentProdutos() {
                 <button type="submit" className="button">
                   {modalType === 'edit' ? 'Atualizar' : 'Cadastrar'}
                 </button>
-                <button type="button" className="button" onClick={handleCloseModal}>
+                <button type="button" className="button " onClick={handleCloseModal}>
                   Cancelar
                 </button>
               </div>
@@ -354,4 +353,4 @@ export default function ContentProdutos() {
       )}
     </div>
   );
-}  
+}
