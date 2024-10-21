@@ -3,8 +3,11 @@ from database.db import db
 from models.produtos import Produtos
 import os
 from werkzeug.utils import secure_filename
+import hashlib
+import time
 
-UPLOAD_FOLDER = 'caminho/para/pasta/uploads'  # Defina o caminho para salvar as imagens
+# Definir o caminho para a pasta de uploads e extensões permitidas
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '../uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Função para verificar se a extensão do arquivo é permitida
@@ -36,8 +39,11 @@ def produtosController():
                 return jsonify({'error': 'Nenhum arquivo selecionado.'}), 400
 
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(UPLOAD_FOLDER, filename))
+                # Cria um nome único para o arquivo
+                file_extension = file.filename.rsplit('.', 1)[1].lower()
+                hashed_filename = hashlib.sha256(f"{file.filename}_{time.time()}".encode()).hexdigest()  # Gera um hash
+                new_filename = f"{hashed_filename}.{file_extension}"  # Novo nome com extensão
+                file.save(os.path.join(UPLOAD_FOLDER, new_filename))
             else:
                 return jsonify({'error': 'Tipo de arquivo não permitido.'}), 400
 
@@ -50,7 +56,7 @@ def produtosController():
                 preco_antigo=data.get('preco_antigo', None),
                 status=data['status'],
                 quantidade=data['quantidade'],
-                foto=filename,  # Salva o nome do arquivo
+                foto=new_filename,  # Salva o novo nome do arquivo
                 observacoes=data['observacoes'],
                 cod_estoque=data['cod_estoque'],
             )
@@ -86,9 +92,11 @@ def produtosController():
             if 'foto' in request.files:
                 file = request.files['foto']
                 if file.filename != '' and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    file.save(os.path.join(UPLOAD_FOLDER, filename))
-                    put_produto.foto = filename  # Atualiza o campo foto
+                    file_extension = file.filename.rsplit('.', 1)[1].lower()
+                    hashed_filename = hashlib.sha256(f"{file.filename}_{time.time()}".encode()).hexdigest()
+                    new_filename = f"{hashed_filename}.{file_extension}"
+                    file.save(os.path.join(UPLOAD_FOLDER, new_filename))
+                    put_produto.foto = new_filename  # Atualiza o campo foto
 
             # Atualiza os campos conforme os dados fornecidos
             put_produto.item = data.get('item', put_produto.item)
