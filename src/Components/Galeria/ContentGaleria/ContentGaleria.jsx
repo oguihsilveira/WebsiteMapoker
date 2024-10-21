@@ -6,6 +6,11 @@ import ambiente_lazer from "../../../assets/ambiente-lazer.jpg";
 import escritorio from "../../../assets/escritorio.jpg";
 
 const ContentGaleria = () => {
+  useEffect(() => {
+    // Faz scroll para o topo da página sempre que o componente é montado
+    window.scrollTo(0, 0);
+  }, []);
+  
   const images = [
     { src: sala_reunioes, title: "Ambiente 1" },
     { src: ambiente_lazer, title: "Ambiente 2" },
