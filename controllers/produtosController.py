@@ -66,12 +66,21 @@ def produtosController():
         except Exception as e:
             return jsonify({'error': f'Erro ao cadastrar produto. Erro: {str(e)}'}), 400
 
-    elif request.method == 'GET':
+    if request.method == 'GET':
         try:
             # Busca todos os produtos e converte em um dicionário
             data = Produtos.query.all()
-            produtos = {'produtos': [item.to_dict() for item in data]}
-            return jsonify(produtos), 200
+            produtos = []
+            
+            # Cria o caminho absoluto para as imagens
+            base_url = 'http://localhost:3000/uploads/'  # Ajuste para o URL do seu servidor
+
+            for item in data:
+                produto_dict = item.to_dict()
+                produto_dict['foto'] = base_url + produto_dict['foto']  # Inclui o caminho completo da imagem
+                produtos.append(produto_dict)
+
+            return jsonify({'produtos': produtos}), 200
         except Exception as e:
             return jsonify({'error': f'Não foi possível buscar os produtos. Erro: {str(e)}'}), 405
 
