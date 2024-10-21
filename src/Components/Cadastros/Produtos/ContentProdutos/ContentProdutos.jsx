@@ -92,6 +92,7 @@ export default function ContentProdutos() {
   };
 
   const postProduto = (data) => {
+    console.log([...data]); // Isso deve mostrar os dados que estão sendo enviados
     axios.post('http://localhost:3000/produtos', data, { headers: { 'Content-Type': 'multipart/form-data' } })
       .then(() => {
         fetchProdutos();
@@ -99,14 +100,10 @@ export default function ContentProdutos() {
         alert('Produto cadastrado com sucesso!');
       })
       .catch(error => {
-        if (error.response && error.response.status === 409) {
-          alert('Erro: O código do produto já existe. Por favor, escolha um código diferente.');
-        } else {
-          console.error('Erro ao cadastrar produto:', error.response ? error.response.data : error.message);
-          alert('Erro ao cadastrar produto.');
-        }
+        console.error('Erro ao cadastrar produto:', error.response ? error.response.data : error.message);
+        alert('Erro ao cadastrar produto.');
       });
-  };
+  };  
 
   const handleUpdate = () => {
     const formDataObj = new FormData();
@@ -166,11 +163,11 @@ export default function ContentProdutos() {
   if (loading) {
     return <div className="loading-container"><p>Carregando...</p></div>;
   }
-  
+
   return (
     <div className="content-container">
       <h2 className="title">Produtos</h2>
-
+  
       <div className="controls">
         <button className="button add-button" onClick={() => handleOpenModal('add')}>
           Adicionar Novo Produto
@@ -185,7 +182,7 @@ export default function ContentProdutos() {
           className="search-input"
         />
       </div>
-
+  
       <table className="table">
         <thead>
           <tr>
@@ -202,26 +199,28 @@ export default function ContentProdutos() {
           </tr>
         </thead>
         <tbody>
-        {filteredProdutos.map((item) => (
-          <tr key={item.codigo}>
-            <td>{item.codigo}</td>
-            <td>{item.item}</td>
-            <td>{item.tipo}</td>
-            <td>R${item.preco_atual ? item.preco_atual.toFixed(2) : 'N/A'}</td>
-            <td>R${item.preco_antigo ? item.preco_antigo.toFixed(2) : 'N/A'}</td>
-            <td>{item.status}</td>
-            <td>{item.quantidade}</td>
-            <td><img src={item.foto} alt={item.item} className="foto-produto" /></td>
-            <td>{item.observacoes}</td>
-            <td className="actions">
-              <button className="button" onClick={() => handleOpenModal('edit', item)}>Editar</button>
-              <button className="button" onClick={() => handleDelete(item.codigo)}>Excluir</button>
-            </td>
-          </tr>
-        ))}
+          {filteredProdutos.map((item) => (
+            <tr key={item.codigo}>
+              <td>{item.codigo}</td>
+              <td>{item.item}</td>
+              <td>{item.tipo}</td>
+              <td>R${item.preco_atual ? item.preco_atual.toFixed(2) : 'N/A'}</td>
+              <td>R${item.preco_antigo ? item.preco_antigo.toFixed(2) : 'N/A'}</td>
+              <td>{item.status}</td>
+              <td>{item.quantidade}</td>
+              <td>
+                <img src={item.foto} alt={item.item} className="foto-produto" />
+              </td>
+              <td>{item.observacoes}</td>
+              <td className="actions">
+                <button className="button" onClick={() => handleOpenModal('edit', item)}>Editar</button>
+                <button className="button" onClick={() => handleDelete(item.codigo)}>Excluir</button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
-
+  
       {modalVisible && (
         <div className="modal-container">
           <div className="modal">
@@ -286,7 +285,7 @@ export default function ContentProdutos() {
                   name="status"
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="input"  // Adiciona a classe 'input' para estilização
+                  className="input"
                 >
                   <option value="">Selecione um status</option>
                   <option value="Disponível">Disponível</option>
@@ -304,9 +303,7 @@ export default function ContentProdutos() {
                 />
               </label>
               <div className="form-group">
-                <label>
-                  Foto:
-                </label>
+                <label>Foto:</label>
                 <label className="custom-file-upload">
                   <input
                     type="file"
@@ -352,4 +349,4 @@ export default function ContentProdutos() {
       )}
     </div>
   );
-}
+}  
