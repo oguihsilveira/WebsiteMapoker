@@ -170,3 +170,7 @@
   border-color: #888; /* Muda a cor da borda ao passar o mouse */
   background-color: #f1f1f1; /* Muda a cor de fundo ao passar o mouse */
 }
+.foto-produto {
+  max-width: 100px; /* Ajuste conforme necessário */
+  max-height: auto; /* Mantém a proporção da imagem */
+}

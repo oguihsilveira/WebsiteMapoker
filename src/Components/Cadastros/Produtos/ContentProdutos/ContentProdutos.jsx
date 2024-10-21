@@ -38,6 +38,7 @@ export default function ContentProdutos() {
       .then(response => {
         if (Array.isArray(response.data.produtos)) {
           setProdutos(response.data.produtos);
+          console.log(response.data.produtos); // Adicione isso para inspecionar o conteúdo
         } else {
           console.error('Formato inesperado da resposta da API:', response.data);
         }
@@ -209,7 +210,11 @@ export default function ContentProdutos() {
               <td>{item.status}</td>
               <td>{item.quantidade}</td>
               <td>
-                <img src={item.foto} alt={item.item} className="foto-produto" />
+                {item.foto ? (
+                  <img src={item.foto} alt={item.item} className="foto-produto" />
+                ) : (
+                  <span>Nenhuma foto disponível</span>
+                )}
               </td>
               <td>{item.observacoes}</td>
               <td className="actions">
