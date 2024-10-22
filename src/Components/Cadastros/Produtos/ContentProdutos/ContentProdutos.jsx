@@ -201,8 +201,8 @@ export default function ContentProdutos() {
             <th>Código</th>
             <th>Item</th>
             <th>Tipo</th>
-            <th>Preço Atual</th>
-            <th>Preço Antigo</th>
+            <th>Preço Atual/Unidade (R$)</th>
+            <th>Preço Antigo/Unidade (R$)</th>
             <th>Status</th>
             <th>Quantidade</th>
             <th>Foto</th>
@@ -222,7 +222,13 @@ export default function ContentProdutos() {
               <td>{item.quantidade}</td>
               <td>
                 {item.foto ? (
-                  <img src={item.foto} alt={item.item} className="foto-produto" />
+                  <img
+                    src={item.foto}
+                    alt={item.item}
+                    className="foto-produto"
+                    onClick={() => window.open(item.foto, '_blank')}
+                    style={{ cursor: 'pointer' }} // Para mostrar que é clicável
+                  />
                 ) : (
                   <span>Nenhuma foto disponível</span>
                 )}
@@ -274,10 +280,11 @@ export default function ContentProdutos() {
                 />
               </label>
               <label>
-                Preço Atual:
+                Preço Atual/Unidade:
                 <input
                   type="number"
                   name="preco_atual"
+                  placeholder="R$"
                   value={formData.preco_atual}
                   onChange={(e) => setFormData({ ...formData, preco_atual: parseFloat(e.target.value) })}
                   className="input"
@@ -285,10 +292,11 @@ export default function ContentProdutos() {
                 />
               </label>
               <label>
-                Preço Antigo:
+                Preço Antigo/Unidade:
                 <input
                   type="number"
                   name="preco_antigo"
+                  placeholder="R$"
                   value={formData.preco_antigo}
                   onChange={(e) => setFormData({ ...formData, preco_antigo: parseFloat(e.target.value) })}
                   className="input"
@@ -330,7 +338,9 @@ export default function ContentProdutos() {
                   Selecione uma imagem
                 </label>
               </div>
-              {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+              {imagePreview && (
+                <img src={imagePreview} alt="Preview" className="modal-image" />
+              )}
               <label>
                 Observações:
                 <input
