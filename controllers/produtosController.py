@@ -2,6 +2,7 @@ from flask import request, jsonify
 from database.db import db
 from models.produtos import Produtos
 from models.estoque import Estoque  # Importe o modelo de Estoque
+
 import os
 from werkzeug.utils import secure_filename
 import hashlib
@@ -14,6 +15,10 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 # Função para verificar se a extensão do arquivo é permitida
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Verifica se o diretório de upload existe
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 def produtosController():
     if request.method == 'POST':
@@ -30,17 +35,6 @@ def produtosController():
             existing_item = Produtos.query.get(data['codigo'])
             if existing_item:
                 return jsonify({'error': 'Código já existe'}), 409  # Código duplicado
-            
-            # Adicione a verificação da quantidade do estoque
-            cod_estoque = data['cod_estoque']
-            estoque_item = Estoque.query.get(cod_estoque)
-
-            if not estoque_item:
-                return jsonify({'error': 'Código de estoque inválido.'}), 400
-
-            # Verifique se a quantidade do produto não excede a quantidade do estoque
-            if int(data['quantidade']) > estoque_item.quantidade:
-                return jsonify({'error': 'A quantidade do produto não pode exceder a quantidade em estoque.'}), 400
 
             # Tratamento para o arquivo de foto
             if 'foto' not in request.files:
@@ -78,7 +72,7 @@ def produtosController():
         except Exception as e:
             return jsonify({'error': f'Erro ao cadastrar produto. Erro: {str(e)}'}), 400
 
-    if request.method == 'GET':
+    elif request.method == 'GET':
         try:
             # Busca todos os produtos e converte em um dicionário
             data = Produtos.query.all()
@@ -86,17 +80,6 @@ def produtosController():
             
             # Cria o caminho absoluto para as imagens
             base_url = 'http://localhost:3000/uploads/'  # Ajuste para o URL do seu servidor
-
-            # No método GET, ao buscar produtos
-            for item in data:
-                produto_dict = item.to_dict()
-                produto_dict['foto'] = base_url + produto_dict['foto']
-                
-                # Adiciona a quantidade disponível do estoque
-                estoque_item = Estoque.query.get(produto_dict['cod_estoque'])
-                produto_dict['quantidade_disponivel'] = estoque_item.quantidade if estoque_item else 0
-                
-                produtos.append(produto_dict)
 
             for item in data:
                 produto_dict = item.to_dict()
