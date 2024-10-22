@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from database.db import db
 from models.estoque import Estoque  # Ajuste o import para o seu modelo de Estoque
+from models.produtos import Produtos  # Importa o modelo de Produtos para fazer a verificação
 
 def estoqueController():
     if request.method == 'POST':
@@ -81,6 +82,11 @@ def estoqueController():
 
             if delete_item is None:
                 return jsonify({'error': 'Item do estoque não encontrado.'}), 404
+
+            # Verifica se existem produtos relacionados ao estoque
+            related_products = Produtos.query.filter_by(cod_estoque=codigo).first()
+            if related_products:
+                return jsonify({'error': 'Não é possível excluir este item do estoque, pois ele está cadastrado como produto na loja.'}), 400
 
             # Remove o item do banco de dados
             db.session.delete(delete_item)
