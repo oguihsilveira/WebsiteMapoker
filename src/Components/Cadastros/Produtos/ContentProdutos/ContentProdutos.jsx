@@ -17,9 +17,10 @@ export default function ContentProdutos() {
     quantidade: '',
     foto: '',
     observacoes: '',
-    cod_estoque: '',
+    cod_estoque: '', // Esse será substituído por um select mais tarde
   });
 
+  const [estoque, setEstoque] = useState([]); // Estado para armazenar os estoque
   const [searchQuery, setSearchQuery] = useState('');
   const [imagePreview, setImagePreview] = useState('');
 
@@ -31,14 +32,15 @@ export default function ContentProdutos() {
 
   useEffect(() => {
     fetchProdutos();
+    fetchEstoque(); // Chama a função para buscar os estoque
   }, []);
 
+  // Função para buscar produtos
   const fetchProdutos = () => {
     axios.get('http://localhost:3000/produtos')
       .then(response => {
         if (Array.isArray(response.data.produtos)) {
           setProdutos(response.data.produtos);
-          console.log(response.data.produtos); // Adicione isso para inspecionar o conteúdo
         } else {
           console.error('Formato inesperado da resposta da API:', response.data);
         }
@@ -48,6 +50,21 @@ export default function ContentProdutos() {
         console.error('Erro ao carregar produtos:', error);
         setLoading(false);
       });
+  };
+
+  // Função para buscar os estoque disponíveis
+  const fetchEstoque = () => {
+    axios.get('http://localhost:3000/estoque')
+        .then(response => {
+            if (Array.isArray(response.data.estoque)) {
+                setEstoque(response.data.estoque);
+            } else {
+                console.error('Formato inesperado da resposta da API:', response.data);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar estoque:', error);
+        });
   };
 
   const handleOpenModal = (type, item = null) => {
@@ -92,7 +109,6 @@ export default function ContentProdutos() {
   };
 
   const postProduto = (data) => {
-    console.log([...data]); // Isso deve mostrar os dados que estão sendo enviados
     axios.post('http://localhost:3000/produtos', data, { headers: { 'Content-Type': 'multipart/form-data' } })
       .then(() => {
         fetchProdutos();
@@ -159,10 +175,6 @@ export default function ContentProdutos() {
       handleUpdate();
     }
   };
-
-  if (loading) {
-    return <div className="loading-container"><p>Carregando...</p></div>;
-  }
 
   return (
     <div className="content-container">
@@ -329,16 +341,24 @@ export default function ContentProdutos() {
                   className="input"
                 />
               </label>
+              <div>
               <label>
-                Código do Estoque:
-                <input
-                  type="number"
-                  name="cod_estoque"
+                Item do Estoque:
+                <select
                   value={formData.cod_estoque}
-                  onChange={(e) => setFormData({ ...formData, cod_estoque: parseInt(e.target.value, 10) })}
+                  onChange={(e) => setFormData({ ...formData, cod_estoque: e.target.value })}
+                  required
                   className="input"
-                />
+                >
+                  <option value="">Selecione um item estoque</option>
+                  {estoque.map((estoque) => (
+                    <option key={estoque.codigo} value={estoque.codigo}>
+                      {estoque.item} {/* Substitua 'nome' pelo atributo que representa o nome do estoque */}
+                    </option>
+                  ))}
+                </select>
               </label>
+              </div>
               <div className="form-buttons">
                 <button type="submit" className="button">
                   {modalType === 'edit' ? 'Atualizar' : 'Cadastrar'}

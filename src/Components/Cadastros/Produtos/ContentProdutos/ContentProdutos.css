@@ -140,7 +140,7 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     font-family: sans-serif;
-  }
+  }input
   .image-preview {
     max-width: 100%; /* A imagem não pode ultrapassar a largura da modal */
     max-height: 400px; /* Defina uma altura máxima para a imagem */
