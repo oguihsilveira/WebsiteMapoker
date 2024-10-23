@@ -1,0 +1,130 @@
+.content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 100px;
+  }
+  
+  .title {
+    text-align: center;
+    color: #ff5100;
+    font-size: 24px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  
+  .button {
+    background-color: #232323;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    text-align: center;
+    font-family: sans-serif;
+    width: auto; /* Ajusta a largura do botão */
+  }
+  
+  .button:hover {
+    background-color: #ff5100;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .table th, .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .table th {
+    background-color: #f4f4f4;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .modal-container {
+    position: fixed;
+    top: 30%; /* Ajusta a posição vertical da modal */
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinha a modal no topo da área de visualização */
+  }
+  
+  .modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    top: 30px;
+    height: 500px;
+    width: 500px; /* Ajusta a largura da modal */
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .modal-title {
+    text-align: center;
+    color: #ff5100;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: sans-serif;
+  }
+  
+  .form-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .search-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: sans-serif;
+    width: 600px; /* Faz a caixa de pesquisa ocupar toda a largura disponível */
+  }
+  
+  .button.add-button {
+    width: auto; /* Garante que o botão de adicionar não ocupe a mesma largura que a pesquisa */
+  }

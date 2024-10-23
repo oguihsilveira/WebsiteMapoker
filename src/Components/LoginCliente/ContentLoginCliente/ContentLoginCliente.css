@@ -80,7 +80,10 @@ label {
     font-size: 14px;
     outline: none;
     transition: border-color 0.3s, background-color 0.3s;
+    flex: 1; /* Faz o input ocupar todo o espaço disponível */
+    margin-right: 10px; /* Espaço entre o input e o botão */
 }
+
 
 .form-input:focus {
     border-color: #ff5100;
