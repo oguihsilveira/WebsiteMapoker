@@ -5,13 +5,22 @@ import "./ContentLoginCliente.css";
 
 const ContentLoginCliente = () => {
   const [activeTab, setActiveTab] = useState("login");
-  const [loginData, setLoginData] = useState({ login: "", password: "" });
-  const [cadastroData, setCadastroData] = useState({ nome: "", empresa: "", login: "", password: "" });
+  const [loginData, setLoginData] = useState({ login: "", senha: "" });
+  const [cadastroData, setCadastroData] = useState({
+    nome: "",
+    empresa: "",
+    telefone: "",
+    email: "",
+    login: "",
+    senha: "",
+  });
+  const [result, setResult] = useState(""); // Para exibir resultados de login/cadastro
   const navigate = useNavigate();
 
   // Função para alternar entre as abas
   const handleTabClick = (tab) => {
     setActiveTab(tab);
+    setResult(""); // Limpar mensagem ao mudar de aba
   };
 
   // Função para manipular as mudanças nos campos de input
@@ -27,17 +36,21 @@ const ContentLoginCliente = () => {
   // Função para fazer login
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
+    setResult("Logando...."); // Mensagem de loading
+
     try {
-      const response = await axios.post("/login_clientes", loginData);
+      const response = await axios.post("http://localhost:3000/login-clientes", loginData);
       const { token } = response.data;
 
-      // Armazenar o token no localStorage
       localStorage.setItem("token", token);
-
-      // Redirecionar para a página de produtos_loja
-      navigate("/produtos_loja");
+      setResult("Login bem-sucedido"); // Mensagem de sucesso
+      navigate("/produtos-loja");
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
+      if (error.response) {
+        setResult(error.response.data.error || "Erro no login");
+      } else {
+        setResult("Erro ao conectar ao servidor");
+      }
     }
   };
 
@@ -45,39 +58,44 @@ const ContentLoginCliente = () => {
   const handleCadastroSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Primeiro, faça o cadastro do cliente
-      const cadastroResponse = await axios.post("/clientes", cadastroData);
-      console.log("Cadastro realizado:", cadastroResponse.data);
+      const cadastroResponse = await axios.post("http://localhost:3000/clientes", cadastroData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-      // Em seguida, faça login automaticamente para obter o token
-      const loginResponse = await axios.post("/login_clientes", {
+      alert('Cadastro efetuado com sucesso!');
+
+      // Login automático após cadastro
+      const loginResponse = await axios.post("http://localhost:3000/login-clientes", {
         login: cadastroData.login,
-        password: cadastroData.password,
+        senha: cadastroData.senha,
       });
 
       const { token } = loginResponse.data;
-
-      // Armazenar o token no localStorage
       localStorage.setItem("token", token);
-
-      // Redirecionar para a página de produtos_loja
-      navigate("/produtos_loja");
+      navigate("/produtos-loja");
     } catch (error) {
-      console.error("Erro ao fazer cadastro:", error);
+      if (error.response && error.response.status === 409) {
+        alert('Erro: O login já está em uso. Por favor, escolha outro.');
+      } else {
+        console.error("Erro ao fazer cadastro:", error.response ? error.response.data : error.message);
+        alert('Erro ao efetuar cadastro.');
+      }
     }
   };
 
   return (
     <div className="content-login-cliente">
       <div className="tabs">
-        <button 
-          className={`tab ${activeTab === "login" ? "active" : ""}`} 
+        <button
+          className={`tab ${activeTab === "login" ? "active" : ""}`}
           onClick={() => handleTabClick("login")}
         >
           Login
         </button>
-        <button 
-          className={`tab ${activeTab === "cadastro" ? "active" : ""}`} 
+        <button
+          className={`tab ${activeTab === "cadastro" ? "active" : ""}`}
           onClick={() => handleTabClick("cadastro")}
         >
           Cadastro
@@ -104,14 +122,17 @@ const ContentLoginCliente = () => {
                 <label>Senha:</label>
                 <input
                   type="password"
-                  name="password"
+                  name="senha"
                   className="form-input"
-                  value={loginData.password}
+                  value={loginData.senha}
                   onChange={handleInputChange}
                   required
                 />
               </div>
-              <button type="submit" className="form-button">Entrar</button>
+              <button type="submit" className="form-button">
+                Entrar
+              </button>
+              <span className="result-message">{result}</span> {/* Exibe mensagem de resultado */}
             </form>
           </div>
         )}
@@ -132,13 +153,35 @@ const ContentLoginCliente = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Empresa (Opcional):</label>
+                <label>Empresa:</label>
                 <input
                   type="text"
                   name="empresa"
                   className="form-input"
                   value={cadastroData.empresa}
                   onChange={handleInputChange}
+                />
+              </div>
+              <div className="form-group">
+                <label>Telefone:</label>
+                <input
+                  type="text"
+                  name="telefone"
+                  className="form-input"
+                  value={cadastroData.telefone}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  className="form-input"
+                  value={cadastroData.email}
+                  onChange={handleInputChange}
+                  required
                 />
               </div>
               <div className="form-group">
@@ -156,14 +199,16 @@ const ContentLoginCliente = () => {
                 <label>Senha:</label>
                 <input
                   type="password"
-                  name="password"
+                  name="senha"
                   className="form-input"
-                  value={cadastroData.password}
+                  value={cadastroData.senha}
                   onChange={handleInputChange}
                   required
                 />
               </div>
-              <button type="submit" className="form-button">Cadastrar</button>
+              <button type="submit" className="form-button">
+                Cadastrar
+              </button>
             </form>
           </div>
         )}

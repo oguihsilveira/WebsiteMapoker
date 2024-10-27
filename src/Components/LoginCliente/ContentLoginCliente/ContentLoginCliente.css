@@ -55,7 +55,7 @@ h2 {
 form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 2px;
 }
 
 /* Container dos grupos de campos */
@@ -108,4 +108,9 @@ label {
 
 .form-button:active {
     transform: scale(0.98);
+}
+.result-message {
+    margin-top: 10px; /* Ajuste a quantidade de pixels conforme necessário */
+    display: inline-block; /* Para garantir que o espaçamento seja aplicado */
+    text-align: center;
 }

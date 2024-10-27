@@ -23,6 +23,10 @@ export default function ContentFuncionarios() {
     fetchFuncionarios();
   }, []);
 
+  const formatNumber = (value) => {
+    return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+  };
+  
   const fetchFuncionarios = () => {
     axios.get('http://localhost:3000/funcionarios')
       .then(response => {
@@ -160,8 +164,6 @@ export default function ContentFuncionarios() {
     }
   };
   
-    
-
   const filteredFuncionarios = Array.isArray(funcionarios) ? funcionarios.filter(funcionario =>
     funcionario.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
     funcionario.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -218,7 +220,7 @@ export default function ContentFuncionarios() {
               <td>{funcionario.email}</td>
               <td>{new Date(funcionario.datanasc).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
               <td>{funcionario.cargo}</td>
-              <td>{funcionario.salario}</td>
+              <td>{formatNumber(funcionario.salario)}</td> {/* Aplicado formatNumber aqui */}
               <td>{funcionario.endereco}</td>
               <td>{funcionario.carga_horaria}</td>
               <td className="actions">
@@ -299,7 +301,6 @@ export default function ContentFuncionarios() {
                   name="salario"
                   value={formData.salario}
                   onChange={(e) => setFormData({ ...formData, salario: e.target.value })}
-                  onWheel={(e) => e.target.blur()}
                   className="input"
                 />
               </label>
@@ -323,11 +324,11 @@ export default function ContentFuncionarios() {
                   className="input"
                 />
               </label>
-              <div className="form-buttons">
-                <button type="submit" className="button">
-                  {modalType === 'edit' ? 'Atualizar' : 'Cadastrar'}
+              <div className="modal-actions">
+                <button type="submit" className="button submit-button">
+                  {modalType === 'edit' ? 'Salvar Alterações' : 'Cadastrar'}
                 </button>
-                <button type="button" className="button" onClick={handleCloseModal}>
+                <button type="button" className="button cancel-button" onClick={handleCloseModal}>
                   Cancelar
                 </button>
               </div>
