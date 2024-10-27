@@ -25,7 +25,7 @@ class Produtos(db.Model):
     status          = db.Column(db.String(50), nullable=False)
     quantidade      = db.Column(db.Integer, nullable=False)
     foto            = db.Column(db.String(255), nullable=False)
-    observacoes     = db.Column(db.String(50), nullable=False)
+    observacoes     = db.Column(db.String(255), nullable=False)
     cod_estoque     = db.Column(db.Integer, db.ForeignKey('estoque.codigo'), nullable=False)
 
     # Construtor
