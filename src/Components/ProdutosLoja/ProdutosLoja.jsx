@@ -12,9 +12,8 @@ const ProdutosLoja = () => {
   return (
     <div>
       <NavbarProdutosLoja/>
-      <br /><br /><br />
-      <div className='container'>
       <ContentProdutosLoja/>
+      <div className='container'>
       <RodapeProdutosLoja/>
       </div>
     </div>

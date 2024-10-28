@@ -11,8 +11,8 @@ export default function ContentProdutos() {
     codigo: '',
     item: '',
     tipo: '',
-    preco_atual: '',
-    preco_antigo: '',
+    preco_padrao: '',
+    preco_descontado: '',
     status: '',
     quantidade: '',
     foto: '',
@@ -76,7 +76,7 @@ export default function ContentProdutos() {
         codigo: '',
         item: '',
         tipo: '',
-        preco_atual: '', preco_antigo: '',
+        preco_padrao: '', preco_descontado: '',
         status: '',
         quantidade: '',
         foto: '',
@@ -161,7 +161,7 @@ export default function ContentProdutos() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const requiredFields = ['codigo', 'item', 'tipo', 'preco_atual', 'status', 'quantidade', 'cod_estoque'];
+    const requiredFields = ['codigo', 'item', 'tipo', 'preco_padrao', 'status', 'quantidade', 'cod_estoque'];
     const emptyFields = requiredFields.filter(field => !formData[field]);
 
     if (emptyFields.length > 0) {
@@ -201,8 +201,8 @@ export default function ContentProdutos() {
             <th>Código</th>
             <th>Item</th>
             <th>Tipo</th>
-            <th>Preço Atual/Unidade (R$)</th>
-            <th>Preço Antigo/Unidade (R$)</th>
+            <th>Preço Padrão/Unidade (R$)</th>
+            <th>Preço com Desconto/Unidade (R$)</th>
             <th>Status</th>
             <th>Quantidade</th>
             <th>Foto</th>
@@ -216,8 +216,8 @@ export default function ContentProdutos() {
               <td>{item.codigo}</td>
               <td>{item.item}</td>
               <td>{item.tipo}</td>
-              <td>R${item.preco_atual ? item.preco_atual.toFixed(2) : 'N/A'}</td>
-              <td>R${item.preco_antigo ? item.preco_antigo.toFixed(2) : 'N/A'}</td>
+              <td>R${item.preco_padrao ? item.preco_padrao.toFixed(2) : 'N/A'}</td>
+              <td>R${item.preco_descontado ? item.preco_descontado.toFixed(2) : 'N/A'}</td>
               <td>{item.status}</td>
               <td>{item.quantidade}</td>
               <td>
@@ -280,27 +280,27 @@ export default function ContentProdutos() {
                 />
               </label>
               <label>
-                Preço Atual/Unidade:
+                Preço Padrão/Unidade:
                 <input
                   type="number"
-                  name="preco_atual"
+                  name="preco_padrao"
                   placeholder="R$"
-                  value={formData.preco_atual}
-                  onChange={(e) => setFormData({ ...formData, preco_atual: parseFloat(e.target.value) })}
+                  value={formData.preco_padrao}
+                  onChange={(e) => setFormData({ ...formData, preco_padrao: parseFloat(e.target.value) })}
+                  onWheel={(e) => e.target.blur()}
                   className="input"
                   step="0.01"
                 />
               </label>
               <label>
-                Preço Antigo/Unidade:
+                Desconto:
                 <input
                   type="number"
-                  name="preco_antigo"
-                  placeholder="R$"
-                  value={formData.preco_antigo}
-                  onChange={(e) => setFormData({ ...formData, preco_antigo: parseFloat(e.target.value) })}
-                  className="input"
+                  value={formData.desconto}  // Mudança aqui
+                  onChange={(e) => setFormData({ ...formData, desconto: e.target.value })}
+                  onWheel={(e) => e.target.blur()}
                   step="0.01"
+                  className="input"
                 />
               </label>
               <label>
