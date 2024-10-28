@@ -12,7 +12,7 @@ export default function ContentProdutos() {
     item: '',
     tipo: '',
     preco_padrao: '',
-    preco_descontado: '',
+    desconto: '',
     status: '',
     quantidade: '',
     foto: '',
@@ -76,7 +76,7 @@ export default function ContentProdutos() {
         codigo: '',
         item: '',
         tipo: '',
-        preco_padrao: '', preco_descontado: '',
+        preco_padrao: '', desconto: '',
         status: '',
         quantidade: '',
         foto: '',
@@ -201,8 +201,8 @@ export default function ContentProdutos() {
             <th>Código</th>
             <th>Item</th>
             <th>Tipo</th>
-            <th>Preço Padrão/Unidade (R$)</th>
-            <th>Preço com Desconto/Unidade (R$)</th>
+            <th className="preco-padrao">Preço Padrão/Unidade (R$)</th>
+            <th className="desconto">Desconto (%)</th>
             <th>Status</th>
             <th>Quantidade</th>
             <th>Foto</th>
@@ -216,8 +216,12 @@ export default function ContentProdutos() {
               <td>{item.codigo}</td>
               <td>{item.item}</td>
               <td>{item.tipo}</td>
-              <td>R${item.preco_padrao ? item.preco_padrao.toFixed(2) : 'N/A'}</td>
-              <td>R${item.preco_descontado ? item.preco_descontado.toFixed(2) : 'N/A'}</td>
+              <td>
+                R${item.preco_padrao ? item.preco_padrao.toFixed(2) : 'N/A'}: Original
+                <br />
+                R${item.preco_padrao && item.desconto ? (item.preco_padrao * (1 - (parseFloat(item.desconto) / 100))).toFixed(2) : 'N/A'}: Descontado
+              </td>
+              <td>{(parseFloat(item.desconto) || 0)}%</td>
               <td>{item.status}</td>
               <td>{item.quantidade}</td>
               <td>

@@ -187,3 +187,9 @@
   display: block; /* Para centralizar */
   margin: 0 auto; /* Para centralizar */
 }
+.preco-padrao {
+  width: 240px; /* Ajuste para o valor que você achar adequado */
+}
+.desconto {
+  width: 120px; /* Ajuste para o valor que você achar adequado */
+}
