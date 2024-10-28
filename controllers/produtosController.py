@@ -20,13 +20,30 @@ def allowed_file(filename):
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
+# Função para limpar arquivos órfãos na pasta uploads
+def clean_orphan_files():
+    try:
+        # Lista de arquivos de foto atualmente no banco de dados
+        db_files = {produto.foto for produto in Produtos.query.with_entities(Produtos.foto).all()}
+        
+        # Verifica os arquivos na pasta de uploads
+        for filename in os.listdir(UPLOAD_FOLDER):
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            
+            # Remove o arquivo se não estiver na lista de fotos do banco de dados
+            if filename not in db_files and os.path.isfile(file_path):
+                os.remove(file_path)
+                print(f"Arquivo órfão removido: {filename}")
+    except Exception as e:
+        print(f"Erro ao limpar arquivos órfãos: {str(e)}")
+
 def produtosController():
     if request.method == 'POST':
         try:
             data = request.form
 
             # Verifica se todos os campos obrigatórios estão preenchidos
-            required_fields = ['codigo', 'item', 'tipo', 'preco_atual', 'status', 'quantidade', 'observacoes', 'cod_estoque']
+            required_fields = ['codigo', 'item', 'tipo', 'preco_padrao', 'status', 'quantidade', 'observacoes', 'cod_estoque']
             for field in required_fields:
                 if not data.get(field):
                     return jsonify({'error': f'{field.capitalize()} é obrigatória.'}), 400
@@ -58,8 +75,8 @@ def produtosController():
                 codigo=data['codigo'],
                 item=data['item'],
                 tipo=data['tipo'],
-                preco_atual=data['preco_atual'],
-                preco_antigo=data.get('preco_antigo', None),
+                preco_padrao=data['preco_padrao'],  # Alterado
+                desconto=int(data.get('desconto', 0)),  # Ajuste para tratar 0 como default
                 status=data['status'],
                 quantidade=data['quantidade'],
                 foto=new_filename,  # Salva o novo nome do arquivo
@@ -68,6 +85,10 @@ def produtosController():
             )
             db.session.add(produto_item)
             db.session.commit()
+
+            # Limpa arquivos órfãos após a inserção
+            clean_orphan_files()
+
             return jsonify({'message': 'Produto inserido com sucesso'}), 200
         except Exception as e:
             return jsonify({'error': f'Erro ao cadastrar produto. Erro: {str(e)}'}), 400
@@ -83,6 +104,10 @@ def produtosController():
 
             for item in data:
                 produto_dict = item.to_dict()
+                
+                # Adiciona a lógica de exibição "Sem desconto" caso desconto seja 0 ou None
+                produto_dict['desconto'] = "Sem desconto" if produto_dict['desconto'] in (0, None) else f"{produto_dict['desconto']}%"
+                
                 produto_dict['foto'] = base_url + produto_dict['foto']  # Inclui o caminho completo da imagem
                 produtos.append(produto_dict)
 
@@ -113,17 +138,21 @@ def produtosController():
                     file.save(os.path.join(UPLOAD_FOLDER, new_filename))
                     put_produto.foto = new_filename  # Atualiza o campo foto
 
-            # Atualiza os campos conforme os dados fornecidos
+            # Atualiza os campos conforme os dados fornecidos, considerando valores 0 e None
             put_produto.item = data.get('item', put_produto.item)
             put_produto.tipo = data.get('tipo', put_produto.tipo)
-            put_produto.preco_atual = data.get('preco_atual', put_produto.preco_atual)
-            put_produto.preco_antigo = data.get('preco_antigo', put_produto.preco_antigo)
+            put_produto.preco_padrao = float(data.get('preco_padrao', put_produto.preco_padrao)) if data.get('preco_padrao') not in (None, '') else put_produto.preco_padrao
+            put_produto.desconto = int(data.get('desconto', put_produto.desconto)) if data.get('desconto') is not None else put_produto.desconto
             put_produto.status = data.get('status', put_produto.status)
-            put_produto.quantidade = data.get('quantidade', put_produto.quantidade)
+            put_produto.quantidade = int(data.get('quantidade', put_produto.quantidade)) if data.get('quantidade') not in (None, '') else put_produto.quantidade
             put_produto.observacoes = data.get('observacoes', put_produto.observacoes)
-            put_produto.cod_estoque = data.get('cod_estoque', put_produto.cod_estoque)
+            put_produto.cod_estoque = int(data.get('cod_estoque', put_produto.cod_estoque)) if data.get('cod_estoque') not in (None, '') else put_produto.cod_estoque
 
             db.session.commit()
+
+            # Limpa arquivos órfãos após a atualização
+            clean_orphan_files()
+
             return jsonify({'message': 'Produto alterado com sucesso'}), 200
         except Exception as e:
             return jsonify({'error': f'Erro ao atualizar produto. Erro: {str(e)}'}), 400
@@ -140,6 +169,10 @@ def produtosController():
             # Remove o produto do banco de dados
             db.session.delete(delete_item)
             db.session.commit()
+
+            # Limpa arquivos órfãos após a exclusão
+            clean_orphan_files()
+
             return jsonify({'message': 'Produto deletado com sucesso'}), 200
         except Exception as e:
             return jsonify({'error': f'Erro ao deletar produto. Erro: {str(e)}'}), 400
