@@ -69,6 +69,7 @@ export default function ContentProdutos() {
 
   const handleOpenModal = (type, item = null) => {
     if (type === 'edit' && item) {
+      console.log(item)
       setFormData({ ...item });
       setImagePreview(item.foto || '');
     } else {
@@ -76,7 +77,8 @@ export default function ContentProdutos() {
         codigo: '',
         item: '',
         tipo: '',
-        preco_padrao: '', desconto: '',
+        preco_padrao: '',
+        desconto: '',
         status: '',
         quantidade: '',
         foto: '',
@@ -293,17 +295,15 @@ export default function ContentProdutos() {
                   onChange={(e) => setFormData({ ...formData, preco_padrao: parseFloat(e.target.value) })}
                   onWheel={(e) => e.target.blur()}
                   className="input"
-                  step="0.01"
                 />
               </label>
               <label>
-                Desconto:
+                Desconto (%):
                 <input
                   type="number"
-                  value={formData.desconto}  // Mudança aqui
-                  onChange={(e) => setFormData({ ...formData, desconto: e.target.value })}
-                  onWheel={(e) => e.target.blur()}
-                  step="0.01"
+                  name="desconto"
+                  value={formData.desconto}
+                  onChange={(e) => setFormData({ ...formData, desconto: parseFloat(e.target.value) })}
                   className="input"
                 />
               </label>
