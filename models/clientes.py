@@ -14,12 +14,12 @@ class Clientes(db.Model):
         }
     
     codigo = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
-    nome = db.Column(db.String(50), nullable=False)
-    empresa = db.Column(db.String(50), nullable=True)
-    telefone = db.Column(db.String(50), nullable=True)
-    email = db.Column(db.String(50), nullable=False) 
+    nome = db.Column(db.String(100), nullable=False)
+    empresa = db.Column(db.String(100), nullable=True)
+    telefone = db.Column(db.String(100), nullable=True)
+    email = db.Column(db.String(100), nullable=False) 
     login = db.Column(db.String(50), nullable=False) 
-    senha = db.Column(db.String(50), nullable=False)
+    senha = db.Column(db.String(255), nullable=False)
 
     def __init__(self, nome, empresa, telefone, email, login, senha):
         self.nome = nome

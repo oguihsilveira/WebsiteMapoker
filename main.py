@@ -7,7 +7,7 @@ import os
 class App():
     def __init__(self) -> None:
         self.app = Flask(__name__)  # Inicializa o Flask sem o static_folder
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Guilherme%40123@localhost/mapoker'  # Conexão com o banco //Guilherme%40123
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:''@localhost/mapoker'  # Conexão com o banco //Guilherme%40123
         db.init_app(self.app)
         CORS(self.app)  # Habilita CORS
         default_routes(self.app)  # Registra todas as rotas

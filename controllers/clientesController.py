@@ -54,9 +54,9 @@ def clientesController():
             cliente.nome = data.get('nome', cliente.nome)
             cliente.empresa = data.get('empresa', cliente.empresa)
             cliente.telefone = data.get('telefone', cliente.telefone)
-            cliente.login = data.get('login', cliente.login)
             cliente.email = data.get('email', cliente.email)
-
+            cliente.login = data.get('login', cliente.login)
+            
             # Atualize a senha apenas se um novo valor for fornecido
             if 'senha' in data and data['senha']:
                 cliente.senha = bcrypt.hashpw(data['senha'].encode('utf-8'), bcrypt.gensalt())
