@@ -220,7 +220,7 @@ export default function ContentFuncionarios() {
               <td>{funcionario.email}</td>
               <td>{new Date(funcionario.datanasc).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
               <td>{funcionario.cargo}</td>
-              <td>{formatNumber(funcionario.salario)}</td> {/* Aplicado formatNumber aqui */}
+              <td>{formatNumber(funcionario.salario)}</td>
               <td>{funcionario.endereco}</td>
               <td>{funcionario.carga_horaria}</td>
               <td className="actions">

@@ -228,7 +228,7 @@ export default function ContentEstoque() {
               <td>{item.tipo}</td>
               <td>R${item.preco_compra.toFixed(2)}</td>
               <td>R${item.preco_venda.toFixed(2)}</td>
-              <td>{new Date(item.data_entrada).toLocaleDateString('pt-BR')}</td>
+              <td>{new Date(new Date(item.data_entrada).getTime() + new Date(item.data_entrada).getTimezoneOffset() * 60000).toLocaleDateString('pt-BR')}</td>
               <td>{item.qtde_entrada}</td>
               <td>{item.cod_funcionario}</td>
               <td>{item.observacoes}</td>

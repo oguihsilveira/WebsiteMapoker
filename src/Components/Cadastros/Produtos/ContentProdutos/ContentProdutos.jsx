@@ -304,6 +304,7 @@ export default function ContentProdutos() {
                   name="desconto"
                   value={formData.desconto}
                   onChange={(e) => setFormData({ ...formData, desconto: parseFloat(e.target.value) })}
+                  onWheel={(e) => e.target.blur()}
                   className="input"
                 />
               </label>

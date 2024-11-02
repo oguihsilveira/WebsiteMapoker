@@ -1,9 +1,5 @@
 //instala tudo
-npm install axios react-router-dom react-scroll react-sticky react-icons 
-
-//não sei
-npm install jwt-decode
-
+npm install axios react-router-dom react-scroll react-sticky react-icons jwt-decode
 
 //erros?
 npm audit fix

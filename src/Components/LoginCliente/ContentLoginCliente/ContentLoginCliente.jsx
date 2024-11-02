@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Adicione useEffect
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import "./ContentLoginCliente.css";
 
@@ -14,8 +15,13 @@ const ContentLoginCliente = () => {
     login: "",
     senha: "",
   });
-  const [result, setResult] = useState(""); // Para exibir resultados de login/cadastro
+  const [result, setResult] = useState("");
   const navigate = useNavigate();
+
+  // Remove o token do localStorage ao carregar o componente
+  useEffect(() => {
+    localStorage.removeItem("token"); // Remove o token
+  }, []); // O array vazio [] faz com que isso seja executado apenas uma vez, quando o componente é montado.
 
   // Função para alternar entre as abas
   const handleTabClick = (tab) => {
@@ -36,20 +42,27 @@ const ContentLoginCliente = () => {
   // Função para fazer login
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    setResult("Logando...."); // Mensagem de loading
+    setResult("Logando....");
 
     try {
       const response = await axios.post("http://localhost:3000/login-clientes", loginData);
       const { token } = response.data;
 
+      const decodedToken = jwtDecode(token);
+
       localStorage.setItem("token", token);
-      setResult("Login bem-sucedido"); // Mensagem de sucesso
-      navigate("/produtos-loja");
+
+      if (decodedToken.role === "cliente") {
+        setResult("Login bem-sucedido");
+        navigate("/produtos-loja");
+      } else {
+        setResult("Acesso negado: você não tem permissão para acessar esta área.");
+      }
     } catch (error) {
       if (error.response) {
-        setResult(error.response.data.error || "Erro no login");
+        setResult(`Erro: ${error.response.status} - ${error.response.data.error || "Erro no login"}`);
       } else {
-        setResult("Erro ao conectar ao servidor");
+        setResult(`Erro ao conectar: ${error.message}`);
       }
     }
   };
@@ -66,7 +79,6 @@ const ContentLoginCliente = () => {
 
       alert('Cadastro efetuado com sucesso!');
 
-      // Login automático após cadastro
       const loginResponse = await axios.post("http://localhost:3000/login-clientes", {
         login: cadastroData.login,
         senha: cadastroData.senha,
@@ -74,7 +86,17 @@ const ContentLoginCliente = () => {
 
       const { token } = loginResponse.data;
       localStorage.setItem("token", token);
-      navigate("/produtos-loja");
+
+      const decodedToken = jwtDecode(token);
+      const userRole = decodedToken.role;
+
+      if (userRole === "cliente") {
+        navigate("/produtos-loja");
+      } else {
+        alert("Houve um problema em relação ao acesso à Loja.");
+        navigate("/login-clientes");
+      }
+
     } catch (error) {
       if (error.response && error.response.status === 409) {
         alert('Erro: O login já está em uso. Por favor, escolha outro.');
@@ -132,7 +154,7 @@ const ContentLoginCliente = () => {
               <button type="submit" className="form-button">
                 Entrar
               </button>
-              <span className="result-message">{result}</span> {/* Exibe mensagem de resultado */}
+              <span className="result-message">{result}</span>
             </form>
           </div>
         )}

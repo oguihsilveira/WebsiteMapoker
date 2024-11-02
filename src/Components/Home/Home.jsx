@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import Navbar from './Navbar/Navbar';
 import Hero from './Hero/Hero';
 import Title from './Title/Title';
@@ -9,6 +10,11 @@ import Contato from './Contato/Contato';
 import Rodape from './Rodape/Rodape';
 
 function Home() {
+  // Remove o token ao carregar a página
+  useEffect(() => {
+    localStorage.removeItem('token');
+  }, []);
+
   return (
     <div>
       <Navbar />
@@ -29,4 +35,4 @@ function Home() {
   );
 }
 
-export default Home
+export default Home;

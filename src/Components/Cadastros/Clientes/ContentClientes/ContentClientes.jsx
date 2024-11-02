@@ -84,10 +84,9 @@ export default function ContentClientes() {
             <tr key={cliente.codigo}>
               <td>{cliente.codigo}</td>
               <td>{cliente.nome}</td>
-              <td>{cliente.empresa}</td> {/* Exibição do nome da empresa */}
-              <td>{cliente.email}</td> {/* Exibição do email */}
+              <td>{cliente.empresa}</td>
+              <td>{cliente.email}</td>
               <td>{cliente.login}</td>
-
               <td className="actions">
                 <button className="button" onClick={() => handleDelete(cliente.codigo)}>
                   Excluir
