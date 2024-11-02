@@ -16,7 +16,7 @@ def login_usuarios_controller():
                 # Gera o token JWT com a claim 'role': 'admin'
                 token = jwt.encode({
                     'login': user.login,
-                    'role': 'admin',  # Define a role para admin
+                    'role': 'admin',  # Define a role para admin para ser aceita no front
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
                 }, SECRET_KEY, algorithm="HS256")
                 

@@ -19,7 +19,7 @@ def login_clientesController():
                     # Gera o token JWT com a claim 'role': 'cliente'
                     token = jwt.encode({
                         'login': cliente.login,
-                        'role': 'cliente',  # Define a role para cliente
+                        'role': 'cliente',  # Define a role para cliente para ser aceita no front
                         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
                     }, SECRET_KEY, algorithm="HS256")
                     
