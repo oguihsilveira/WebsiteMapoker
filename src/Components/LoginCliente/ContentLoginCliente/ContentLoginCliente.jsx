@@ -101,8 +101,8 @@ const ContentLoginCliente = () => {
       if (error.response && error.response.status === 409) {
         alert('Erro: O login já está em uso. Por favor, escolha outro.');
       } else {
-        console.error("Erro ao fazer cadastro:", error.response ? error.response.data : error.message);
-        alert('Erro ao efetuar cadastro.');
+        console.error("Erro ao fazer Login:", error.response ? error.response.data : error.message);
+        alert('Erro ao efetuar Login.');
       }
     }
   };
