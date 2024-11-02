@@ -4,7 +4,7 @@ from flask import request, jsonify
 from models.usuarios import Usuarios
 from database.db import db
 
-SECRET_KEY = 'hgjfyrddytfuyfiyufu@12332211233'  # Troque por uma chave secreta forte
+SECRET_KEY = 'hgjfyrddytfuyfiyufu@12332211233'
 
 def login_usuarios_controller():
     if request.method == 'POST':
@@ -12,13 +12,16 @@ def login_usuarios_controller():
             data = request.get_json()
             user = Usuarios.query.filter_by(login=data['login']).first()
 
-            if user and user.senha == data['senha']:  # Verifique a senha
+            if user and user.senha == data['senha']:
+                # Gera o token JWT com a claim 'role': 'admin'
                 token = jwt.encode({
                     'login': user.login,
-                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)  # Token expira em 30 minutos
+                    'role': 'admin',  # Define a role para admin
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
                 }, SECRET_KEY, algorithm="HS256")
-                print("Seu token: ",token)
-                return jsonify({'token': token}), 200
+                
+                token_str = token if isinstance(token, str) else token.decode('utf-8')
+                return jsonify({'token': token_str}), 200
             
             return jsonify({'error': 'Credenciais inválidas'}), 401
 
