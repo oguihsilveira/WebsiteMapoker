@@ -1,10 +1,15 @@
 // App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+//Geral & Cliente
 import Home from "./Components/Home/Home";
 import LoginCliente from "./Components/LoginCliente/LoginCliente";
 import ProdutosLoja from "./Components/ProdutosLoja/ProdutosLoja";
+import ProdutoEspecifico from "./Components/ProdutosLojaEspecifico/ProdutosEspecifico";
 import Galeria from './Components/Galeria/Galeria';
+
+// Admin
 import CadastrosGerais from "./Components/CadastrosGerais/CadastrosGerais";
 import Funcionarios from "./Components/Cadastros/Funcionarios/Funcionarios";
 import Usuarios from "./Components/Cadastros/Usuarios/Usuarios";
@@ -13,6 +18,8 @@ import Produtos from './Components/Cadastros/Produtos/Produtos';
 import Clientes from './Components/Cadastros/Clientes/Clientes';
 import Pagamentos from "./Components/Cadastros/Pagamentos/Pagamentos";
 import Parcelas from './Components/Cadastros/Parcelas/Parcelas';
+
+// Rota Protegida
 import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
 
 const App = () => {
@@ -29,6 +36,14 @@ const App = () => {
           element={
             <PrivateRoute allowedRoles={['admin', 'cliente']}> {/* Exemplo de roles permitidas */}
               <ProdutosLoja />
+            </PrivateRoute>
+          }
+        />
+        <Route 
+          path="/produto/:codigo" 
+          element={
+            <PrivateRoute allowedRoles={['admin', 'cliente']}> {/* Exemplo de roles permitidas */}
+              <ProdutoEspecifico />
             </PrivateRoute>
           } 
         />

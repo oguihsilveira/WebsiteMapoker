@@ -219,11 +219,11 @@ export default function ContentProdutos() {
               <td>{item.item}</td>
               <td>{item.tipo}</td>
               <td className='preco-padrao'>
-                R${item.preco_padrao ? item.preco_padrao.toFixed(2) : 'N/A'}: Original
+                R${item.preco_padrao ? parseFloat(item.preco_padrao).toFixed(2) : 'N/A'}: Original
                 <br />
-                R${item.preco_padrao && item.desconto && item.desconto > 0
-                    ? (item.preco_padrao * (1 - (parseFloat(item.desconto) / 100))).toFixed(2)
-                    : item.preco_padrao?.toFixed(2)
+                R${item.preco_padrao && item.desconto && parseFloat(item.desconto) > 0
+                  ? (parseFloat(item.preco_padrao) * (1 - parseFloat(item.desconto) / 100)).toFixed(2)
+                  : parseFloat(item.preco_padrao)?.toFixed(2)
                 }: Descontado
               </td>
               <td className='desconto'>{(parseFloat(item.desconto) || 0)}%</td>

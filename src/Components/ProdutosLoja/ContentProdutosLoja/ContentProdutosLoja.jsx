@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Importação para navegação
 import './ContentProdutosLoja.css';
 
 export default function ContentProdutosLoja() {
@@ -7,8 +8,9 @@ export default function ContentProdutosLoja() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  
+  const navigate = useNavigate(); // Hook para navegação
 
-  // Filtragem de produtos com base na pesquisa
   const filteredProdutos = produtos.filter(item =>
     (item.item && item.item.toLowerCase().includes(searchQuery.toLowerCase())) ||
     (item.tipo && item.tipo.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -18,7 +20,6 @@ export default function ContentProdutosLoja() {
     fetchProdutos();
   }, []);
 
-  // Função para buscar produtos
   const fetchProdutos = () => {
     axios.get('http://localhost:3000/produtos')
       .then(response => {
@@ -35,17 +36,15 @@ export default function ContentProdutosLoja() {
       });
   };
 
-  // Função para atualizar as sugestões com base na pesquisa
   const updateSuggestions = (query) => {
     const newSuggestions = produtos.filter(item =>
       item.item.toLowerCase().includes(query.toLowerCase()) ||
       item.tipo.toLowerCase().includes(query.toLowerCase())
     ).map(item => item.item);
 
-    setSuggestions(newSuggestions.slice(0, 5)); // Exibe até 5 sugestões
+    setSuggestions(newSuggestions.slice(0, 5));
   };
 
-  // Atualizar a pesquisa e as sugestões conforme o usuário digita
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -56,10 +55,13 @@ export default function ContentProdutosLoja() {
     }
   };
 
-  // Função para selecionar uma sugestão
   const selectSuggestion = (suggestion) => {
     setSearchQuery(suggestion);
     setSuggestions([]);
+  };
+
+  const handleSeeMore = (codigo) => {
+    navigate(`/produto/${codigo}`); // Navegação para página do produto específico
   };
 
   return (
@@ -74,8 +76,7 @@ export default function ContentProdutosLoja() {
           onChange={handleSearchChange}
           className="search-input"
         />
-        
-        {/* Exibir sugestões */}
+
         {suggestions.length > 0 && (
           <div className="suggestions">
             {suggestions.map((suggestion, index) => (
@@ -107,11 +108,20 @@ export default function ContentProdutosLoja() {
               <div className="product-info">
                 <h3>{item.item}</h3>
                 <h4 className="product-type">{item.tipo}</h4>
-                <p>De: R${item.preco_antigo ? item.preco_antigo.toFixed(2) : 'N/A'}</p>
-                <p>Por apenas: R${item.preco_atual ? item.preco_atual.toFixed(2) : 'N/A'}</p>
+                <p>De: <s>R${item.preco_padrao ? parseFloat(item.preco_padrao).toFixed(2) : 'N/A'}</s></p>
+                <p>
+                  Por apenas: R${item.preco_padrao && item.desconto && parseFloat(item.desconto) > 0
+                    ? (parseFloat(item.preco_padrao) * (1 - parseFloat(item.desconto) / 100)).toFixed(2)
+                    : item.preco_padrao ? parseFloat(item.preco_padrao).toFixed(2) : 'N/A'}
+                </p>
               </div>
               <div className="product-buttons">
-                <button className="see-more-button">Veja mais</button>
+                <button 
+                  className="see-more-button" 
+                  onClick={() => handleSeeMore(item.codigo)}
+                >
+                  Veja mais
+                </button>
                 <button className="order-button">Fazer pedido</button>
               </div>
             </div>
