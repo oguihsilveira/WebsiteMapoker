@@ -1,3 +1,4 @@
+#produtosController.py
 from flask import request, jsonify
 from database.db import db
 from models.produtos import Produtos
@@ -95,6 +96,15 @@ def produtosController():
 
     elif request.method == 'GET':
         try:
+            # Verifica se um código específico foi fornecido
+            codigo = request.view_args.get('codigo')
+            if codigo:
+                produto = Produtos.query.get(codigo)
+                if produto:
+                    return jsonify(produto.to_dict()), 200
+                else:
+                    return jsonify({'error': 'Produto não encontrado'}), 404
+                
             # Busca todos os produtos e converte em um dicionário
             data = Produtos.query.all()
             produtos = []
