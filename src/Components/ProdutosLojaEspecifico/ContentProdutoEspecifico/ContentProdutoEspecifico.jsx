@@ -10,29 +10,27 @@ export default function ContentProdutoEspecifico() {
 
   useEffect(() => {
     const fetchProduto = async () => {
-        try {
-          const response = await axios.get(`http://localhost:3000/produtos/${codigo}`);
-            setProduto(response.data);
-            setLoading(false);
-        } catch (error) {
-            console.error('Erro ao carregar produto:', error);
-            setLoading(false);
-        }
-    };
-    fetchProduto();
-}, [codigo]);
-  
-  const fetchProduto = () => {
-    axios.get(`http://localhost:3000/produtos/${codigo}`)
-      .then(response => {
+      try {
+        // Obtém o token JWT armazenado no localStorage
+        const token = localStorage.getItem('token');
+
+        // Realiza a requisição GET com o header de autenticação
+        const response = await axios.get(`http://localhost:3000/produtos/${codigo}`, {
+          headers: {
+            Authorization: `Bearer ${token}` // Adiciona o token no header
+          }
+        });
+        
         setProduto(response.data);
         setLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Erro ao carregar produto:', error);
         setLoading(false);
-      });
-  };
+      }
+    };
+    
+    fetchProduto();
+  }, [codigo]);
 
   return (
     <div className="product-detail-container">

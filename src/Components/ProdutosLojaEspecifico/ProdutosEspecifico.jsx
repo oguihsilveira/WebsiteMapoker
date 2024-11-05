@@ -11,10 +11,10 @@ const ProdutoEspecifico = () => {
 
   return (
     <div>
-      <NavbarProdutoEspecifico/>
+      {/* <NavbarProdutoEspecifico/> */}
       <ContentProdutoEspecifico/>
       <div className='container'>
-      <RodapeProdutoEspecifico/>
+      {/* <RodapeProdutoEspecifico/> */}
       </div>
     </div>
   )
