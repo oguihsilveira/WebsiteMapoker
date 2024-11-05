@@ -21,6 +21,14 @@ def allowed_file(filename):
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
+#Busca de produtos por código
+def get_produto(codigo):
+    produto = Produtos.query.get(codigo)  # Busca o produto pelo código
+    if produto:
+        return jsonify(produto.to_dict()), 200  # Supondo que você tenha um método to_dict() no modelo
+    else:
+        return jsonify({'error': 'Produto não encontrado'}), 404  # Retorna 404 se o produto não existir
+
 # Função para limpar arquivos órfãos na pasta uploads
 def clean_orphan_files():
     try:
