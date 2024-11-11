@@ -1,61 +1,76 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import './NavbarProdutosLoja.css'
-import logo from '../../../assets/logo.png'
-import cart_icon from '../../../assets/cart-icon.jpg' // Adicione o ícone de carrinho
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode'; // Biblioteca para decodificar JWT
+import './NavbarProdutosLoja.css';
+import logo from '../../../assets/logo.png';
+import cart_icon from '../../../assets/cart-icon.jpg';
 
 const NavbarProdutosLoja = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Estado de carregamento
+  const [isLoading, setIsLoading] = useState(false);
+  const [clienteNome, setClienteNome] = useState(''); // Nome do cliente
   const navigate = useNavigate();
 
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen); // Alterna o estado da drawer
-  }
+  // Decodifica o token e obtém o nome do cliente
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setClienteNome(decoded.nome); // Define o nome do cliente
+      } catch (error) {
+        console.error('Erro ao decodificar o token:', error);
+      }
+    }
+  }, []);
 
-  // Função de Logout
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
   const handleLogout = () => {
-    setIsLoading(true); // Ativa a tela de carregamento
+    setIsLoading(true);
     setTimeout(() => {
-      localStorage.removeItem('token'); // Remove o token do localStorage
-      setIsLoading(false); // Desativa a tela de carregamento
-      navigate('/'); // Navega para a página inicial (ou onde preferir)
-    }, 1500); // Define o tempo de carregamento em 1.5s
-  }
+      localStorage.removeItem('token');
+      setIsLoading(false);
+      navigate('/');
+    }, 1500);
+  };
 
   return (
     <div>
-      {/* Tela de carregamento condicional */}
       {isLoading && (
         <div className="loading-screen">
-          <div className="spinner"></div> {/* Círculo de loading */}
+          <div className="spinner"></div>
           <p>Realizando logout, aguarde...</p>
         </div>
       )}
-      
+
       <nav className={'container'}>
-          <img src={logo} alt="Logo" className='logo'/>
-          <ul>
-              <li>Loja</li>
-              <li onClick={toggleDrawer}>
-                <img src={cart_icon} alt="Carrinho" className='cart'/> {/* Ícone de carrinho */}
-              </li>
-              <li>
-                <button className='btn' onClick={handleLogout}>LogOut</button> {/* Botão de Logout */}
-              </li>
-          </ul>
+        <img src={logo} alt="Logo" className="logo" />
+        <ul>
+          <li>Bem-vindo, {clienteNome || 'Visitante'}!</li> {/* Exibe o nome do cliente */}
+          <li onClick={toggleDrawer}>
+            <img src={cart_icon} alt="Carrinho" className="cart" />
+          </li>
+          <li>
+            <button className="btn" onClick={handleLogout}>
+              LogOut
+            </button>
+          </li>
+        </ul>
       </nav>
 
-      {/* Drawer lateral */}
       {isDrawerOpen && (
         <div className="drawer">
-          <button className="close-drawer" onClick={toggleDrawer}>×</button>
+          <button className="close-drawer" onClick={toggleDrawer}>
+            ×
+          </button>
           <p>Carrinho de Compras</p>
-          {/* Aqui você pode adicionar conteúdo do carrinho */}
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default NavbarProdutosLoja
+export default NavbarProdutosLoja;

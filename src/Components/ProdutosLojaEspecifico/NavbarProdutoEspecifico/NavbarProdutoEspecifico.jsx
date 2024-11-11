@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import './NavbarProdutoEspecifico.css'
 import logo from '../../../assets/logo.png'
 import cart_icon from '../../../assets/cart-icon.jpg' // Adicione o ícone de carrinho
+import back_icon from '../../../assets/back-icon.png';
 
 const NavbarProdutoEspecifico = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -11,6 +12,10 @@ const NavbarProdutoEspecifico = () => {
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen); // Alterna o estado da drawer
+  }
+
+  const handleBackClick = () => {
+    navigate('/produtos-loja'); // Navega para a página /cadastros-gerais
   }
 
   // Função de Logout
@@ -36,13 +41,14 @@ const NavbarProdutoEspecifico = () => {
       <nav className={'container'}>
           <img src={logo} alt="Logo" className='logo'/>
           <ul>
-              <li>Loja</li>
-              <li onClick={toggleDrawer}>
-                <img src={cart_icon} alt="Carrinho" className='cart'/> {/* Ícone de carrinho */}
-              </li>
-              <li>
-                <button className='btn' onClick={handleLogout}>LogOut</button> {/* Botão de Logout */}
-              </li>
+            <li onClick={handleBackClick}><img src={back_icon} alt="Voltar" className='back' /></li>
+            <li>Loja</li>
+            <li onClick={toggleDrawer}>
+              <img src={cart_icon} alt="Carrinho" className='cart'/> {/* Ícone de carrinho */}
+            </li>
+            <li>
+              <button className='btn' onClick={handleLogout}>LogOut</button> {/* Botão de Logout */}
+            </li>
           </ul>
       </nav>
 

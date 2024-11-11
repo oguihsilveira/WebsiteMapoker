@@ -84,6 +84,7 @@
 
 .see-more-button {
     margin-left: 20px;
+    margin-right: 5px;
     width: 120px;
     height: auto;
     background-color: #232323;
@@ -96,6 +97,7 @@
 
 .order-button {
     margin-right: 20px;
+    margin-left: 5px;
     width: 120px;
     height: auto;
     background-color: #90ee90; /* Verde claro */
@@ -112,7 +114,8 @@
     height: auto;
 }
 .suggestions :hover{
-    background-color: #232323;
+    background-color: #ededed;
+    border-radius: 2px;
 }
 .suggestion-item{
     gap: 20;

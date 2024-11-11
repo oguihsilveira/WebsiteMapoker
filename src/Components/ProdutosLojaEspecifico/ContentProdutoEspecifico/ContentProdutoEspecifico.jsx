@@ -11,16 +11,11 @@ export default function ContentProdutoEspecifico() {
   useEffect(() => {
     const fetchProduto = async () => {
       try {
-        // Obtém o token JWT armazenado no localStorage
         const token = localStorage.getItem('token');
-
-        // Realiza a requisição GET com o header de autenticação
         const response = await axios.get(`http://localhost:3000/produtos/${codigo}`, {
-          headers: {
-            Authorization: `Bearer ${token}` // Adiciona o token no header
-          }
+          headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         setProduto(response.data);
         setLoading(false);
       } catch (error) {
@@ -28,7 +23,7 @@ export default function ContentProdutoEspecifico() {
         setLoading(false);
       }
     };
-    
+
     fetchProduto();
   }, [codigo]);
 
@@ -38,12 +33,20 @@ export default function ContentProdutoEspecifico() {
         <p>Carregando produto...</p>
       ) : produto ? (
         <div className="product-detail">
-          <img src={produto.foto} alt={produto.item} className="product-detail-image" />
-          <h2>{produto.item}</h2>
-          <p>Tipo: {produto.tipo}</p>
-          <p>Preço: R${produto.preco_padrao ? parseFloat(produto.preco_padrao).toFixed(2) : 'N/A'}</p>
-          <p>Descrição: {produto.observacoes}</p>
-          {/* Adicione mais detalhes aqui conforme necessário */}
+          <div className="product-image-wrapper">
+            <img 
+              src={`http://localhost:3000/uploads/${produto.foto}`} 
+              alt={produto.item} 
+              className="product-detail-image" 
+            />
+          </div>
+          <div className="product-info">
+            <h2>{produto.item}</h2>
+            <p className="product-type">Tipo: {produto.tipo}</p>
+            <p className="product-price">Preço: R${produto.preco_padrao ? parseFloat(produto.preco_padrao).toFixed(2) : 'N/A'}</p>
+            <p className="product-description">Descrição: {produto.observacoes}</p>
+            <button className="add-to-cart-btn">Adicionar ao Carrinho</button>
+          </div>
         </div>
       ) : (
         <p>Produto não encontrado.</p>
