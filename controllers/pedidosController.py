@@ -1,8 +1,10 @@
 from flask import request, jsonify
 from database.db import db
+from sqlalchemy.orm import joinedload
 from models.pedidos import Pedidos  # Certifique-se de ter um modelo Pedidos definido
 from models.produtos import Produtos  # Para verificar relação com produtos
 from models.clientes import Clientes  # Para verificar relação com clientes
+import datetime
 
 def pedidosController():
     if request.method == 'POST':
@@ -10,10 +12,32 @@ def pedidosController():
             data = request.get_json()
 
             # Verifica se todos os campos obrigatórios estão preenchidos
-            required_fields = ['item', 'destinatario', 'endereco', 'tipo_pgto', 'data_compra', 'valor_compra', 'status', 'cod_produto', 'cod_cliente']
+            required_fields = ['item', 'quantidade', 'destinatario', 'endereco', 'tipo_pgto', 'data_compra', 'valor_compra', 'status', 'cod_produto', 'cod_cliente']
             for field in required_fields:
                 if not data.get(field):
                     return jsonify({'error': f'{field.capitalize()} é obrigatório.'}), 400
+
+            # Verifica se o formato do campo 'data_compra' está correto (por exemplo, 'YYYY-MM-DD')
+            try:
+                data_compra = datetime.datetime.strptime(data['data_compra'], '%Y-%m-%d')
+            except ValueError:
+                return jsonify({'error': 'Formato de data_compra inválido. Use o formato YYYY-MM-DD.'}), 400
+
+            # Verifica se 'valor_compra' é um número positivo
+            try:
+                valor_compra = float(data['valor_compra'])
+                if valor_compra <= 0:
+                    return jsonify({'error': 'Valor de compra deve ser maior que 0.'}), 400
+            except ValueError:
+                return jsonify({'error': 'Valor de compra inválido.'}), 400
+
+            # Verifica se 'quantidade' é um número positivo
+            try:
+                quantidade = int(data['quantidade'])
+                if quantidade <= 0:
+                    return jsonify({'error': 'Quantidade deve ser maior que 0.'}), 400
+            except ValueError:
+                return jsonify({'error': 'Quantidade inválida.'}), 400
 
             # Verifica se o produto e o cliente existem
             produto = Produtos.query.get(data['cod_produto'])
@@ -26,30 +50,41 @@ def pedidosController():
             # Cria um novo pedido com status
             pedido = Pedidos(
                 item=data['item'],
+                quantidade=quantidade,
                 destinatario=data['destinatario'],
                 endereco=data['endereco'],
                 tipo_pgto=data['tipo_pgto'],
-                data_compra=data['data_compra'],
-                valor_compra=data['valor_compra'],
+                data_compra=data_compra,
+                valor_compra=valor_compra,
                 status="em andamento",  # Garantindo que o status seja "em andamento"
                 cod_produto=data['cod_produto'],
                 cod_cliente=data['cod_cliente']
             )
             db.session.add(pedido)
             db.session.commit()
-            return jsonify({'message': 'Pedido criado com sucesso'}), 200
+            return jsonify({'message': 'Pedido criado com sucesso'}), 201  # Usando 201 para criação bem-sucedida
         except Exception as e:
-            return jsonify({'error': f'Erro ao criar pedido. Erro: {str(e)}'}), 400
+            return jsonify({'error': f'Erro ao criar pedido. Erro: {str(e)}'}), 500
 
     elif request.method == 'GET':
         try:
-            # Busca todos os pedidos
-            data = Pedidos.query.all()
-            pedidos = {'pedidos': [pedido.to_dict() for pedido in data]}
+            # Busca os pedidos com a junção do produto
+            data = Pedidos.query.options(joinedload(Pedidos.produto)).all()
+
+            # Transforma os dados em dicionário e inclui as informações do produto
+            pedidos = {
+                'pedidos': [
+                    {
+                        **pedido.to_dict(),
+                        'produto': pedido.produto.to_dict()  # Inclui o produto relacionado
+                    }
+                    for pedido in data
+                ]
+            }
             return jsonify(pedidos), 200
         except Exception as e:
-            return jsonify({'error': f'Erro ao buscar pedidos. Erro: {str(e)}'}), 400
-
+            return jsonify({'error': f'Erro ao buscar pedidos. Erro: {str(e)}'}), 500
+        
     elif request.method == 'PUT':
         try:
             data = request.get_json()
@@ -63,8 +98,9 @@ def pedidosController():
             if not pedido:
                 return jsonify({'error': 'Pedido não encontrado.'}), 404
 
-            # Atualiza os campos do pedido, incluindo o status
+            # Atualiza os campos do pedido, incluindo a quantidade
             pedido.item = data.get('item', pedido.item)
+            pedido.quantidade = data.get('quantidade', pedido.quantidade)
             pedido.destinatario = data.get('destinatario', pedido.destinatario)
             pedido.endereco = data.get('endereco', pedido.endereco)
             pedido.tipo_pgto = data.get('tipo_pgto', pedido.tipo_pgto)
@@ -77,7 +113,7 @@ def pedidosController():
             db.session.commit()
             return jsonify({'message': 'Pedido atualizado com sucesso'}), 200
         except Exception as e:
-            return jsonify({'error': f'Erro ao atualizar pedido. Erro: {str(e)}'}), 400
+            return jsonify({'error': f'Erro ao atualizar pedido. Erro: {str(e)}'}), 500
 
     elif request.method == 'DELETE':
         try:
@@ -93,4 +129,4 @@ def pedidosController():
             db.session.commit()
             return jsonify({'message': 'Pedido deletado com sucesso'}), 200
         except Exception as e:
-            return jsonify({'error': f'Erro ao deletar pedido. Erro: {str(e)}'}), 400
+            return jsonify({'error': f'Erro ao deletar pedido. Erro: {str(e)}'}), 500

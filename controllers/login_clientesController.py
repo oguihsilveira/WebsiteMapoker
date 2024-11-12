@@ -16,8 +16,9 @@ def login_clientesController():
             if cliente:
                 senha_hash_armazenada = cliente.senha.encode('utf-8') if isinstance(cliente.senha, str) else cliente.senha
                 if bcrypt.checkpw(data['senha'].encode('utf-8'), senha_hash_armazenada):
-                    # Gera o token JWT com a claim 'role': 'cliente'
+                    # Gera o token JWT com o código do cliente incluído
                     token = jwt.encode({
+                        'codigo': cliente.codigo,  # Inclui o código do cliente no token
                         'login': cliente.login,
                         'nome': cliente.nome,  # Inclui o nome do cliente no token
                         'role': 'cliente',

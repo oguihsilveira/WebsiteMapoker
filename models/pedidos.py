@@ -5,6 +5,7 @@ class Pedidos(db.Model):
         return {
             'codigo': self.codigo,
             'item': self.item,
+            'quantidade': self.quantidade,  # Adiciona o campo 'quantidade' no dicionário
             'destinatario': self.destinatario,
             'endereco': self.endereco,
             'tipo_pgto': self.tipo_pgto,
@@ -17,6 +18,7 @@ class Pedidos(db.Model):
 
     codigo = db.Column(db.Integer, primary_key=True, nullable=False, unique=True)
     item = db.Column(db.String(100), nullable=False)
+    quantidade = db.Column(db.Integer, nullable=False)  # Adiciona o campo 'quantidade'
     destinatario = db.Column(db.String(100), nullable=False)
     endereco = db.Column(db.String(50), nullable=False)
     tipo_pgto = db.Column(db.String(50), nullable=False)
@@ -26,9 +28,10 @@ class Pedidos(db.Model):
     cod_produto = db.Column(db.Integer, nullable=False)
     cod_cliente = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, codigo, item, destinatario, endereco, tipo_pgto, data_compra, valor_compra, status, cod_produto, cod_cliente):
+    def __init__(self, codigo, item, quantidade, destinatario, endereco, tipo_pgto, data_compra, valor_compra, status, cod_produto, cod_cliente):
         self.codigo = codigo
         self.item = item
+        self.quantidade = quantidade  # Inicializa o campo quantidade
         self.destinatario = destinatario
         self.endereco = endereco
         self.tipo_pgto = tipo_pgto
