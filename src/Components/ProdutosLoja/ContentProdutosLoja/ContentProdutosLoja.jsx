@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Importação para navegação
+import { jwtDecode } from 'jwt-decode'; 
 import './ContentProdutosLoja.css';
 
 export default function ContentProdutosLoja() {
@@ -10,6 +11,27 @@ export default function ContentProdutosLoja() {
   const [suggestions, setSuggestions] = useState([]);
   
   const navigate = useNavigate(); // Hook para navegação
+
+  // Função para obter o ID do cliente
+  const getCodigoCliente = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token); // Decodifica o token JWT
+        console.log("Token decodificado:", decodedToken); // Depuração do token completo
+        return decodedToken.codigo; // Retorna o código do cliente (ID)
+      } catch (error) {
+        console.error("Erro ao decodificar o token:", error);
+      }
+    } else {
+      console.warn("Token não encontrado no localStorage.");
+    }
+    return null; // Caso o token não exista ou não possa ser decodificado
+  };
+  
+
+  const CodigoCliente = getCodigoCliente(); // Obtendo o ID do cliente
+  console.log("Código do cliente: ",CodigoCliente)
 
   const filteredProdutos = produtos.filter(item =>
     (item.item && item.item.toLowerCase().includes(searchQuery.toLowerCase())) ||

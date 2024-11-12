@@ -1,63 +1,98 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './NavbarProdutoEspecifico.css'
 import logo from '../../../assets/logo.png'
-import cart_icon from '../../../assets/cart-icon.jpg' // Adicione o ícone de carrinho
-import back_icon from '../../../assets/back-icon.png';
+import cart_icon from '../../../assets/cart-icon.jpg'
+import back_icon from '../../../assets/back-icon.png'
+import axios from 'axios'
 
 const NavbarProdutoEspecifico = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Estado de carregamento
-  const navigate = useNavigate();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [cartItems, setCartItems] = useState([]) 
+  const navigate = useNavigate()
 
   const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen); // Alterna o estado da drawer
+    setIsDrawerOpen(!isDrawerOpen)
   }
 
   const handleBackClick = () => {
-    navigate('/produtos-loja'); // Navega para a página /cadastros-gerais
+    navigate('/produtos-loja')
   }
 
-  // Função de Logout
   const handleLogout = () => {
-    setIsLoading(true); // Ativa a tela de carregamento
+    setIsLoading(true)
     setTimeout(() => {
-      localStorage.removeItem('token'); // Remove o token do localStorage
-      setIsLoading(false); // Desativa a tela de carregamento
-      navigate('/'); // Navega para a página inicial (ou onde preferir)
-    }, 1500); // Define o tempo de carregamento em 1.5s
+      localStorage.removeItem('token')
+      setIsLoading(false)
+      navigate('/')
+    }, 1500)
   }
+
+  const fetchCartItems = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/pedidos', {
+        params: { status: 'em andamento' }
+      })
+
+      const items = Array.isArray(response.data.pedidos) ? response.data.pedidos : []
+      setCartItems(items)
+    } catch (error) {
+      console.error('Erro ao buscar os itens do carrinho:', error)
+      setCartItems([])
+    }
+  }
+
+  useEffect(() => {
+    if (isDrawerOpen) {
+      fetchCartItems()
+    }
+  }, [isDrawerOpen])
 
   return (
     <div>
-      {/* Tela de carregamento condicional */}
       {isLoading && (
         <div className="loading-screen">
-          <div className="spinner"></div> {/* Círculo de loading */}
+          <div className="spinner"></div>
           <p>Realizando logout, aguarde...</p>
         </div>
       )}
-      
-      <nav className={'container'}>
-          <img src={logo} alt="Logo" className='logo'/>
-          <ul>
-            <li onClick={handleBackClick}><img src={back_icon} alt="Voltar" className='back' /></li>
-            <li>Loja</li>
-            <li onClick={toggleDrawer}>
-              <img src={cart_icon} alt="Carrinho" className='cart'/> {/* Ícone de carrinho */}
-            </li>
-            <li>
-              <button className='btn' onClick={handleLogout}>LogOut</button> {/* Botão de Logout */}
-            </li>
-          </ul>
+
+      <nav className="container">
+        <img src={logo} alt="Logo" className="logo" />
+        <ul>
+          <li onClick={handleBackClick}>
+            <img src={back_icon} alt="Voltar" className="back" />
+          </li>
+          <li>Loja</li>
+          <li onClick={toggleDrawer}>
+            <img src={cart_icon} alt="Carrinho" className="cart" />
+          </li>
+          <li>
+            <button className="btn" onClick={handleLogout}>LogOut</button>
+          </li>
+        </ul>
       </nav>
 
-      {/* Drawer lateral */}
       {isDrawerOpen && (
         <div className="drawer">
           <button className="close-drawer" onClick={toggleDrawer}>×</button>
-          <p>Carrinho de Compras</p>
-          {/* Aqui você pode adicionar conteúdo do carrinho */}
+          <h2>Carrinho de Compras</h2>
+        
+          {cartItems.length > 0 ? (
+            <div className="cart-items">
+              {cartItems.map((item, index) => (
+                <div key={index} className="cart-item">
+                  <img src={item.foto} alt={item.item_produto} className="cart-item-img" />
+                  <span className="cart-item-name">{item.item_produto}</span>
+                  <span className="cart-item-price">R$ {item.preco_com_desconto.toFixed(2)}</span>
+                  <button className="remove-item" onClick={() => removeItem(index)}>X</button> 
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>O carrinho está vazio.</p>
+          )}
         </div>
       )}
     </div>

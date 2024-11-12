@@ -18,7 +18,7 @@ const Navbar = () => {
       <img src={logo} alt="" className='logo'/>
         <ul>
             <li><Link to='hero' smooth={true} offset={0} duration={500}>Home</Link></li>
-            <li><Link to='produtos' smooth={true} offset={-230} duration={500}>Produtos</Link></li>
+            <li><Link to='produtos' smooth={true} offset={-230} duration={500}>Loja</Link></li>
             <li><Link to='sobre' smooth={true} offset={-150} duration={500}>Sobre nós</Link></li>
             <li><Link to='ambiente' smooth={true} offset={-250} duration={500}>Ambiente</Link></li>
             <li><Link to='login' smooth={true} offset={-210} duration={500}>Gestão</Link></li>

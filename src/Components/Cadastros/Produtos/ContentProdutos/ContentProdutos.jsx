@@ -163,7 +163,7 @@ export default function ContentProdutos() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const requiredFields = ['codigo', 'item', 'tipo', 'preco_padrao', 'status', 'quantidade', 'cod_estoque'];
+    const requiredFields = ['codigo', 'item', 'tipo', 'preco_padrao','desconto', 'status', 'quantidade', 'cod_estoque'];
     const emptyFields = requiredFields.filter(field => !formData[field]);
 
     if (emptyFields.length > 0) {
@@ -306,8 +306,8 @@ export default function ContentProdutos() {
                   type="number"
                   name="desconto"
                   value={formData.desconto}
-                  onChange={(e) => setFormData({ ...formData, desconto: parseFloat(e.target.value) })}
-                  onWheel={(e) => e.target.blur()}
+                  onChange={(e) => setFormData({ ...formData, desconto: e.target.value })}
+                  onWheel={(e) => e.target.blur()} // Para evitar mudanças indesejadas ao rolar o mouse
                   className="input"
                 />
               </label>

@@ -85,11 +85,7 @@ export default function ContentClientes() {
             <tr key={cliente.codigo}>
               <td>{cliente.codigo}</td>
               <td>{cliente.nome}</td>
-
               <td>{cliente.empresa}</td>
-              <td>{cliente.email}</td>
-
-              <td>{cliente.empresa}</td> {/* Exibição do nome da empresa */}
               <td>{cliente.telefone}</td> {/* Exibição do telefone */}
               <td>{cliente.email}</td> {/* Exibição do email */}
               <td>{cliente.login}</td>

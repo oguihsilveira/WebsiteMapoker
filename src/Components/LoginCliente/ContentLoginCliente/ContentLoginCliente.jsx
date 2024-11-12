@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react"; // Adicione useEffect
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode"; // Certifique-se de instalar 'jwt-decode'
 import axios from "axios";
 import "./ContentLoginCliente.css";
 
@@ -18,18 +18,15 @@ const ContentLoginCliente = () => {
   const [result, setResult] = useState("");
   const navigate = useNavigate();
 
-  // Remove o token do localStorage ao carregar o componente
   useEffect(() => {
-    localStorage.removeItem("token"); // Remove o token
-  }, []); // O array vazio [] faz com que isso seja executado apenas uma vez, quando o componente é montado.
+    localStorage.removeItem("token"); // Remove o token ao carregar o componente
+  }, []);
 
-  // Função para alternar entre as abas
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    setResult(""); // Limpar mensagem ao mudar de aba
+    setResult("");
   };
 
-  // Função para manipular as mudanças nos campos de input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (activeTab === "login") {
@@ -39,7 +36,6 @@ const ContentLoginCliente = () => {
     }
   };
 
-  // Função para fazer login
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setResult("Logando....");
@@ -49,6 +45,7 @@ const ContentLoginCliente = () => {
       const { token } = response.data;
 
       const decodedToken = jwtDecode(token);
+      console.log("Token decodificado:", decodedToken);
 
       localStorage.setItem("token", token);
 
@@ -59,6 +56,7 @@ const ContentLoginCliente = () => {
         setResult("Acesso negado: você não tem permissão para acessar esta área.");
       }
     } catch (error) {
+      console.error("Erro durante o login:", error.response || error.message);
       if (error.response) {
         setResult(`Erro: ${error.response.status} - ${error.response.data.error || "Erro no login"}`);
       } else {
@@ -67,17 +65,19 @@ const ContentLoginCliente = () => {
     }
   };
 
-  // Função para fazer cadastro
   const handleCadastroSubmit = async (e) => {
     e.preventDefault();
+    console.log("Tentativa de cadastro iniciada:", cadastroData);
+
     try {
       const cadastroResponse = await axios.post("http://localhost:3000/clientes", cadastroData, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
-      alert('Cadastro efetuado com sucesso!');
+      console.log("Cadastro efetuado:", cadastroResponse.data);
+      alert("Cadastro efetuado com sucesso!");
 
       const loginResponse = await axios.post("http://localhost:3000/login-clientes", {
         login: cadastroData.login,
@@ -85,24 +85,24 @@ const ContentLoginCliente = () => {
       });
 
       const { token } = loginResponse.data;
+      console.log("Login automático após cadastro bem-sucedido. Token:", token);
       localStorage.setItem("token", token);
 
       const decodedToken = jwtDecode(token);
-      const userRole = decodedToken.role;
+      console.log("Token decodificado após cadastro:", decodedToken);
 
-      if (userRole === "cliente") {
+      if (decodedToken.role === "cliente") {
         navigate("/produtos-loja");
       } else {
         alert("Houve um problema em relação ao acesso à Loja.");
         navigate("/login-clientes");
       }
-
     } catch (error) {
+      console.error("Erro durante o cadastro:", error.response || error.message);
       if (error.response && error.response.status === 409) {
-        alert('Erro: O login já está em uso. Por favor, escolha outro.');
+        alert("Erro: O login já está em uso. Por favor, escolha outro.");
       } else {
-        console.error("Erro ao fazer Login:", error.response ? error.response.data : error.message);
-        alert('Erro ao efetuar Login.');
+        alert("Erro ao efetuar Login.");
       }
     }
   };
