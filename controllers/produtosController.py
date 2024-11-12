@@ -3,6 +3,7 @@ from flask import request, jsonify
 from database.db import db
 from models.produtos import Produtos
 from models.estoque import Estoque  # Importe o modelo de Estoque
+from models.clientes import Clientes
 
 import os
 from werkzeug.utils import secure_filename
