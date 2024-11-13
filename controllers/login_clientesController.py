@@ -21,6 +21,7 @@ def login_clientesController():
                         'codigo': cliente.codigo,  # Inclui o código do cliente no token
                         'login': cliente.login,
                         'nome': cliente.nome,  # Inclui o nome do cliente no token
+                        'empresa' : cliente.empresa,
                         'role': 'cliente',
                         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
                     }, SECRET_KEY, algorithm="HS256")
