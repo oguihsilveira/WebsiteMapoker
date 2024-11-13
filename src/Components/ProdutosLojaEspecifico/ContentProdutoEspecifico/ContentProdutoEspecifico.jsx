@@ -1,55 +1,69 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';  // Adicionando a biblioteca jwt-decode
+import { jwtDecode } from 'jwt-decode'; // Corrigido para usar 'jwt-decode' corretamente
 import './ContentProdutoEspecifico.css';
+
+// Função para obter dados do cliente
+const getDadosCliente = () => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token); // Decodifica o token JWT
+      console.log('Token decodificado:', decodedToken); // Depuração do token completo
+      return {
+        codigo: decodedToken.codigo, // Retorna o código do cliente (ID)
+        nome: decodedToken.nome, // Nome do cliente
+        empresa: decodedToken.empresa, // Empresa do cliente
+      };
+    } catch (error) {
+      console.error('Erro ao decodificar o token:', error);
+    }
+  } else {
+    console.warn('Token não encontrado no localStorage.');
+  }
+  return null; // Caso o token não exista ou não possa ser decodificado
+};
 
 export default function ContentProdutoEspecifico() {
   const { codigo } = useParams();
   const [produto, setProduto] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [pedido, setPedido] = useState({
-    item: '',
-    destinatario: '',
-    endereco: '',
-    tipo_pgto: '',
-    qntd_parcelas: 1, // Valor padrão de parcelas
-    data_compra: '', // A data vai ser preenchida com a data atual
-    valor_compra: '',
-    quantidade: 1, // Campo de quantidade adicionado
-    cod_produto: codigo,
-    cod_cliente: '', // O código do cliente será preenchido pelo usuário ou automaticamente
-  });
+  const [pedido, setPedido] = useState(() => {
+    const dadosCliente = getDadosCliente();
+    return {
+      item: '',
+      destinatario: dadosCliente ? `${dadosCliente.nome} - ${dadosCliente.empresa}` : '', // Preenche com nome e empresa
+      endereco: '',
+      tipo_pgto: '',
+      qntd_parcelas: 1,
+      data_compra: '',
+      valor_compra: '',
+      quantidade: 1,
+      cod_produto: codigo,
+      cod_cliente: dadosCliente ? dadosCliente.codigo : null, // Obtém o código do cliente
+    };
+  });  
 
   useEffect(() => {
     const fetchProduto = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (token) {
-          const decodedToken = jwtDecode(token); // Decodifica o token JWT
-          console.log(decodedToken); // Verifique a estrutura do token aqui
-          const codCliente = decodedToken.cod_cliente; // Verifique se este campo existe
-          if (codCliente) {
-            setPedido((prevState) => ({
-              ...prevState,
-              cod_cliente: codCliente, // Preenche automaticamente o cod_cliente
-            }));
-          } else {
-            alert('Código do cliente não encontrado no token');
-          }
+        if (!token) {
+          throw new Error('Token de autenticação não encontrado.');
         }
-  
+
         const response = await axios.get(`http://localhost:3000/produtos/${codigo}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-  
+
         setProduto(response.data);
         setPedido((prevState) => ({
           ...prevState,
           item: response.data.item,
           valor_compra: response.data.preco_padrao,
-          data_compra: new Date().toISOString().split('T')[0], // Define a data atual
+          data_compra: new Date().toISOString().split('T')[0],
         }));
         setLoading(false);
       } catch (error) {
@@ -57,9 +71,9 @@ export default function ContentProdutoEspecifico() {
         setLoading(false);
       }
     };
-  
+
     fetchProduto();
-  }, [codigo]);   
+  }, [codigo]);
 
   const calcularPrecoComDesconto = (preco, desconto) => {
     if (!preco) return '0.00';
@@ -73,6 +87,15 @@ export default function ContentProdutoEspecifico() {
     setPedido((prevState) => ({ ...prevState, [name]: value }));
   };
 
+  // Função para calcular o valor das parcelas
+  const calcularParcelas = (valorTotal, parcelas) => {
+    const valorParcela = valorTotal / parcelas;
+    return {
+      valorParcela: valorParcela.toFixed(2),
+      valorTotal: valorTotal.toFixed(2),
+    };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -80,17 +103,30 @@ export default function ContentProdutoEspecifico() {
       if (!token) {
         throw new Error('Token de autenticação não encontrado.');
       }
-  
-      const response = await axios.post('http://localhost:3000/pedidos', pedido, {
+
+      await axios.post('http://localhost:3000/pedidos', pedido, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       alert('Pedido realizado com sucesso!');
     } catch (error) {
       console.error('Erro ao realizar pedido:', error);
       alert('Erro ao realizar pedido.');
     }
-  };  
+  };
+
+  // Atualiza o valor da compra com base na quantidade de parcelas
+  useEffect(() => {
+    if (pedido.tipo_pgto === 'Cartão de Crédito') {
+      const precoTotal = pedido.quantidade * produto.preco_padrao;
+      const { valorParcela, valorTotal } = calcularParcelas(precoTotal, pedido.qntd_parcelas);
+      setPedido((prevState) => ({
+        ...prevState,
+        valor_compra: valorTotal, // Atualiza o valor total
+        valor_parcela: valorParcela, // Atualiza o valor da parcela
+      }));
+    }
+  }, [pedido.quantidade, pedido.qntd_parcelas, produto]);
 
   return (
     <div className="product-detail-container">
@@ -121,6 +157,7 @@ export default function ContentProdutoEspecifico() {
 
           <form className="pedido-form" onSubmit={handleSubmit}>
             <h3>Realizar Pedido</h3>
+            {/* Campos do formulário */}
             <div className="form-group">
               <label htmlFor="destinatario">Destinatário:</label>
               <input
@@ -145,15 +182,27 @@ export default function ContentProdutoEspecifico() {
             </div>
             <div className="form-group">
               <label htmlFor="quantidade">Quantidade:</label>
-              <input
-                type="number"
+              <select
                 id="quantidade"
                 name="quantidade"
                 value={pedido.quantidade}
-                onChange={handleInputChange}
-                min="1"
+                onChange={(e) => {
+                  const quantidade = parseInt(e.target.value, 10);
+                  const novoValorCompra = quantidade * produto.preco_padrao;
+                  setPedido((prevState) => ({
+                    ...prevState,
+                    quantidade,
+                    valor_compra: novoValorCompra.toFixed(2),
+                  }));
+                }}
                 required
-              />
+              >
+                {Array.from({ length: produto.quantidade }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label htmlFor="tipo_pgto">Tipo de Pagamento:</label>
@@ -172,16 +221,19 @@ export default function ContentProdutoEspecifico() {
             </div>
             <div className="form-group">
               <label htmlFor="qntd_parcelas">Quantidade de Parcelas:</label>
-              <input
-                type="number"
+              <select
                 id="qntd_parcelas"
                 name="qntd_parcelas"
                 value={pedido.qntd_parcelas}
                 onChange={handleInputChange}
-                min="1"
-                max="12"
+                disabled={pedido.tipo_pgto !== 'Cartão de Crédito'}
                 required
-              />
+              >
+                <option value={1}>1x</option>
+                <option value={3}>3x</option>
+                <option value={6}>6x</option>
+                <option value={12}>12x</option>
+              </select>
             </div>
             <div className="form-group">
               <label htmlFor="data_compra">Data da Compra:</label>
@@ -195,34 +247,17 @@ export default function ContentProdutoEspecifico() {
                 readOnly
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="valor_compra">Valor da Compra:</label>
-              <input
-                type="number"
-                id="valor_compra"
-                name="valor_compra"
-                value={pedido.valor_compra}
-                onChange={handleInputChange}
-                required
-                step="0.01"
-              />
+
+            <div className="payment-summary">
+              <p>Valor total: R${pedido.valor_compra}</p>
+              {pedido.tipo_pgto === 'Cartão de Crédito' && (
+                <p>Valor da parcela: R${pedido.valor_parcela}</p>
+              )}
             </div>
-            <div className="form-group">
-              <label htmlFor="cod_cliente">Código do Cliente:</label>
-              <input
-                type="number"
-                id="cod_cliente"
-                name="cod_cliente"
-                value={pedido.cod_cliente}
-                onChange={handleInputChange}
-                required
-                readOnly // Impede o usuário de alterar o código manualmente
-              />
-            </div>
-            <button type="submit" className="submit-btn">
-              Enviar ao Carrinho
-            </button>
+
+            <button type="submit" className="submit-btn">Finalizar Pedido</button>
           </form>
+
         </div>
       ) : (
         <p>Produto não encontrado.</p>
