@@ -34,17 +34,18 @@ export default function ContentProdutoEspecifico() {
     const dadosCliente = getDadosCliente();
     return {
       item: '',
-      destinatario: dadosCliente ? `${dadosCliente.nome} - ${dadosCliente.empresa}` : '', // Preenche com nome e empresa
+      destinatario: dadosCliente ? `${dadosCliente.nome} - ${dadosCliente.empresa}` : '',
       endereco: '',
       tipo_pgto: '',
       qntd_parcelas: 1,
-      data_compra: '',
+      data_compra: new Date().toISOString().split('T')[0], // Define a data da compra como a data atual
       valor_compra: '',
       quantidade: 1,
-      cod_produto: codigo,
-      cod_cliente: dadosCliente ? dadosCliente.codigo : null, // Obtém o código do cliente
+      status: 'Em Andamento', // Adiciona o status inicial
+      cod_produto: parseInt(codigo, 10), // Converte o código para número
+      cod_cliente: dadosCliente ? dadosCliente.codigo : null,
     };
-  });  
+  });   
 
   useEffect(() => {
     const fetchProduto = async () => {
