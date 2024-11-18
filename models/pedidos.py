@@ -5,13 +5,13 @@ class Pedidos(db.Model):
         return {
             'codigo': self.codigo,
             'item': self.item,
-            'quantidade': self.quantidade,  # Adiciona o campo 'quantidade' no dicionário
+            'quantidade': self.quantidade,
             'destinatario': self.destinatario,
             'endereco': self.endereco,
             'tipo_pgto': self.tipo_pgto,
             'data_compra': self.data_compra,
             'valor_compra': self.valor_compra,
-            'status': self.status,  # Adiciona o status no dicionário
+            'status': self.status,
             'cod_produto': self.cod_produto,
             'cod_cliente': self.cod_cliente
         }

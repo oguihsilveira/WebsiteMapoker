@@ -125,7 +125,7 @@ def produtosController():
                 produto_dict = item.to_dict()
                 
                 # Adiciona a lógica de exibição "Sem desconto" caso desconto seja 0 ou None
-                produto_dict['desconto'] = "Sem desconto" if produto_dict['desconto'] in (0, None) else f"{produto_dict['desconto']}%"
+                produto_dict['desconto'] = "Sem desconto" if produto_dict['desconto'] in (0, None) else f"{produto_dict['desconto']}"
                 
                 produto_dict['foto'] = base_url + produto_dict['foto']  # Inclui o caminho completo da imagem
                 produtos.append(produto_dict)
