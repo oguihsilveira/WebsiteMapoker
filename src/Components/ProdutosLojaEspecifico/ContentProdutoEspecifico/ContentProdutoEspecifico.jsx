@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importe o hook de navegação
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode'; // Corrigido para usar 'jwt-decode' corretamente
@@ -26,6 +27,7 @@ const getDadosCliente = () => {
 };
 
 export default function ContentProdutoEspecifico() {
+  const navigate = useNavigate(); // Inicialize o hook de navegação
   const { codigo } = useParams();
   const [produto, setProduto] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,9 +39,10 @@ export default function ContentProdutoEspecifico() {
       destinatario: dadosCliente ? `${dadosCliente.nome} - ${dadosCliente.empresa}` : '',
       endereco: '',
       tipo_pgto: '',
-      qntd_parcelas: 1,
+      qntd_parcelas: '',
       data_compra: new Date().toISOString().split('T')[0], // Define a data da compra como a data atual
       valor_compra: '',
+      valor_parcela: '',
       quantidade: 1,
       status: 'Em Andamento', // Adiciona o status inicial
       cod_produto: parseInt(codigo, 10), // Converte o código para número
@@ -79,13 +82,16 @@ export default function ContentProdutoEspecifico() {
   const calcularPrecoComDesconto = (preco, desconto) => {
     if (!preco) return '0.00';
     if (!desconto || parseFloat(desconto) <= 0) return parseFloat(preco).toFixed(2);
-
     return (preco * (1 - desconto / 100)).toFixed(2);
   };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setPedido((prevState) => ({ ...prevState, [name]: value }));
+    setPedido((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   // Função para calcular o valor das parcelas
@@ -105,17 +111,31 @@ export default function ContentProdutoEspecifico() {
         throw new Error('Token de autenticação não encontrado.');
       }
 
-      await axios.post('http://localhost:3000/pedidos', pedido, {
+      const { codigo, ...pedidoSemCodigo } = pedido;
+
+      const pedidoFormatado = {
+        ...pedidoSemCodigo,
+        valor_compra: parseFloat(pedidoSemCodigo.valor_compra).toFixed(2),
+        valor_parcela: pedidoSemCodigo.valor_parcela ? parseFloat(pedidoSemCodigo.valor_parcela).toFixed(2) : '',
+      };
+
+      console.log('Pedido enviado:', pedidoFormatado);
+
+      const response = await axios.post('http://localhost:3000/pedidos', pedidoFormatado, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert('Pedido realizado com sucesso!');
+      console.log('Resposta da API:', response.data);
+      alert('Pedido enviado ao carrinho!');
+
+      // Redirecione o usuário após o sucesso
+      navigate('/produtos-loja'); // Substitua '/meus-pedidos' pela rota desejada
     } catch (error) {
-      console.error('Erro ao realizar pedido:', error);
+      console.error('Erro ao realizar pedido:', error.response ? error.response.data : error.message);
       alert('Erro ao realizar pedido.');
     }
-  };
-
+  };  
+  
   // Atualiza o valor da compra com base na quantidade de parcelas
   useEffect(() => {
     if (pedido.tipo_pgto === 'Cartão de Crédito') {
@@ -225,11 +245,14 @@ export default function ContentProdutoEspecifico() {
               <select
                 id="qntd_parcelas"
                 name="qntd_parcelas"
-                value={pedido.qntd_parcelas}
+                value={pedido.qntd_parcelas || ''} // Garante que o valor inicial seja vazio
                 onChange={handleInputChange}
                 disabled={pedido.tipo_pgto !== 'Cartão de Crédito'}
                 required
               >
+                <option value="" disabled>
+                  Selecione a quantidade
+                </option>
                 <option value={1}>1x</option>
                 <option value={3}>3x</option>
                 <option value={6}>6x</option>
@@ -256,7 +279,7 @@ export default function ContentProdutoEspecifico() {
               )}
             </div>
 
-            <button type="submit" className="submit-btn">Finalizar Pedido</button>
+            <button type="submit" className="submit-btn">Enviar ao carrinho</button>
           </form>
 
         </div>

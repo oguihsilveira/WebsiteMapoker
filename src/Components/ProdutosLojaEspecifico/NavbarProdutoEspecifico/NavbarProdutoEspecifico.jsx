@@ -1,53 +1,59 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import './NavbarProdutoEspecifico.css'
-import logo from '../../../assets/logo.png'
-import cart_icon from '../../../assets/cart-icon.jpg'
-import back_icon from '../../../assets/back-icon.png'
-import axios from 'axios'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './NavbarProdutoEspecifico.css';
+import logo from '../../../assets/logo.png';
+import cart_icon from '../../../assets/cart-icon.jpg';
+import back_icon from '../../../assets/back-icon.png';
 
 const NavbarProdutoEspecifico = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [cartItems, setCartItems] = useState([]) 
-  const navigate = useNavigate()
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const navigate = useNavigate();
 
   const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen)
-  }
+    setIsDrawerOpen(!isDrawerOpen);
+  };
 
   const handleBackClick = () => {
-    navigate('/produtos-loja')
-  }
+    navigate('/produtos-loja');
+  };
 
   const handleLogout = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     setTimeout(() => {
-      localStorage.removeItem('token')
-      setIsLoading(false)
-      navigate('/')
-    }, 1500)
-  }
+      localStorage.removeItem('access_token');
+      setIsLoading(false);
+      navigate('/');
+    }, 1500);
+  };
 
   const fetchCartItems = async () => {
     try {
+      const token = localStorage.getItem('access_token');
       const response = await axios.get('http://localhost:3000/pedidos', {
-        params: { status: 'em andamento' }
-      })
-
-      const items = Array.isArray(response.data.pedidos) ? response.data.pedidos : []
-      setCartItems(items)
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      console.log("Dados recebidos:", response.data); // Verificar a estrutura do retorno
+      if (response.data?.pedidos && Array.isArray(response.data.pedidos)) {
+        setCartItems(response.data.pedidos); // Atualiza o estado com itens
+      } else {
+        console.error("Formato inesperado de resposta:", response.data);
+      }
     } catch (error) {
-      console.error('Erro ao buscar os itens do carrinho:', error)
-      setCartItems([])
+      console.error("Erro ao buscar itens do carrinho:", error);
+      handleLogout(); // Desloga o usuário em caso de falha
     }
-  }
+  };
 
+  // UseEffect para buscar itens do carrinho ao abrir o drawer
   useEffect(() => {
     if (isDrawerOpen) {
-      fetchCartItems()
+      fetchCartItems();
     }
-  }, [isDrawerOpen])
+  }, [isDrawerOpen]);
 
   return (
     <div>
@@ -69,7 +75,9 @@ const NavbarProdutoEspecifico = () => {
             <img src={cart_icon} alt="Carrinho" className="cart" />
           </li>
           <li>
-            <button className="btn" onClick={handleLogout}>LogOut</button>
+            <button className="btn" onClick={handleLogout}>
+              LogOut
+            </button>
           </li>
         </ul>
       </nav>
@@ -78,25 +86,34 @@ const NavbarProdutoEspecifico = () => {
         <div className="drawer">
           <button className="close-drawer" onClick={toggleDrawer}>×</button>
           <h2>Carrinho de Compras</h2>
-        
+
           {cartItems.length > 0 ? (
             <div className="cart-items">
               {cartItems.map((item, index) => (
                 <div key={index} className="cart-item">
-                  <img src={item.foto} alt={item.item_produto} className="cart-item-img" />
+                 <img 
+                    src={`http://localhost:3000${item.foto}`} 
+                    alt={item.item_produto} 
+                    className="cart-item-img" 
+                  />
                   <span className="cart-item-name">{item.item_produto}</span>
-                  <span className="cart-item-price">R$ {item.preco_com_desconto.toFixed(2)}</span>
-                  <button className="remove-item" onClick={() => removeItem(index)}>X</button> 
+                  <span className="cart-item-price">R$ {item.valor_compra.toFixed(2)}</span>
+                  <button
+                    className="remove-item"
+                    onClick={() => console.log(`Remover item ${item.pedido_id}`)}
+                  >
+                    X
+                  </button>
                 </div>
               ))}
             </div>
           ) : (
-            <p>O carrinho está vazio.</p>
+            <p>O carrinho está vazio ou os dados não foram carregados corretamente.</p>
           )}
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default NavbarProdutoEspecifico
+export default NavbarProdutoEspecifico;
