@@ -38,32 +38,43 @@ const ContentLoginCliente = () => {
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    setResult("Logando....");
-
+    setResult("Logando...");
+  
     try {
       const response = await axios.post("http://localhost:3000/login-clientes", loginData);
       const { token } = response.data;
-
+  
       const decodedToken = jwtDecode(token);
       console.log("Token decodificado:", decodedToken);
-
+  
       localStorage.setItem("token", token);
-
+  
       if (decodedToken.role === "cliente") {
-        setResult("Login bem-sucedido");
+        setResult("Login bem-sucedido!");
         navigate("/produtos-loja");
       } else {
         setResult("Acesso negado: você não tem permissão para acessar esta área.");
       }
     } catch (error) {
-      console.error("Erro durante o login:", error.response || error.message);
+      console.error("Erro durante o login:", error);
+  
       if (error.response) {
-        setResult(`Erro: ${error.response.status} - ${error.response.data.error || "Erro no login"}`);
+        // Personalizando mensagens de erro
+        const status = error.response.status;
+        const errorMessage = error.response.data.error || "Erro desconhecido no login.";
+        
+        if (status === 401) {
+          setResult("Credenciais inválidas. Verifique seu login e senha.");
+        } else if (status === 403) {
+          setResult("Acesso negado. Você não tem permissão para acessar.");
+        } else {
+          setResult(`Erro: ${status} - ${errorMessage}`);
+        }
       } else {
-        setResult(`Erro ao conectar: ${error.message}`);
+        setResult("Erro ao conectar ao servidor. Tente novamente mais tarde.");
       }
     }
-  };
+  };  
 
   const handleCadastroSubmit = async (e) => {
     e.preventDefault();
@@ -99,12 +110,25 @@ const ContentLoginCliente = () => {
       }
     } catch (error) {
       console.error("Erro durante o cadastro:", error.response || error.message);
-      if (error.response && error.response.status === 409) {
-        alert("Erro: O login já está em uso. Por favor, escolha outro.");
+  
+      if (error.response) {
+          const status = error.response.status;
+          const errorMessage = error.response.data.error;
+  
+          if (status === 409 && errorMessage.includes("Login já está em uso")) {
+              alert("Erro: O login já está em uso. Por favor, escolha outro.");
+          } else if (status === 409 && errorMessage.includes("Telefone já está em uso")) {
+              alert("Erro: O telefone já está em uso. Por favor, escolha outro.");
+          } else if (status === 409 && errorMessage.includes("Email já está em uso")) {
+              alert("Erro: O email já está em uso. Por favor, escolha outro.");
+          } else {
+              alert("Erro ao efetuar cadastro. Por favor, tente novamente.");
+          }
       } else {
-        alert("Erro ao efetuar Login.");
+          alert("Erro ao conectar ao servidor.");
       }
-    }
+  }
+  
   };
 
   return (

@@ -23,7 +23,7 @@ const NavbarProdutoEspecifico = () => {
   const handleLogout = () => {
     setIsLoading(true);
     setTimeout(() => {
-      localStorage.removeItem('access_token');
+      localStorage.removeItem('token');
       setIsLoading(false);
       navigate('/');
     }, 1500);
@@ -31,24 +31,36 @@ const NavbarProdutoEspecifico = () => {
 
   const fetchCartItems = async () => {
     try {
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("Token não encontrado no localStorage");
+        return;
+      }
+      console.log("Token usado para buscar itens do carrinho:", token);
+  
       const response = await axios.get('http://localhost:3000/pedidos', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
-      console.log("Dados recebidos:", response.data); // Verificar a estrutura do retorno
+  
       if (response.data?.pedidos && Array.isArray(response.data.pedidos)) {
-        setCartItems(response.data.pedidos); // Atualiza o estado com itens
+        setCartItems(response.data.pedidos);
       } else {
         console.error("Formato inesperado de resposta:", response.data);
       }
     } catch (error) {
       console.error("Erro ao buscar itens do carrinho:", error);
-      handleLogout(); // Desloga o usuário em caso de falha
+    }
+  };    
+
+  const handleRemoveItem = async (codigo) => {
+    try {
+      await axios.delete(`http://localhost:3000/pedidos/${codigo}`);
+      setCartItems((prevItems) => prevItems.filter((item) => item.codigo !== codigo));
+    } catch (error) {
+      console.error("Erro ao remover item:", error);
     }
   };
 
-  // UseEffect para buscar itens do carrinho ao abrir o drawer
   useEffect(() => {
     if (isDrawerOpen) {
       fetchCartItems();
@@ -91,8 +103,8 @@ const NavbarProdutoEspecifico = () => {
             <div className="cart-items">
               {cartItems.map((item, index) => (
                 <div key={index} className="cart-item">
-                 <img 
-                    src={`http://localhost:3000${item.foto}`} 
+                  <img 
+                    src={`http://localhost:3000/uploads/${item.produto.foto}`} 
                     alt={item.item_produto} 
                     className="cart-item-img" 
                   />
@@ -100,7 +112,7 @@ const NavbarProdutoEspecifico = () => {
                   <span className="cart-item-price">R$ {item.valor_compra.toFixed(2)}</span>
                   <button
                     className="remove-item"
-                    onClick={() => console.log(`Remover item ${item.pedido_id}`)}
+                    onClick={() => handleRemoveItem(item.codigo)}
                   >
                     X
                   </button>

@@ -1,0 +1,8 @@
+Iniciar Front-end:
+
+1. Com o Back-end iniciado (ou não), você pode iniciar o Front-nd escrevendo no terminal:
+
+- npm install axios react-router-dom react-scroll react-sticky react-icons jwt-decode (instalará todas as bibliotecas do Front-end)
+- Caso dê algum problema, rodar "npm audit fix"
+- Após instalação, rodar "npm run dev"
+- Clicar com ctrl em "http://localhost:5173/"
