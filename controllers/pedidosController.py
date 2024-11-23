@@ -4,79 +4,7 @@ from sqlalchemy.orm import joinedload
 from models.pedidos import Pedidos
 from models.produtos import Produtos
 from models.clientes import Clientes
-import jwt  # Para decodificar o token
 import datetime
-import logging
-import os  # Para carregar a chave secreta de variáveis de ambiente
-
-# Carregando a chave secreta de uma variável de ambiente
-SECRET_KEY = os.getenv('SECRET_KEY', 'chave_secreta_padrao')  # Substitua pela sua chave segura
-
-def get_pedidos():
-    try:
-        # Obtendo o token do cabeçalho Authorization
-        auth_header = request.headers.get('Authorization')
-        if not auth_header:
-            logging.error("Token não fornecido no cabeçalho")
-            return jsonify({'error': 'Token não fornecido'}), 401
-
-        # Extraindo o token do cabeçalho
-        try:
-            token = auth_header.split(' ')[1]
-        except IndexError:
-            logging.error("Formato do cabeçalho Authorization inválido")
-            return jsonify({'error': 'Token malformado'}), 401
-
-        # Decodificando o token para obter informações do cliente
-        try:
-            decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            logging.error("Token expirado")
-            return jsonify({'error': 'Token expirado'}), 401
-        except jwt.InvalidTokenError as e:
-            logging.error(f"Token inválido: {str(e)}")
-            return jsonify({'error': 'Token inválido'}), 401
-
-        # Obtendo o código do cliente do token decodificado
-        cod_cliente = decoded_token.get('codigo')
-        if not cod_cliente:
-            logging.error("Cliente não encontrado no token")
-            return jsonify({'error': 'Cliente não encontrado no token'}), 401
-
-        # Query para buscar pedidos do cliente logado com status 'em andamento'
-        pedidos_query = db.session.query(
-            Pedidos.codigo.label('codigo'),
-            Pedidos.status,
-            Pedidos.valor_compra,
-            Produtos.codigo.label('cod_produto'),
-            Produtos.item,
-            Produtos.foto
-        ).join(Produtos, Pedidos.cod_produto == Produtos.codigo).filter(
-            Pedidos.cod_cliente == cod_cliente,
-            Pedidos.status == 'em andamento'
-        )
-
-        # Executando a consulta
-        pedidos = pedidos_query.all()
-
-        # Serialização dos resultados
-        pedidos_list = [
-            {
-                'codigo': pedido.codigo,
-                'cod_produto': pedido.cod_produto,
-                'item': pedido.item,
-                'foto': pedido.foto,
-                'valor_compra': pedido.valor_compra,
-                'status': pedido.status
-            }
-            for pedido in pedidos
-        ]
-
-        return jsonify({'pedidos': pedidos_list}), 200
-
-    except Exception as e:
-        logging.error(f"Erro inesperado: {str(e)}")
-        return jsonify({'error': 'Erro interno do servidor'}), 500
 
 def pedidosController():
     if request.method == 'POST':

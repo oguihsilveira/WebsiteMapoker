@@ -12,7 +12,21 @@ def clientesController():
             if not data.get('nome') or not data.get('empresa') or not data.get('telefone') or not data.get('login') or not data.get('email'):
                 return jsonify({'error': 'Nome, empresa, telefone, login e email são obrigatórios.'}), 400
 
-            # Remove a verificação do código, pois é auto-incremento
+            # Verifica se o login, telefone ou email já estão em uso
+            existing_login = Clientes.query.filter_by(login=data['login']).first()
+            if existing_login:
+                return jsonify({'error': 'Login já está em uso. Por favor, escolha outro.'}), 409
+
+            existing_telefone = Clientes.query.filter_by(telefone=data['telefone']).first()
+            if existing_telefone:
+                return jsonify({'error': 'Telefone já está em uso. Por favor, escolha outro.'}), 409
+
+            existing_email = Clientes.query.filter_by(email=data['email']).first()
+            if existing_email:
+                return jsonify({'error': 'Email já está em uso. Por favor, escolha outro.'}), 409
+
+
+            # Cria o hash da senha e cadastra o cliente
             hashed_password = bcrypt.hashpw(data['senha'].encode('utf-8'), bcrypt.gensalt())
 
             cliente = Clientes(

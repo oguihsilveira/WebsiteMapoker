@@ -18,7 +18,7 @@ class Clientes(db.Model):
     empresa = db.Column(db.String(100), nullable=True)
     telefone = db.Column(db.String(100), nullable=True)
     email = db.Column(db.String(100), nullable=False) 
-    login = db.Column(db.String(50), nullable=False) 
+    login = db.Column(db.String(50), unique=True, nullable=False) 
     senha = db.Column(db.String(255), nullable=False)
 
     def __init__(self, nome, empresa, telefone, email, login, senha):

@@ -4,6 +4,7 @@ from routes.estoqueRoutes import estoque
 from routes.produtosRoutes import produtos
 from routes.clientesRoutes import clientes
 from routes.pedidosRoutes import pedidos
+from routes.carrinhoRoutes import carrinho
 
 # Importando as rotas de login
 from routes.login_clientesRoutes import login_clientes
@@ -16,6 +17,7 @@ def default_routes(app):
     produtos(app)
     clientes(app)
     pedidos(app)
+    carrinho(app)
     #pagamentos(app)
     #parcelas(app)
     login_clientes(app) # Rota para login de clientes

@@ -1,0 +1,15 @@
+Iniciar Back-end:
+
+1. Tenha o Banco de Dados Aberto com as tabelas de "tabelas.txt"
+
+2. No terminal, faça esta sequência:
+
+- python -m venv venv (criar venv)
+- ./venv/Scripts/activate (ativar venv)
+- pip install -r ./requirements.txt (instalar bibliotecas utilizadas)
+- Se pedir para atualizar o pip, atualize (python.exe -m pip install --upgrade pip)
+- garanta que o arquivo main.py tenha o endereço de conexão correto (por exemplo: mysql+pymysql://root:''@localhost/mapoker)
+- python main.py (iniciar back-end)
+
+Pronto, você tem o back-end rodando.
+
