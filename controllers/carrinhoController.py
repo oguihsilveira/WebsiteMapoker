@@ -1,3 +1,5 @@
+# carrinhoController.py
+
 from flask import request, jsonify
 from database.db import db
 from models.pedidos import Pedidos
@@ -39,7 +41,10 @@ def get_pedidos():
             logging.error("Cliente não encontrado no token ou token malformado")
             return jsonify({'error': 'Cliente não encontrado no token'}), 401
 
-        # Query para buscar pedidos associados ao cliente do token
+        # No carrinhoController.py
+        print(f"Cod_cliente no token: {cod_cliente}")  # Verifique o valor de cod_cliente extraído do token
+
+        # Filtra apenas os pedidos com status 'em andamento'
         pedidos_query = db.session.query(
             Pedidos.codigo.label('codigo'),
             Pedidos.status,
@@ -48,14 +53,11 @@ def get_pedidos():
             Produtos.item,
             Produtos.foto
         ).join(Produtos, Pedidos.cod_produto == Produtos.codigo).filter(
-            Pedidos.cod_cliente == cod_cliente,  # Filtra por cliente autenticado
-            Pedidos.status == 'em andamento'
+            Pedidos.cod_cliente == cod_cliente,  # Filtrando pelo código do cliente
+            Pedidos.status == 'em andamento'     # Filtra apenas os pedidos 'em andamento'
         )
 
-        logging.info(f"Token decodificado, cod_cliente: {cod_cliente}")
-        logging.info(f"Pedidos retornados para cliente {cod_cliente}: {pedidos}")
         pedidos = pedidos_query.all()
-
 
         # Serialização dos pedidos
         pedidos_list = [
@@ -71,6 +73,88 @@ def get_pedidos():
         ]
 
         return jsonify({'pedidos': pedidos_list}), 200
+
+    except Exception as e:
+        logging.error(f"Erro inesperado: {str(e)}")
+        return jsonify({'error': 'Erro interno do servidor'}), 500
+
+    
+def update_pedido_status(codigo):
+    try:
+        # Validação do token no cabeçalho Authorization
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            logging.error("Token não fornecido no cabeçalho")
+            return jsonify({'error': 'Token não fornecido'}), 401
+
+        try:
+            token = auth_header.split(' ')[1]
+        except IndexError:
+            logging.error("Formato do cabeçalho Authorization inválido")
+            return jsonify({'error': 'Token malformado'}), 401
+
+        try:
+            decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            logging.error("Token expirado")
+            return jsonify({'error': 'Token expirado'}), 401
+        except jwt.InvalidTokenError as e:
+            logging.error(f"Token inválido: {str(e)}")
+            return jsonify({'error': 'Token inválido'}), 401
+
+        cod_cliente = decoded_token.get('codigo')
+        if not cod_cliente:
+            logging.error("Cliente não encontrado no token ou token malformado")
+            return jsonify({'error': 'Cliente não encontrado no token'}), 401
+
+        # Atualizar o pedido para "pendente"
+        pedido = db.session.query(Pedidos).filter_by(codigo=codigo, cod_cliente=cod_cliente).first()
+        if pedido:
+            pedido.status = 'pendente'  # Atualiza o status para 'pendente'
+            db.session.commit()
+            return jsonify({'message': 'Status do pedido atualizado para "pendente" com sucesso!'}), 200
+        else:
+            return jsonify({'error': 'Pedido não encontrado ou cliente inválido'}), 404
+
+    except Exception as e:
+        logging.error(f"Erro inesperado: {str(e)}")
+        return jsonify({'error': 'Erro interno do servidor'}), 500
+
+def remove_pedido(codigo):
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            logging.error("Token não fornecido no cabeçalho")
+            return jsonify({'error': 'Token não fornecido'}), 401
+
+        try:
+            token = auth_header.split(' ')[1]
+        except IndexError:
+            logging.error("Formato do cabeçalho Authorization inválido")
+            return jsonify({'error': 'Token malformado'}), 401
+
+        try:
+            decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            logging.error("Token expirado")
+            return jsonify({'error': 'Token expirado'}), 401
+        except jwt.InvalidTokenError as e:
+            logging.error(f"Token inválido: {str(e)}")
+            return jsonify({'error': 'Token inválido'}), 401
+
+        cod_cliente = decoded_token.get('codigo')
+        if not cod_cliente:
+            logging.error("Cliente não encontrado no token ou token malformado")
+            return jsonify({'error': 'Cliente não encontrado no token'}), 401
+
+        # Remover o pedido do carrinho
+        pedido = db.session.query(Pedidos).filter_by(codigo=codigo, cod_cliente=cod_cliente).first()
+        if pedido:
+            db.session.delete(pedido)
+            db.session.commit()
+            return jsonify({'message': 'Pedido removido com sucesso!'}), 200
+        else:
+            return jsonify({'error': 'Pedido não encontrado ou cliente inválido'}), 404
 
     except Exception as e:
         logging.error(f"Erro inesperado: {str(e)}")

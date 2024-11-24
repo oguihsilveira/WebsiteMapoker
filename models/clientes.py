@@ -16,8 +16,8 @@ class Clientes(db.Model):
     codigo = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     nome = db.Column(db.String(100), nullable=False)
     empresa = db.Column(db.String(100), nullable=True)
-    telefone = db.Column(db.String(100), nullable=True)
-    email = db.Column(db.String(100), nullable=False) 
+    telefone = db.Column(db.String(100), unique=True, nullable=True)
+    email = db.Column(db.String(100), unique=True, nullable=False) 
     login = db.Column(db.String(50), unique=True, nullable=False) 
     senha = db.Column(db.String(255), nullable=False)
 
