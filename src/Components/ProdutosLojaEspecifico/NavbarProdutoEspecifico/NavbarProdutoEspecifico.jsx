@@ -1,3 +1,4 @@
+//NavbarProdutoEspecifico.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -5,6 +6,8 @@ import './NavbarProdutoEspecifico.css';
 import logo from '../../../assets/logo.png';
 import cart_icon from '../../../assets/cart-icon.jpg';
 import back_icon from '../../../assets/back-icon.png';
+import { jwtDecode } from 'jwt-decode';  // Importando a biblioteca jwt-decode
+import { AiOutlineCheck } from 'react-icons/ai';  // Ícone de check da biblioteca react-icons
 
 const NavbarProdutoEspecifico = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
@@ -30,34 +33,79 @@ const NavbarProdutoEspecifico = () => {
   };
 
   const fetchCartItems = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error("Token não encontrado no localStorage");
+      return;
+    }
+  
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error("Token não encontrado no localStorage");
-        return;
-      }
-      console.log("Token usado para buscar itens do carrinho:", token);
+      const decodedToken = jwtDecode(token);
+      console.log("Dados do cliente decodificados:", decodedToken);
   
       const response = await axios.get('http://localhost:3000/pedidos', {
         headers: { Authorization: `Bearer ${token}` },
       });
   
+      console.log("Pedidos recebidos:", response.data);
+  
       if (response.data?.pedidos && Array.isArray(response.data.pedidos)) {
-        setCartItems(response.data.pedidos);
+        // Filtra os pedidos verificando tanto o código do cliente quanto o status "em andamento"
+        const filteredPedidos = response.data.pedidos.filter((pedido) => 
+          pedido.cod_cliente === decodedToken.codigo && pedido.status === "em andamento"
+        );
+        setCartItems(filteredPedidos);
       } else {
         console.error("Formato inesperado de resposta:", response.data);
       }
     } catch (error) {
       console.error("Erro ao buscar itens do carrinho:", error);
     }
-  };    
+  };  
+
+  const handleUpdateStatus = async (codigo) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("Token não encontrado no localStorage");
+        return;
+      }
+  
+      const response = await axios.put(
+        `http://localhost:3000/carrinho/pedidos/${codigo}/status`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      alert(response.data.message);  // Exibe a resposta do servidor
+  
+      // Atualiza os itens do carrinho após alterar o status
+      fetchCartItems();
+  
+    } catch (error) {
+      console.error("Erro ao atualizar o status do pedido:", error);
+      alert('Não foi possível atualizar o status do pedido.');
+    }
+  };  
 
   const handleRemoveItem = async (codigo) => {
     try {
-      await axios.delete(`http://localhost:3000/pedidos/${codigo}`);
+      await axios.delete(`http://localhost:3000/carrinho/pedidos/${codigo}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
       setCartItems((prevItems) => prevItems.filter((item) => item.codigo !== codigo));
+
+      alert('Item removido com sucesso!');
     } catch (error) {
       console.error("Erro ao remover item:", error);
+      alert('Não foi possível remover o item. Tente novamente.');
     }
   };
 
@@ -102,14 +150,26 @@ const NavbarProdutoEspecifico = () => {
           {cartItems.length > 0 ? (
             <div className="cart-items">
               {cartItems.map((item, index) => (
-                <div key={index} className="cart-item">
-                  <img 
-                    src={`http://localhost:3000/uploads/${item.produto.foto}`} 
-                    alt={item.item_produto} 
-                    className="cart-item-img" 
-                  />
+              <div key={index} className="cart-item">
+                <img 
+                  src={`http://localhost:3000/uploads/${item.produto.foto}`} 
+                  alt={item.item_produto} 
+                  className="cart-item-img" 
+                />
+                <div className="cart-item-details">
                   <span className="cart-item-name">{item.item_produto}</span>
-                  <span className="cart-item-price">R$ {item.valor_compra.toFixed(2)}</span>
+                  <span className="cart-item-quantity">Qtd: {item.quantidade}</span>
+                </div>
+                <span className="cart-item-price">R$ {item.valor_compra.toFixed(2)}</span>
+
+                <div className="cart-item-actions">
+                  <button
+                    className="update-status"
+                    onClick={() => handleUpdateStatus(item.codigo)}
+                  >
+                    <AiOutlineCheck size={24} />
+                  </button>
+
                   <button
                     className="remove-item"
                     onClick={() => handleRemoveItem(item.codigo)}
@@ -117,7 +177,9 @@ const NavbarProdutoEspecifico = () => {
                     X
                   </button>
                 </div>
-              ))}
+              </div>
+            ))}
+
             </div>
           ) : (
             <p>O carrinho está vazio ou os dados não foram carregados corretamente.</p>

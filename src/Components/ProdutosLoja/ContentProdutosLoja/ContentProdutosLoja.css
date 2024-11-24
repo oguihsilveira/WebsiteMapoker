@@ -75,49 +75,38 @@
     font-size: 16px;
     margin-bottom: 10px;
 }
+
 .product-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* Centralizando os botões */
     margin-top: 20px;
     width: 100%;
 }
 
-.see-more-button {
-    margin-left: 20px;
-    margin-right: 5px;
-    width: 120px;
-    height: auto;
-    background-color: #232323;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-}
-
 .order-button {
-    margin-right: 20px;
-    margin-left: 5px;
-    width: 120px;
+    width: 200px;
     height: auto;
-    background-color: #90ee90; /* Verde claro */
+    background-color: lightgreen; /* Verde claro */
     color: black;
     border: none;
     border-radius: 5px;
     padding: 10px 15px;
     cursor: pointer;
 }
-.suggestions{
+
+.suggestions {
     background-color: #fff;
     border-radius: 20;
     width: 100%;
     height: auto;
 }
-.suggestions :hover{
+
+.suggestions :hover {
     background-color: #ededed;
     border-radius: 2px;
 }
-.suggestion-item{
+
+.suggestion-item {
     gap: 20;
     margin: 10px;
 }

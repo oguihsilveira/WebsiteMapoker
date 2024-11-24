@@ -331,6 +331,7 @@ export default function ContentProdutos() {
                   name="quantidade"
                   value={formData.quantidade}
                   onChange={(e) => setFormData({ ...formData, quantidade: parseInt(e.target.value, 10) })}
+                  onWheel={(e) => e.target.blur()} // Para evitar mudanças indesejadas ao rolar o mouse
                   className="input"
                 />
               </label>

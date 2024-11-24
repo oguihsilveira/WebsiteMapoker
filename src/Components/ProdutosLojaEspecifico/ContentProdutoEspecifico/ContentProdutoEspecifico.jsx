@@ -11,7 +11,7 @@ const getDadosCliente = () => {
   if (token) {
     try {
       const decodedToken = jwtDecode(token); // Decodifica o token JWT
-      console.log('Token decodificado:', decodedToken); // Depuração do token completo
+      /* console.log('Token decodificado:', decodedToken); // Depuração do token completo */
       return {
         codigo: decodedToken.codigo, // Retorna o código do cliente (ID)
         nome: decodedToken.nome, // Nome do cliente
@@ -43,7 +43,7 @@ export default function ContentProdutoEspecifico() {
       data_compra: new Date().toISOString().split('T')[0], // Define a data da compra como a data atual
       valor_compra: '',
       valor_parcela: '',
-      quantidade: 1,
+      quantidade: '',
       status: 'Em Andamento', // Adiciona o status inicial
       cod_produto: parseInt(codigo, 10), // Converte o código para número
       cod_cliente: dadosCliente ? dadosCliente.codigo : null,
@@ -57,16 +57,19 @@ export default function ContentProdutoEspecifico() {
         if (!token) {
           throw new Error('Token de autenticação não encontrado.');
         }
-
+    
         const response = await axios.get(`http://localhost:3000/produtos/${codigo}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        setProduto(response.data);
+    
+        const produto = response.data;
+        const precoComDesconto = calcularPrecoComDesconto(produto.preco_padrao, produto.desconto);
+    
+        setProduto(produto);
         setPedido((prevState) => ({
           ...prevState,
-          item: response.data.item,
-          valor_compra: response.data.preco_padrao,
+          item: produto.item,
+          valor_compra: precoComDesconto, // Inicia o valor com o preço com desconto
           data_compra: new Date().toISOString().split('T')[0],
         }));
         setLoading(false);
@@ -74,7 +77,7 @@ export default function ContentProdutoEspecifico() {
         console.error('Erro ao carregar produto:', error);
         setLoading(false);
       }
-    };
+    };    
 
     fetchProduto();
   }, [codigo]);
@@ -136,19 +139,33 @@ export default function ContentProdutoEspecifico() {
     }
   };  
   
-  // Atualiza o valor da compra com base na quantidade de parcelas
-  useEffect(() => {
-    if (pedido.tipo_pgto === 'Cartão de Crédito') {
-      const precoTotal = pedido.quantidade * produto.preco_padrao;
-      const { valorParcela, valorTotal } = calcularParcelas(precoTotal, pedido.qntd_parcelas);
-      setPedido((prevState) => ({
-        ...prevState,
-        valor_compra: valorTotal, // Atualiza o valor total
-        valor_parcela: valorParcela, // Atualiza o valor da parcela
-      }));
-    }
-  }, [pedido.quantidade, pedido.qntd_parcelas, produto]);
-
+    // Atualiza o valor da compra com base na quantidade de parcelas
+    useEffect(() => {
+      if (pedido.quantidade && produto) {
+        const precoComDesconto = calcularPrecoComDesconto(produto.preco_padrao, produto.desconto);
+        const precoTotal = pedido.quantidade * parseFloat(precoComDesconto);
+    
+        if (pedido.tipo_pgto === 'Cartão de Crédito' && pedido.qntd_parcelas) {
+          const { valorParcela, valorTotal } = calcularParcelas(precoTotal, pedido.qntd_parcelas);
+          setPedido((prevState) => ({
+            ...prevState,
+            valor_compra: valorTotal, // Atualiza o valor total
+            valor_parcela: valorParcela, // Atualiza o valor da parcela
+            qntd_parcelas: 1,
+          }));
+        } else {
+          // Se o tipo de pagamento for Boleto ou Pix, define a quantidade de parcelas como 1x
+          setPedido((prevState) => ({
+            ...prevState,
+            valor_compra: precoTotal.toFixed(2),
+            valor_parcela: '', // Limpa as parcelas se não for crédito
+            qntd_parcelas: 1,  // Se não for Cartão de Crédito, define a quantidade de parcelas como 1
+          }));
+        }
+      }
+    }, [pedido.quantidade, pedido.qntd_parcelas, pedido.tipo_pgto, produto]);  
+  
+  
   return (
     <div className="product-detail-container">
       {loading ? (
@@ -202,29 +219,33 @@ export default function ContentProdutoEspecifico() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="quantidade">Quantidade:</label>
-              <select
-                id="quantidade"
-                name="quantidade"
-                value={pedido.quantidade}
-                onChange={(e) => {
-                  const quantidade = parseInt(e.target.value, 10);
-                  const novoValorCompra = quantidade * produto.preco_padrao;
-                  setPedido((prevState) => ({
-                    ...prevState,
-                    quantidade,
-                    valor_compra: novoValorCompra.toFixed(2),
-                  }));
-                }}
-                required
-              >
-                {Array.from({ length: produto.quantidade }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <label htmlFor="quantidade">Quantidade:</label>
+            <select
+              id="quantidade"
+              name="quantidade"
+              value={pedido.quantidade}
+              onChange={(e) => {
+                const quantidade = parseInt(e.target.value, 10);
+                const precoComDesconto = calcularPrecoComDesconto(produto.preco_padrao, produto.desconto);
+                const novoValorCompra = quantidade * parseFloat(precoComDesconto);
+                setPedido((prevState) => ({
+                  ...prevState,
+                  quantidade: quantidade || '', // Define como vazio se nenhum valor for selecionado
+                  valor_compra: quantidade ? novoValorCompra.toFixed(2) : '',
+                }));
+              }}
+              required
+            >
+              <option value={pedido.qntd_parcelas} disabled>
+                Selecione a quantidade
+              </option>
+              {Array.from({ length: produto.quantidade }, (_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </select>
+          </div>
             <div className="form-group">
               <label htmlFor="tipo_pgto">Tipo de Pagamento:</label>
               <select
@@ -245,32 +266,26 @@ export default function ContentProdutoEspecifico() {
               <select
                 id="qntd_parcelas"
                 name="qntd_parcelas"
-                value={pedido.qntd_parcelas || ''} // Garante que o valor inicial seja vazio
+                value={pedido.qntd_parcelas}
                 onChange={handleInputChange}
-                disabled={pedido.tipo_pgto !== 'Cartão de Crédito'}
+                disabled={pedido.tipo_pgto === 'Boleto Bancário' || pedido.tipo_pgto === 'Pix'} // Desabilita as parcelas para Boleto ou Pix
                 required
               >
-                <option value="" disabled>
-                  Selecione a quantidade
-                </option>
-                <option value={1}>1x</option>
-                <option value={3}>3x</option>
-                <option value={6}>6x</option>
-                <option value={12}>12x</option>
+                <option value="">Selecione</option>
+                {pedido.tipo_pgto === 'Cartão de Crédito' && (
+                  <>
+                    <option value="1">1x</option>
+                    <option value="3">3x</option>
+                    <option value="6">6x</option>
+                    <option value="12">12x</option>
+                  </>
+                )}
+                {(pedido.tipo_pgto === 'Boleto Bancário' || pedido.tipo_pgto === 'Pix') && (
+                  <option value="1">1x</option> // Para Boleto e Pix, só mostra 1x
+                )}
               </select>
             </div>
-            <div className="form-group">
-              <label htmlFor="data_compra">Data da Compra:</label>
-              <input
-                type="date"
-                id="data_compra"
-                name="data_compra"
-                value={pedido.data_compra}
-                onChange={handleInputChange}
-                required
-                readOnly
-              />
-            </div>
+
 
             <div className="payment-summary">
               <p>Valor total: R${pedido.valor_compra}</p>

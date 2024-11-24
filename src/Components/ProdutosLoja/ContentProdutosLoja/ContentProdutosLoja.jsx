@@ -86,6 +86,11 @@ export default function ContentProdutosLoja() {
     navigate(`/produto/${codigo}`); // Navegação para página do produto específico
   };
 
+  // Função para fazer o pedido
+  const handleOrder = (codigo) => {
+    navigate(`/produto/${codigo}`); // Navegação para página do produto para fazer o pedido
+  };
+
   return (
     <div className="content-container">
       <h2 className="title">Loja</h2>
@@ -138,13 +143,13 @@ export default function ContentProdutosLoja() {
                 </p>
               </div>
               <div className="product-buttons">
+                {/* Removido o botão Veja Mais */}
                 <button 
-                  className="see-more-button" 
-                  onClick={() => handleSeeMore(item.codigo)}
+                  className="order-button" 
+                  onClick={() => handleOrder(item.codigo)} // Função de fazer pedido
                 >
-                  Veja mais
+                  Fazer pedido
                 </button>
-                <button className="order-button">Fazer pedido</button>
               </div>
             </div>
           ))
