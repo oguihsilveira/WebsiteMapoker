@@ -44,7 +44,7 @@ const Produtos = () => {
       </div>
       <div>
         <button className='btn dark-btn' onClick={handleNavigate}>
-          Veja mais aqui
+          Veja mais na Loja
           <img src={white_arrow} alt="" />
         </button>
       </div>
