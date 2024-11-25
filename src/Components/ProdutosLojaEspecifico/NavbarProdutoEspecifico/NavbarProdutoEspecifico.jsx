@@ -10,7 +10,7 @@ import { jwtDecode } from 'jwt-decode';  // Importando a biblioteca jwt-decode
 import { AiOutlineCheck } from 'react-icons/ai';  // Ícone de check da biblioteca react-icons
 
 const NavbarProdutoEspecifico = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();

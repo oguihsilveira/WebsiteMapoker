@@ -16,11 +16,13 @@ import Usuarios from "./Components/Cadastros/Usuarios/Usuarios";
 import Estoque from "./Components/Cadastros/Estoque/Estoque";
 import Produtos from './Components/Cadastros/Produtos/Produtos';
 import Clientes from './Components/Cadastros/Clientes/Clientes';
-import Pagamentos from "./Components/Cadastros/Pagamentos/Pagamentos";
-import Parcelas from './Components/Cadastros/Parcelas/Parcelas';
+import Pedidos from "./Components/Cadastros/Pedidos/Pedidos";
+/* import Pagamentos from "./Components/Cadastros/Pagamentos/Pagamentos";
+import Parcelas from './Components/Cadastros/Parcelas/Parcelas'; */
 
 // Rota Protegida
 import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
+
 
 const App = () => {
   return (
@@ -96,6 +98,14 @@ const App = () => {
           } 
         />
         <Route 
+          path="/pedidos" 
+          element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <Pedidos />
+            </PrivateRoute>
+          } 
+        />
+        {/* <Route 
           path="/pagamentos" 
           element={
             <PrivateRoute allowedRoles={['admin']}>
@@ -110,7 +120,7 @@ const App = () => {
               <Parcelas />
             </PrivateRoute>
           } 
-        />
+        /> */}
       </Routes>
     </Router>
   );
