@@ -372,7 +372,7 @@ export default function ContentProdutos() {
                   <option value="">Selecione um item estoque</option>
                   {estoque.map((estoque) => (
                     <option key={estoque.codigo} value={estoque.codigo}>
-                      {estoque.item} {/* Substitua 'nome' pelo atributo que representa o nome do estoque */}
+                      {estoque.item}
                     </option>
                   ))}
                 </select>

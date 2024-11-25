@@ -25,7 +25,7 @@
   text-align: center;
   vertical-align: middle;
   font-family: sans-serif;
-  width: auto; /* Ajusta a largura do botão */
+  width: auto;
   margin-left: 10px;
   height: 40px;
 }
@@ -60,15 +60,15 @@
 
 .modal-container {
   position: fixed;
-  top: 0; /* Ajusta para que a modal comece do topo da tela */
+  top: 0; 
   left: 0;
   right: 0;
-  bottom: 0; /* Preenche toda a tela */
-  background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+  bottom: 0; 
+  background-color: rgba(0, 0, 0, 0.5); 
   display: flex;
   justify-content: center;
-  align-items: center; /* Centraliza a modal verticalmente */
-  z-index: 1000; /* Garantir que fique sobre outros elementos */
+  align-items: center; 
+  z-index: 1000; 
 }
 
 .modal {
@@ -76,13 +76,12 @@
   padding: 20px;
   border-radius: 10px;
   position: relative;
-  height: auto; /* Deixa a altura auto para acomodar o conteúdo */
-  width: 500px; /* Largura da modal */
-  max-width: 90%; /* Maxima largura em relação a tela */
-  max-height: 80vh; /* Maxima altura da modal */
-  overflow-y: auto; /* Habilita rolagem se o conteúdo for maior */
+  height: auto;
+  width: 500px; 
+  max-width: 90%; 
+  max-height: 80vh; 
+  overflow-y: auto;
 }
-
 
 .modal-title {
   text-align: center;
@@ -107,8 +106,8 @@
 
 .form-buttons {
   display: flex;
-  justify-content: flex-end; /* Alinha os botões à direita */
-  margin-top: 20px; /* Adiciona um espaço entre o formulário e os botões */
+  justify-content: flex-end; 
+  margin-top: 20px; 
 }
 
 .loading-container {
@@ -130,11 +129,11 @@
   border: 1px solid #ddd;
   border-radius: 5px;
   font-family: sans-serif;
-  width: 600px; /* Faz a caixa de pesquisa ocupar toda a largura disponível */
+  width: 600px;
 }
 
 .button.add-button {
-  width: auto; /* Garante que o botão de adicionar não ocupe a mesma largura que a pesquisa */
+  width: auto; 
 }
 .input {
   padding: 10px;
@@ -143,53 +142,52 @@
   font-family: sans-serif;
 }input
 .image-preview {
-  width: 100%; /* A imagem não pode ultrapassar a largura da modal */
-  max-height: 400px; /* Defina uma altura máxima para a imagem */
-  object-fit: contain; /* Faz com que a imagem mantenha suas proporções */
-  display: block; /* Garante que a imagem seja exibida como um bloco */
-  margin: 0 auto; /* Centraliza a imagem horizontalmente */
+  width: 100%;
+  max-height: 400px; 
+  object-fit: contain; 
+  display: block; 
+  margin: 0 auto; 
 }
-/* Oculta o input de arquivo padrão */
+
 .file-input {
-display: none; /* Oculta o input de arquivo */
+display: none; 
 }
 
 .form-group {
-margin-bottom: 15px; /* Espaço abaixo do grupo do formulário */
+margin-bottom: 15px; 
 }
 
 .custom-file-upload {
-display: inline-block; /* Permite o estilo do botão */
-padding: 10px 15px; /* Adiciona espaço interno ao botão */
-border: 1px solid #ccc; /* Borda leve */
-border-radius: 4px; /* Cantos arredondados */
-background-color: #EBECFE; /* Cor de fundo leve */
-color: #333; /* Cor do texto */
-cursor: pointer; /* Muda o cursor para indicar que é clicável */
-margin-top: 5px; /* Espaço acima do botão */
-display: block; /* Faz o botão ocupar a largura total disponível */
+display: inline-block;
+padding: 10px 15px; 
+border: 1px solid #ccc; 
+border-radius: 4px; 
+background-color: #EBECFE; 
+color: #333; 
+cursor: pointer; 
+margin-top: 5px; 
+display: block; 
 }
 
-/* Estiliza o botão ao passar o mouse */
 .custom-file-upload:hover {
-border-color: #888; /* Muda a cor da borda ao passar o mouse */
-background-color: #f1f1f1; /* Muda a cor de fundo ao passar o mouse */
+border-color: #888; 
+background-color: #f1f1f1; 
 }
 .foto-produto {
-max-width: 60px; /* Ajuste conforme necessário */
-max-height: auto; /* Mantém a proporção da imagem */
+max-width: 60px; 
+max-height: auto; 
 }
 .modal img {
-max-width: 300px; /* Define a largura máxima da imagem */
-max-height: 300px; /* Define a altura máxima da imagem */
-width: auto; /* Ajusta a largura automaticamente */
-height: auto; /* Ajusta a altura automaticamente */
-display: block; /* Para centralizar */
-margin: 0 auto; /* Para centralizar */
+max-width: 300px; 
+max-height: 300px; 
+width: auto;
+height: auto;
+display: block; 
+margin: 0 auto; 
 }
 .preco-padrao {
-width: 240px; /* Ajuste para o valor que você achar adequado */
+width: 240px;
 }
 .desconto {
-width: 120px; /* Ajuste para o valor que você achar adequado */
+width: 120px;
 }

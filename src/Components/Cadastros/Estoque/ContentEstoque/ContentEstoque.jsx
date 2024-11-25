@@ -4,6 +4,276 @@ import './ContentEstoque.css';
 
 export default function ContentEstoque() {
   const [estoque, setEstoque] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalType, setModalType] = useState(null); // 'add' or 'edit'
+  const [formData, setFormData] = useState({
+    codigo: '',
+    item: '',
+    tipo: '',
+    preco_compra: '',
+    preco_venda: '',
+    data_entrada: '',
+    qtde_entrada: '',
+    observacoes: '',
+  });
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    fetchEstoque();
+  }, []);
+
+  const fetchEstoque = () => {
+    axios.get('http://localhost:3000/estoque')
+      .then(response => {
+        if (Array.isArray(response.data.estoque)) {
+          setEstoque(response.data.estoque);
+        } else {
+          console.error('Formato inesperado da resposta da API:', response.data);
+        }
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Erro ao carregar estoque:', error);
+        setLoading(false);
+      });
+  };
+
+  const handleOpenModal = (type, item = null) => {
+    if (type === 'edit' && item) {
+      const formattedDate = item.data_entrada
+        ? new Date(item.data_entrada).toISOString().split('T')[0]
+        : '';
+      setFormData({
+        ...item,
+        data_entrada: formattedDate,
+      });
+    } else {
+      setFormData({
+        codigo: '',
+        item: '',
+        tipo: '',
+        preco_compra: '',
+        preco_venda: '',
+        data_entrada: '',
+        qtde_entrada: '',
+        observacoes: '',
+      });
+    }
+    setModalType(type);
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setModalType(null);
+  };
+
+  const handleInsert = () => {
+    postEstoque(formData);
+  };
+
+  const postEstoque = (data) => {
+    axios.post('http://localhost:3000/estoque', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        fetchEstoque();
+        handleCloseModal();
+        alert('Item adicionado ao estoque com sucesso!');
+      })
+      .catch(error => {
+        console.error('Erro ao adicionar item no estoque:', error.response ? error.response.data : error.message);
+        alert('Erro ao adicionar item no estoque.');
+      });
+  };
+
+  function formatNumber(number) {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(number);
+}
+
+  const handleUpdate = () => {
+    putEstoque(formData);
+  };
+
+  const putEstoque = (data) => {
+    axios.put('http://localhost:3000/estoque', data, {
+      params: { codigo: data.codigo }
+    })
+    .then(response => {
+      fetchEstoque();
+      handleCloseModal();
+      alert('Item atualizado com sucesso!');
+    })
+    .catch(error => {
+      console.error('Erro ao atualizar item no estoque:', error.response ? error.response.data : error.message);
+      alert('Erro ao atualizar item no estoque.');
+    });
+  };
+
+  const handleDelete = (codigo) => {
+    if (window.confirm('Tem certeza que deseja excluir este item?')) {
+      axios.delete('http://localhost:3000/estoque', { params: { codigo } })
+        .then(response => {
+          fetchEstoque();
+          alert('Item excluído com sucesso!');
+        })
+        .catch(error => {
+          console.error('Erro ao deletar item do estoque:', error.response ? error.response.data : error.message);
+          alert('Erro ao deletar item do estoque.');
+        });
+    }
+  };
+
+  const fieldLabels = {
+    codigo: 'Código',
+    item: 'Item',
+    tipo: 'Tipo',
+    preco_compra: 'Preço de Compra',
+    preco_venda: 'Preço de Venda',
+    data_entrada: 'Data de Entrada',
+    qtde_entrada: 'Quantidade Entrada',
+    observacoes: 'Observações',
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const requiredFields = Object.keys(fieldLabels);
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+
+    if (emptyFields.length > 0) {
+      const missingFieldLabels = emptyFields.map(field => fieldLabels[field]);
+      alert(`Por favor, preencha os seguintes campos: ${missingFieldLabels.join(', ')}`);
+      return;
+    }
+
+    if (modalType === 'add') {
+      handleInsert();
+    } else if (modalType === 'edit') {
+      handleUpdate();
+    }
+  };
+
+  const filteredEstoque = Array.isArray(estoque) ? estoque.filter(item =>
+    item.item.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.codigo.toString().toLowerCase().includes(searchQuery.toLowerCase())
+  ).reverse() : [];
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <p>Carregando...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="content-container">
+      <h2 className="title">Estoque</h2>
+
+      <div className="controls">
+        <button className="button add-button" onClick={() => handleOpenModal('add')}>
+          Adicionar Novo Item ao Estoque
+        </button>
+      </div>
+
+      <div>
+        <input
+          type="text"
+          placeholder="Pesquisar por nome, código ou tipo..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+      </div>
+
+      {/* Tabela de estoque */}
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Item</th>
+            <th>Tipo</th>
+            <th>Preço de Compra</th>
+            <th>Preço de Venda</th>
+            <th>Quantidade</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredEstoque.map((item) => (
+            <tr key={item.codigo}>
+              <td>{item.codigo}</td>
+              <td>{item.item}</td>
+              <td>{item.tipo}</td>
+              <td>{formatNumber(item.preco_compra)}</td>
+              <td>{formatNumber(item.preco_venda)}</td>
+              <td>{item.qtde_entrada}</td>
+              <td>
+                <div className="actions">
+                  <button className="button" onClick={() => handleOpenModal('edit', item)}>Editar</button>
+                  <button className="button" onClick={() => handleDelete(item.codigo)}>Excluir</button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Modal */}
+      {modalVisible && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">{modalType === 'add' ? 'Adicionar Item ao Estoque' : 'Editar Item no Estoque'}</h2>
+            <form onSubmit={handleSubmit} className="form">
+              {Object.keys(fieldLabels).map((field) => (
+                <div key={field}>
+                  <label className="modal-label">{fieldLabels[field]}:</label>
+                  {field === 'data_entrada' ? (
+                    <input
+                      type="date"
+                      className="input"
+                      value={formData[field] || ''}
+                      onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+                      required
+                    />
+                  ) : (
+                    <input
+                      type={field === 'data_entrada' ? 'date' : 'text'}
+                      className="input"
+                      value={formData[field] || ''}
+                      onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+                      required
+                    />
+                  )}
+                </div>
+              ))}
+              <div className="form-buttons">
+                <button type="submit" className="button">
+                  {modalType === 'add' ? 'Adicionar' : 'Atualizar'}
+                </button>
+                <button type="button" className="button" onClick={handleCloseModal}>Fechar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './ContentEstoque.css';
+
+export default function ContentEstoque() {
+  const [estoque, setEstoque] = useState([]);
   const [funcionarios, setFuncionarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -359,4 +629,4 @@ export default function ContentEstoque() {
       )}
     </div>
   );
-}
+} */

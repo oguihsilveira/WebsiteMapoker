@@ -1,5 +1,263 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import "./ContentFuncionarios.css"
+
+export default function ContentFuncionarios() {
+  const [funcionarios, setFuncionarios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalType, setModalType] = useState(null); // 'add' or 'edit'
+  const [formData, setFormData] = useState({
+    codigo: '',
+    nome: '',
+    email: '',
+    datanasc: '',
+    cargo: '',
+    salario: '',
+    endereco: '',
+    carga_horaria: '',
+  });
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    fetchFuncionarios();
+  }, []);
+
+  const formatNumber = (value) => {
+    return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+  };
+  
+  const fetchFuncionarios = () => {
+    axios.get('http://localhost:3000/funcionarios')
+      .then(response => {
+        if (Array.isArray(response.data.funcionarios)) {
+          setFuncionarios(response.data.funcionarios);
+        } else {
+          console.error('Formato inesperado da resposta da API:', response.data);
+        }
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Erro ao carregar funcionários:', error);
+        setLoading(false);
+      });
+  };
+
+  const handleOpenModal = (type, funcionario = null) => {
+    if (type === 'edit' && funcionario) {
+      const formattedDate = funcionario.datanasc 
+        ? new Date(funcionario.datanasc).toISOString().split('T')[0] 
+        : '';
+      setFormData({
+        ...funcionario,
+        datanasc: formattedDate,
+      });
+    } else {
+      setFormData({
+        codigo: '',
+        nome: '',
+        email: '',
+        datanasc: '',
+        cargo: '',
+        salario: '',
+        endereco: '',
+        carga_horaria: '',
+      });
+    }
+    setModalType(type);
+    setModalVisible(true);
+  };  
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setModalType(null);
+  };
+
+  const handleInsert = () => {
+    postFuncionario(formData);
+  };
+
+  const postFuncionario = (data) => {
+    axios.post('http://localhost:3000/funcionarios', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        fetchFuncionarios(); 
+        handleCloseModal();
+        alert('Funcionário cadastrado com sucesso!');
+      })
+      .catch(error => {
+        if (error.response && error.response.status === 409) {
+          alert('Erro: O código do funcionário já existe. Por favor, escolha um código diferente.');
+        } else {
+          console.error('Erro ao cadastrar funcionário:', error.response ? error.response.data : error.message);
+          alert('Erro ao cadastrar funcionário.');
+        }
+      });
+  };
+
+  const handleUpdate = () => {
+    putFuncionario(formData);
+  };
+
+  const putFuncionario = (data) => {
+    axios.put('http://localhost:3000/funcionarios', data, {
+      params: { codigo: data.codigo }
+    })
+    .then(response => {
+      fetchFuncionarios(); 
+      handleCloseModal();
+      alert('Funcionário atualizado com sucesso!');
+    })
+    .catch(error => {
+      console.error('Erro ao atualizar funcionário:', error.response ? error.response.data : error.message);
+      alert('Erro ao atualizar funcionário.');
+    });
+  };
+
+  const handleDelete = (codigo) => {
+    if (window.confirm('Tem certeza que deseja excluir este funcionário?')) {
+        axios.delete('http://localhost:3000/funcionarios', { params: { codigo } })
+            .then(response => {
+                fetchFuncionarios(); 
+                alert('Funcionário excluído com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro ao deletar funcionário:', error.response ? error.response.data : error.message);
+                alert(error.response && error.response.data.error ? error.response.data.error : 'Erro ao deletar funcionário.');
+            });
+    }
+  };
+
+  const fieldLabels = {
+    codigo: 'Código',
+    nome: 'Nome',
+    email: 'Email',
+    datanasc: 'Data de Nascimento',
+    cargo: 'Cargo',
+    salario: 'Salário',
+    endereco: 'Endereço',
+    carga_horaria: 'Carga Horária',
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const requiredFields = Object.keys(fieldLabels);
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+
+    if (emptyFields.length > 0) {
+      const missingFieldLabels = emptyFields.map(field => fieldLabels[field]);
+      alert(`Por favor, preencha os seguintes campos: ${missingFieldLabels.join(', ')}`);
+      return;
+    }
+
+    if (modalType === 'add') {
+      handleInsert();
+    } else if (modalType === 'edit') {
+      handleUpdate();
+    }
+  };
+
+  const filteredFuncionarios = Array.isArray(funcionarios) ? funcionarios.filter(funcionario =>
+    funcionario.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    funcionario.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    funcionario.codigo.toString().toLowerCase().includes(searchQuery.toLowerCase())
+  ).reverse() : [];
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <p>Carregando...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="content-container">
+      <h2 className="title">Funcionários</h2>
+
+      <div className="controls">
+        <button className="button add-button" onClick={() => handleOpenModal('add')}>
+          Adicionar Novo Funcionário
+        </button>
+      </div>
+    
+      <div>
+        <input
+          type="text"
+          placeholder="Pesquisar por nome, email ou código..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+      </div>
+
+      {/* Tabela de funcionários */}
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Cargo</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredFuncionarios.map((funcionario) => (
+            <tr key={funcionario.codigo}>
+              <td>{funcionario.codigo}</td>
+              <td>{funcionario.nome}</td>
+              <td>{funcionario.email}</td>
+              <td>{funcionario.cargo}</td>
+              <td>
+                <div className="actions">
+                  <button className="button" onClick={() => handleOpenModal('edit', funcionario)}>Editar</button>
+                  <button className="button" onClick={() => handleDelete(funcionario.codigo)}>Excluir</button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Modal */}
+      {modalVisible && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">{modalType === 'add' ? 'Adicionar Funcionário' : 'Editar Funcionário'}</h2>
+            <form onSubmit={handleSubmit} className="form">
+              {Object.keys(fieldLabels).map((field) => (
+                <div key={field}>
+                  <label className="modal-label">{fieldLabels[field]}:</label>
+                  <input
+                    type={field === 'datanasc' ? 'date' : 'text'}
+                    className="input"
+                    value={formData[field] || ''}
+                    onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+                    required
+                  />
+                </div>
+              ))}
+              <div className="form-buttons">
+                <button type="submit" className="button">
+                  {modalType === 'add' ? 'Cadastrar' : 'Atualizar'}
+                </button>
+                <button type="button" className="button" onClick={handleCloseModal}>Fechar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 
 export default function ContentFuncionarios() {
@@ -339,3 +597,4 @@ export default function ContentFuncionarios() {
     </div>
   );
 }
+ */
