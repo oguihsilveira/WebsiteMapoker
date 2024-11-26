@@ -77,11 +77,14 @@ export default function ContentPedidos() {
   // Campos a exibir na tabela (excluindo 'codigo')
   const tableFields = Object.keys(fieldLabels);
 
-  const filteredPedidos = Array.isArray(pedidos) ? pedidos.filter(pedido =>
-    pedido.item.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    pedido.destinatario.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    pedido.codigo.toString().includes(searchQuery)
-  ).reverse() : [];
+  const filteredPedidos = Array.isArray(pedidos) ? pedidos.filter(pedido => {
+    const formattedDataCompra = formatDate(pedido.data_compra); // Formata a data para o padrão dd/mm/yyyy
+    return (
+      pedido.item.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      pedido.destinatario.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      formattedDataCompra.includes(searchQuery) // Agora a pesquisa será por data de compra
+    );
+  }).reverse() : [];
 
   if (loading) {
     return (
@@ -98,7 +101,7 @@ export default function ContentPedidos() {
       <div className="controls">
         <input
           type="text"
-          placeholder="Pesquisar por item, destinatário ou código..."
+          placeholder="Pesquisar por item, destinatário ou data da compra..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Navbar from './Navbar/Navbar';
 import Hero from './Hero/Hero';
-import Title from './Title/Title';
+import Title from '../CadastrosGerais/Title/Title';
 import Produtos from './Produtos/Produtos';
 import Sobre from './Sobre/Sobre';
 import Ambiente from './Ambiente/Ambiente';

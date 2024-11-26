@@ -81,7 +81,7 @@ const NavbarProdutoEspecifico = () => {
         }
       );
   
-      alert(response.data.message);  // Exibe a resposta do servidor
+      alert("Pedido enviado com sucesso!");  // Exibe a resposta do servidor
   
       // Atualiza os itens do carrinho após alterar o status
       fetchCartItems();
@@ -102,7 +102,7 @@ const NavbarProdutoEspecifico = () => {
 
       setCartItems((prevItems) => prevItems.filter((item) => item.codigo !== codigo));
 
-      alert('Item removido com sucesso!');
+      alert('Item removido do carrinho!');
     } catch (error) {
       console.error("Erro ao remover item:", error);
       alert('Não foi possível remover o item. Tente novamente.');
@@ -157,19 +157,23 @@ const NavbarProdutoEspecifico = () => {
                   className="cart-item-img" 
                 />
                 <div className="cart-item-details">
-                  <span className="cart-item-name">{item.item_produto}</span>
-                  <span className="cart-item-quantity">Qtd: {item.quantidade}</span>
+                  <div className="cart-item-header">
+                    <span className="cart-item-name">{item.item}</span>
+                    <span className="cart-item-quantity">Qntd: {item.quantidade}</span>
+                  </div>
+                  <span className="cart-item-product-name">{item.produto.nome}</span>
+                  <div className="cart-item-extra">
+                    <span className="cart-item-price">R$ {item.valor_compra.toFixed(2)}</span>
+                    <span className="cart-item-installments">Parcelas: {item.qntd_parcelas || 1}x</span>
+                  </div>
                 </div>
-                <span className="cart-item-price">R$ {item.valor_compra.toFixed(2)}</span>
-
                 <div className="cart-item-actions">
                   <button
                     className="update-status"
                     onClick={() => handleUpdateStatus(item.codigo)}
                   >
-                    <AiOutlineCheck size={24} />
+                    <AiOutlineCheck size={20} />
                   </button>
-
                   <button
                     className="remove-item"
                     onClick={() => handleRemoveItem(item.codigo)}

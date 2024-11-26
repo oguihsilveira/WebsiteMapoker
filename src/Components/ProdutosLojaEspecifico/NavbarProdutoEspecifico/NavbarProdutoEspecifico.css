@@ -43,12 +43,12 @@ nav ul li {
   position: fixed;
   top: 0;
   right: 0;
-  width: 30%;
+  width: 35%; /* Largura um pouco maior */
   height: 100%;
-  background: #333;
-  color: #fff;
+  background: #232323; /* Fundo escuro mais moderno */
+  color: #eeeeee; /* Texto claro para contraste */
   padding: 20px;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
   transition: transform 0.3s ease;
   z-index: 20;
   display: flex;
@@ -56,78 +56,176 @@ nav ul li {
 }
 
 .drawer h2 {
-  color: #fff;
+  color: #ffffff;
   font-size: 24px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ff5100;
+  padding-bottom: 10px;
 }
 
 /* Estilo dos itens do carrinho */
+.cart-items {
+  max-height: 80%; /* Altura máxima com scroll, se necessário */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ff5100 #333;
+}
+
 .cart-item {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
+  padding: 15px;
+  background: #393e46; /* Fundo para destacar cada item */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cart-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
 .cart-item-img {
-  width: 50px;
-  height: 50px;
-  margin-right: 10px;
+  width: 60px;
+  height: 60px;
+  margin-right: 15px;
   object-fit: cover;
-  border-radius: 5px;
+  border-radius: 8px;
+  border: 2px solid #ff5100;
 }
 
 .cart-item-details {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  margin-right: 10px; /* Espaço entre o nome/quantidade e o preço */
+}
+
+.cart-item-header {
+  display: flex; /* Garante que os elementos sejam exibidos lado a lado */
+  justify-content: space-between; /* Espaçamento entre os elementos */
+  align-items: center; /* Centraliza verticalmente */
+  gap: 10px; /* Espaçamento opcional entre os elementos */
 }
 
 .cart-item-name {
-  font-size: 16px;
-  font-weight: bold;
+  flex: 1; /* Garante que ocupe o espaço disponível */
+  margin-bottom: 4px;
 }
 
 .cart-item-quantity {
-  font-size: 14px;
-  color: #666;
+  display: flex; /* Para os itens dentro do container da quantidade ficarem lado a lado */
+  align-items: center; /* Alinha o número com o texto */
+  gap: 5px; /* Ajuste do espaço entre o rótulo e o número */
+  margin-right: 30px;
+}
+
+.cart-item-quantity span {
+  font-size: 16px; /* Ajuste do tamanho da fonte */
+  font-weight: bold;
 }
 
 .cart-item-price {
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: bold;
   color: #ff5100;
-  width: 100px;
+  text-align: right;
+  margin: 10px;
 }
 
-/* Estilo da tela de carregamento */
-.loading-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(35, 35, 35, 0.9); /* Cor escura translúcida */
+.cart-item-installments {
+  font-size: 16px;
+  font-weight: bold;
   color: #fff;
+  text-align: right;
+  margin: 10px;
+}
+
+/* Estilo dos botões */
+.cart-item-actions {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  z-index: 20; /* Deve estar acima do navbar */
+  gap: 10px;
 }
 
-/* Estilo do spinner */
-.spinner {
+.update-status {
+  display: flex; /* Usando flexbox para centralizar o conteúdo */
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+  width: 50px; /* Defina uma largura específica para o botão */
+  height: 50px; /* Defina uma altura específica para o botão */
+  background: #2ecc71;
+  border: none;
+  color: white;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  padding: 0; /* Remove o padding padrão */
+}
+
+.update-status:hover {
+  background: #27ae60;
+}
+
+
+.remove-item {
   width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3; /* Cor clara */
-  border-top: 5px solid #FF5100; /* Cor de destaque */
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 15px; /* Espaço entre o círculo e o texto */
+  height: auto;
+  background: #e74c3c;
+  border: none;
+  color: white;
+  font-size: 18px;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.remove-item:hover {
+  background: #c0392b;
+}
+
+/* Botão de fechar Drawer */
+.drawer-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  color: #ffffff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.drawer-close:hover {
+  color: #ff5100;
+}
+
+/* Indicador de carrinho vazio */
+.empty-cart {
+  text-align: center;
+  font-size: 20px;
+  color: #b0b0b0;
+  margin-top: 50px;
+}
+
+/* Estilo do botão para checkout */
+.checkout-btn {
+  margin-top: auto;
+  padding: 15px;
+  background: #ff5100;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.checkout-btn:hover {
+  background: #e14a00;
 }

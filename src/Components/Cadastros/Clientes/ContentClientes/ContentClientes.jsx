@@ -43,8 +43,10 @@ export default function ContentClientes() {
 
   const filteredClientes = Array.isArray(clientes) ? clientes.filter(cliente =>
     cliente.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    cliente.login.toLowerCase().includes(searchQuery.toLowerCase())
+    cliente.login.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    cliente.codigo.toString().includes(searchQuery) // Agora o código também é pesquisável
   ).reverse() : [];
+  
 
   if (loading) {
     return (
@@ -61,7 +63,7 @@ export default function ContentClientes() {
       <div className="controls">
         <input
           type="text"
-          placeholder="Pesquisar por nome ou login..."
+          placeholder="Pesquisar por código, nome ou login..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"

@@ -1,12 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate para navegação
 import './BtnCadGerais.css'; // Importar o CSS
+import Title from '../Title/Title'
 
 const BtnCadGerais = () => {
   const navigate = useNavigate(); // Instanciar o useNavigate
 
   return (
     <div className="btn-container">
+      <Title title="Bem vindo!" subTitle='Administração Geral'/>
       <button className="btncadgerais" onClick={() => navigate('/funcionarios')}>
         Funcionários
       </button> {/* Funcionarios */}
@@ -31,13 +33,13 @@ const BtnCadGerais = () => {
         Pedidos dos Clientes
       </button> {/* Produtos que foram pedidos por clientes */}
 
-      <button className="btncadgerais" onClick={() => navigate('/pagamentos')}>
+      {/* <button className="btncadgerais" onClick={() => navigate('/pagamentos')}>
         Pagamentos dos Clientes
-      </button> {/* Contas/Pagamentos dos produtos comprados dos fornecedores */}
+      </button> //Contas/Pagamentos dos produtos comprados dos fornecedores
 
       <button className="btncadgerais" onClick={() => navigate('/parcelas')}>
         Parcelas dos Clientes
-      </button> {/* Caso o tipo de pagamento for Parcelado/Financiado, mostrar parcelas que restam a pagar. */}
+      </button> //Caso o tipo de pagamento for Parcelado/Financiado, mostrar parcelas que restam a pagar. */}
 
       <button className="btncadgerais" onClick={() => navigate('/relatorio')}>
         Relatório Financeiro

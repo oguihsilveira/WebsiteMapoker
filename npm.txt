@@ -1,5 +1,5 @@
 //instala tudo
-npm install axios react-router-dom react-scroll react-sticky react-icons jwt-decode
+npm install axios react-router-dom react-scroll react-sticky react-icons jwt-decode chart.js react-chartjs-2
 
 //erros?
 npm audit fix

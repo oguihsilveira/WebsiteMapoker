@@ -17,8 +17,9 @@ import Estoque from "./Components/Cadastros/Estoque/Estoque";
 import Produtos from './Components/Cadastros/Produtos/Produtos';
 import Clientes from './Components/Cadastros/Clientes/Clientes';
 import Pedidos from "./Components/Cadastros/Pedidos/Pedidos";
-/* import Pagamentos from "./Components/Cadastros/Pagamentos/Pagamentos";
-import Parcelas from './Components/Cadastros/Parcelas/Parcelas'; */
+//import Pagamentos from "./Components/Cadastros/Pagamentos/Pagamentos";
+//import Parcelas from './Components/Cadastros/Parcelas/Parcelas';
+import Relatorio from "./Components/Cadastros/Relatorio/Relatorio";
 
 // Rota Protegida
 import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
@@ -121,6 +122,14 @@ const App = () => {
             </PrivateRoute>
           } 
         /> */}
+        <Route 
+          path="/relatorio" 
+          element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <Relatorio />
+            </PrivateRoute>
+          } 
+        />
       </Routes>
     </Router>
   );

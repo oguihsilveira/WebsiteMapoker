@@ -139,32 +139,41 @@ export default function ContentProdutoEspecifico() {
     }
   };  
   
-    // Atualiza o valor da compra com base na quantidade de parcelas
-    useEffect(() => {
-      if (pedido.quantidade && produto) {
-        const precoComDesconto = calcularPrecoComDesconto(produto.preco_padrao, produto.desconto);
-        const precoTotal = pedido.quantidade * parseFloat(precoComDesconto);
-    
-        if (pedido.tipo_pgto === 'Cartão de Crédito' && pedido.qntd_parcelas) {
-          const { valorParcela, valorTotal } = calcularParcelas(precoTotal, pedido.qntd_parcelas);
-          setPedido((prevState) => ({
-            ...prevState,
-            valor_compra: valorTotal, // Atualiza o valor total
-            valor_parcela: valorParcela, // Atualiza o valor da parcela
-            qntd_parcelas: 1,
-          }));
-        } else {
-          // Se o tipo de pagamento for Boleto ou Pix, define a quantidade de parcelas como 1x
-          setPedido((prevState) => ({
-            ...prevState,
-            valor_compra: precoTotal.toFixed(2),
-            valor_parcela: '', // Limpa as parcelas se não for crédito
-            qntd_parcelas: 1,  // Se não for Cartão de Crédito, define a quantidade de parcelas como 1
-          }));
-        }
+    // Atualiza o valor da compra com base na quantidade de parcelas e no tipo de pagamento
+useEffect(() => {
+  if (pedido.quantidade && produto) {
+    const precoComDesconto = calcularPrecoComDesconto(produto.preco_padrao, produto.desconto);
+    const precoTotal = pedido.quantidade * parseFloat(precoComDesconto);
+
+    if (pedido.tipo_pgto === 'Cartão de Crédito') {
+      // Se o pagamento for com Cartão de Crédito
+      if (pedido.qntd_parcelas && [1, 3, 6, 12].includes(Number(pedido.qntd_parcelas))) {
+        const { valorParcela, valorTotal } = calcularParcelas(precoTotal, Number(pedido.qntd_parcelas));
+        setPedido((prevState) => ({
+          ...prevState,
+          valor_compra: valorTotal, // Atualiza o valor total
+          valor_parcela: valorParcela, // Atualiza o valor da parcela
+        }));
+      } else {
+        // Se o número de parcelas for inválido, define como 1x
+        setPedido((prevState) => ({
+          ...prevState,
+          qntd_parcelas: 1, // Define como 1 parcela
+          valor_compra: precoTotal.toFixed(2), // Atualiza o valor total
+          valor_parcela: precoTotal.toFixed(2), // Atualiza o valor da parcela como o total
+        }));
       }
-    }, [pedido.quantidade, pedido.qntd_parcelas, pedido.tipo_pgto, produto]);  
-  
+    } else {
+      // Para Boleto e Pix, sempre define 1 parcela
+      setPedido((prevState) => ({
+        ...prevState,
+        qntd_parcelas: 1, // Apenas uma parcela permitida
+        valor_compra: precoTotal.toFixed(2), // Atualiza o valor total
+        valor_parcela: precoTotal.toFixed(2), // Atualiza o valor da parcela como o total
+      }));
+    }
+  }
+}, [pedido.quantidade, pedido.qntd_parcelas, pedido.tipo_pgto, produto]);
   
   return (
     <div className="product-detail-container">
@@ -268,24 +277,23 @@ export default function ContentProdutoEspecifico() {
                 name="qntd_parcelas"
                 value={pedido.qntd_parcelas}
                 onChange={handleInputChange}
-                disabled={pedido.tipo_pgto === 'Boleto Bancário' || pedido.tipo_pgto === 'Pix'} // Desabilita as parcelas para Boleto ou Pix
+                disabled={pedido.tipo_pgto !== 'Cartão de Crédito'} // Desabilita se não for crédito
                 required
               >
                 <option value="">Selecione</option>
-                {pedido.tipo_pgto === 'Cartão de Crédito' && (
-                  <>
-                    <option value="1">1x</option>
-                    <option value="3">3x</option>
-                    <option value="6">6x</option>
-                    <option value="12">12x</option>
-                  </>
-                )}
-                {(pedido.tipo_pgto === 'Boleto Bancário' || pedido.tipo_pgto === 'Pix') && (
-                  <option value="1">1x</option> // Para Boleto e Pix, só mostra 1x
-                )}
+                {pedido.tipo_pgto === 'Cartão de Crédito'
+                  ? [1, 3, 6, 12].map((parcela) => (
+                      <option key={parcela} value={parcela}>
+                        {parcela}x
+                      </option>
+                    ))
+                  : [1].map((parcela) => (
+                      <option key={parcela} value={parcela}>
+                        {parcela}x
+                      </option>
+                    ))}
               </select>
             </div>
-
 
             <div className="payment-summary">
               <p>Valor total: R${pedido.valor_compra}</p>

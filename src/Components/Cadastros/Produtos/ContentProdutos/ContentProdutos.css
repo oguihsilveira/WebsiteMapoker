@@ -1,4 +1,4 @@
-.content-container {
+/* .content-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -190,4 +190,297 @@ width: 240px;
 }
 .desconto {
 width: 120px;
+} */
+
+/* Container principal */
+.content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 100px;
+}
+
+/* Título */
+.title {
+  text-align: center;
+  color: #ff5100;
+  font-size: 24px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+/* Botões */
+.button {
+  background-color: #232323;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  font-family: sans-serif;
+  width: auto;
+  margin-left: 10px;
+  height: 40px;
+}
+
+.button:hover {
+  background-color: #ff5100;
+}
+
+.button.add-button {
+  width: auto;
+  margin-top: 10px;
+}
+
+/* Tabela */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  height: 100px;
+}
+
+.table th {
+  background-color: #f4f4f4;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+/* Modal */
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  position: relative;
+  height: auto;
+  width: 500px;
+  max-width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  text-align: center;
+  color: #ff5100;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.modal img {
+  max-width: 300px;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Formulário */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: sans-serif;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Inputs específicos */
+.search-input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: sans-serif;
+  width: 600px;
+}
+
+.file-input {
+  display: none;
+}
+
+.preco-padrao {
+  width: 240px;
+}
+
+.desconto {
+  width: 120px;
+}
+
+/* Upload de arquivos */
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #EBECFE;
+  color: #333;
+  cursor: pointer;
+  margin-top: 5px;
+  display: block;
+}
+
+.custom-file-upload:hover {
+  border-color: #888;
+  background-color: #f1f1f1;
+}
+
+/* Imagens */
+.image-preview {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.foto-produto {
+  max-width: 60px;
+  max-height: auto;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Controles */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.file-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.file-input:hover {
+  border-color: #5c9f8f;
+}
+select {
+  color: #000; /* Definindo a cor do texto como preto */
+  background-color: #fff; /* Definindo a cor de fundo como branco */
+  border: 1px solid #ccc; /* Adicionando borda */
+  padding: 8px; /* Adicionando preenchimento para mais conforto */
+  font-size: 16px; /* Ajustando o tamanho da fonte */
+}
+
+select:focus {
+  border-color: #007BFF; /* Adicionando cor de borda no foco */
+  outline: none; /* Removendo o contorno padrão */
+}
+/* Adicionando estilo para garantir que a imagem seja centralizada no modal */
+.modal-content img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%; /* Garante que a imagem se ajuste à largura do modal */
+  max-height: 500px; /* Define uma altura máxima para a imagem */
+  object-fit: contain; /* Garante que a imagem não fique distorcida */
+}
+/* Para garantir que as imagens sejam centralizadas no layout geral */
+.foto-produto {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 150px; /* Ajuste a altura máxima para não afetar o layout */
+  object-fit: contain; /* Garante que a imagem se ajuste proporcionalmente */
+}
+/* Estiliza o campo de input do arquivo */
+.input-file {
+  display: inline-block;
+  background-color: #f1f1f1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.input-file:hover {
+  background-color: #e0e0e0;
+}
+
+.input-file:focus {
+  border-color: #007bff;
+}
+
+.preview-img {
+  margin-top: 10px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  display: block;
+  max-height: 200px;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+.upload-button {
+  display: inline-block;
+  background-color: #ccc; /* Cor de fundo do botão */
+  border-color: #bbb;
+  color: white;              /* Cor do texto */
+  padding: 10px 20px;        /* Espaçamento interno */
+  border-radius: 5px;        /* Borda arredondada */
+  cursor: pointer;          /* Aponta o cursor como uma mãozinha */
+  font-size: 16px;           /* Tamanho da fonte */
+  transition: background-color 0.3s; /* Efeito de transição */
+}
+
+.upload-button:hover {
+  background-color: #aaa; /* Cor ao passar o mouse */
+}
+
+.upload-button input[type="file"] {
+  display: none; /* Garante que o input original está escondido */
 }

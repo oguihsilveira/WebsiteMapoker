@@ -1,0 +1,41 @@
+/* Relatorio.css */
+
+/* Container principal */
+.relatorio-container {
+  padding: 20px;
+  margin-top: 100px; /* Ajuste conforme necessário para não sobrepor a Navbar */
+}
+.relatorio-container h2{
+  text-align: center;
+  color: #ff5100;
+  font-size: 24px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+/* Container do gráfico */
+.grafico-container {
+  width: 100%;
+  max-width: 900px; /* Largura máxima do gráfico */
+  height: 400px; /* Definindo a altura do gráfico */
+  margin: 0 auto; /* Centraliza o gráfico */
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #fff; /* Fundo branco para o gráfico */
+  border-radius: 8px; /* Bordas arredondadas */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Responsividade - ajuste a altura do gráfico para telas menores */
+@media (max-width: 768px) {
+  .grafico-container {
+    height: 300px; /* Menor altura para telas menores */
+  }
+}
+
+@media (max-width: 480px) {
+  .grafico-container {
+    height: 250px; /* Altura menor para dispositivos móveis */
+  }
+}

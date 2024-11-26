@@ -28,9 +28,9 @@ const Sobre = () => {
           <h3>Sobre nós</h3>
           <h2>Curiosidades</h2>
         </div>
-          <p>Fundada em [Ano de Fundação], nossa empresa nasceu do desejo de inovar e oferecer soluções tecnológicas que facilitam a vida das pessoas e das organizações. Com um forte compromisso com a qualidade e a inovação, estamos presentes no mercado desde [Ano], sempre buscando maneiras de agregar valor aos nossos clientes e parceiros.
+          <p>Fundada em 2001, nossa empresa nasceu do desejo de inovar e oferecer soluções tecnológicas que facilitam a vida das pessoas e das organizações. Com um forte compromisso com a qualidade e a inovação, estamos presentes no mercado desde a fundação, sempre buscando maneiras de agregar valor aos nossos clientes e parceiros.
           </p>
-          <p>Os fundadores, [Nomes dos Donos], são profissionais experientes no setor de [Setor da Empresa], trazendo uma combinação única de expertise técnica e visão estratégica. A paixão por tecnologia e a vontade de fazer a diferença no mercado foram os pilares que sustentaram a criação da empresa, que hoje é referência em [Área de Atuação].
+          <p>Os fundadores, Antônio Silveira Júnior e Edelar Soratto, são profissionais experientes no setor de [Setor da Empresa], trazendo uma combinação única de expertise técnica e visão estratégica. A paixão por tecnologia e a vontade de fazer a diferença no mercado foram os pilares que sustentaram a criação da empresa, que hoje é referência em importação e exportação de Insumos para Indústria.
           </p>
           <p>No mercado, buscamos constantemente nos destacar pela excelência em nossos serviços e produtos. Nosso objetivo é não apenas atender às expectativas dos nossos clientes, mas superá-las, entregando soluções personalizadas e inovadoras. Estamos comprometidos com o crescimento sustentável, a ética nos negócios e a construção de relacionamentos duradouros que gerem benefícios mútuos.
           </p>
