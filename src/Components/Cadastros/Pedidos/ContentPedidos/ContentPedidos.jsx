@@ -94,6 +94,10 @@ export default function ContentPedidos() {
     );
   }
 
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  };
+
   return (
     <div className="content-container">
       <h2 className="title">Pedidos</h2>
@@ -150,10 +154,18 @@ export default function ContentPedidos() {
             <h3 className="modal-title">Detalhes do Pedido</h3>
             <table className="modal-table">
               <tbody>
-                {Object.keys({ codigo: 'Código', ...fieldLabels }).map(field => (
+                {Object.keys({ codigo: 'Código', ...fieldLabels }).map((field) => (
                   <tr key={field}>
-                    <td className="modal-label">{field === 'codigo' ? 'Código' : fieldLabels[field]}</td>
-                    <td className="modal-value">{field === 'data_compra' ? formatDate(modalPedido[field]) : modalPedido[field]}</td>
+                    <td className="modal-label">
+                      {field === 'codigo' ? 'Código' : fieldLabels[field]}
+                    </td>
+                    <td className="modal-value">
+                      {field === 'data_compra'
+                        ? formatDate(modalPedido[field])
+                        : field === 'valor_compra' || field === 'valor_parcela'
+                        ? formatCurrency(modalPedido[field])
+                        : modalPedido[field]}
+                    </td>
                   </tr>
                 ))}
               </tbody>

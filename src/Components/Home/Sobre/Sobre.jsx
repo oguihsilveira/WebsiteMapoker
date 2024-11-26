@@ -30,7 +30,7 @@ const Sobre = () => {
         </div>
           <p>Fundada em 2001, nossa empresa nasceu do desejo de inovar e oferecer soluções tecnológicas que facilitam a vida das pessoas e das organizações. Com um forte compromisso com a qualidade e a inovação, estamos presentes no mercado desde a fundação, sempre buscando maneiras de agregar valor aos nossos clientes e parceiros.
           </p>
-          <p>Os fundadores, Antônio Silveira Júnior e Edelar Soratto, são profissionais experientes no setor de [Setor da Empresa], trazendo uma combinação única de expertise técnica e visão estratégica. A paixão por tecnologia e a vontade de fazer a diferença no mercado foram os pilares que sustentaram a criação da empresa, que hoje é referência em importação e exportação de Insumos para Indústria.
+          <p>Os fundadores, Antônio Silveira Júnior e Edelar Soratto, são profissionais experientes no setor de comércio de insumos para a indústria cerâmica, combinando expertise técnica e visão estratégica. A paixão por tecnologia e o desejo de inovar no mercado foram os pilares que sustentaram a criação da empresa, que hoje se destaca na importação e exportação de produtos voltados para o setor.
           </p>
           <p>No mercado, buscamos constantemente nos destacar pela excelência em nossos serviços e produtos. Nosso objetivo é não apenas atender às expectativas dos nossos clientes, mas superá-las, entregando soluções personalizadas e inovadoras. Estamos comprometidos com o crescimento sustentável, a ética nos negócios e a construção de relacionamentos duradouros que gerem benefícios mútuos.
           </p>

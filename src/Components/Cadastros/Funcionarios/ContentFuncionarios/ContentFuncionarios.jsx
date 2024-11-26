@@ -22,10 +22,6 @@ export default function ContentFuncionarios() {
   useEffect(() => {
     fetchFuncionarios();
   }, []);
-
-  const formatNumber = (value) => {
-    return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
-  };
   
   const fetchFuncionarios = () => {
     axios.get('http://localhost:3000/funcionarios')
@@ -175,6 +171,23 @@ export default function ContentFuncionarios() {
     );
   }
 
+  // Função para formatar a data no formato DD/MM/AA
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate() + 1).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };  
+
+  // Função para formatar o salário no formato brasileiro
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
+  };
+
   return (
     <div className="content-container">
       <h2 className="title">Funcionários</h2>
@@ -202,27 +215,40 @@ export default function ContentFuncionarios() {
             <th>Código</th>
             <th>Nome</th>
             <th>Email</th>
+            <th>Data de Nascimento</th>
             <th>Cargo</th>
+            <th>Salário</th>
+            <th>Endereço</th>
+            <th>Carga Horária</th>
             <th>Ações</th>
           </tr>
         </thead>
         <tbody>
-          {filteredFuncionarios.map((funcionario) => (
-            <tr key={funcionario.codigo}>
-              <td>{funcionario.codigo}</td>
-              <td>{funcionario.nome}</td>
-              <td>{funcionario.email}</td>
-              <td>{funcionario.cargo}</td>
-              <td>
-                <div className="actions">
-                  <button className="button" onClick={() => handleOpenModal('edit', funcionario)}>Editar</button>
-                  <button className="button" onClick={() => handleDelete(funcionario.codigo)}>Excluir</button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+        {filteredFuncionarios.map((funcionario) => (
+          <tr key={funcionario.codigo}>
+            <td>{funcionario.codigo}</td>
+            <td>{funcionario.nome}</td>
+            <td>{funcionario.email}</td>
+            <td>{formatDate(funcionario.datanasc)}</td> {/* Data formatada */}
+            <td>{funcionario.cargo}</td>
+            <td>{formatCurrency(funcionario.salario)}</td> {/* Salário formatado */}
+            <td>{funcionario.endereco}</td>
+            <td>{funcionario.carga_horaria}</td>
+            <td>
+              <div className="actions">
+                <button className="button" onClick={() => handleOpenModal('edit', funcionario)}>
+                  Editar
+                </button>
+                <button className="button" onClick={() => handleDelete(funcionario.codigo)}>
+                  Excluir
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
       </table>
+
 
       {/* Modal */}
       {modalVisible && (
